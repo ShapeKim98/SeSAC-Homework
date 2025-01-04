@@ -7,6 +7,8 @@
 
 import UIKit
 
+import Kingfisher
+
 class MagazineTableViewController: UITableViewController {
     private let magazineList = MagazineInfo().magazine
     private let cachedDateFormatter = DateStyle.cachedDateFormatter
@@ -31,6 +33,11 @@ class MagazineTableViewController: UITableViewController {
         
         let magazine = magazineList[indexPath.row]
         
+        setPhotoImageView(
+            imageView: magazineCell.photoImageView,
+            photoImage: magazine.photo_image
+        )
+        
         setTitleLabel(
             label: magazineCell.titleLabel,
             text: magazine.title
@@ -47,6 +54,14 @@ class MagazineTableViewController: UITableViewController {
         )
         
         return magazineCell
+    }
+    
+    private func setPhotoImageView(imageView: UIImageView, photoImage: String) {
+        let url = URL(string: photoImage)
+        imageView.kf.setImage(with: url)
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 12
+        imageView.clipsToBounds = true
     }
     
     private func setTitleLabel(label: UILabel, text: String) {

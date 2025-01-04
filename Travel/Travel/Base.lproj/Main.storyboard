@@ -24,28 +24,28 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LqJ-PJ-v0y">
-                                            <rect key="frame" x="20" y="11" width="353" height="353"/>
+                                            <rect key="frame" x="20" y="23" width="353" height="353"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" secondItem="LqJ-PJ-v0y" secondAttribute="height" multiplier="1:1" id="Bz9-Rl-JhH"/>
                                             </constraints>
                                         </imageView>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ewl-pq-nIp">
-                                            <rect key="frame" x="20" y="376" width="353" height="85"/>
+                                            <rect key="frame" x="20" y="388" width="353" height="73"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KZd-4t-JfL">
-                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="22.333333333333332"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="19.333333333333332"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8km-y7-5RH">
-                                                    <rect key="frame" x="0.0" y="30.333333333333314" width="353" height="22.666666666666671"/>
+                                                    <rect key="frame" x="0.0" y="27.333333333333314" width="353" height="19.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EnS-e7-xeK">
-                                                    <rect key="frame" x="0.0" y="61" width="353" height="24"/>
+                                                    <rect key="frame" x="0.0" y="54.666666666666686" width="353" height="18.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -55,7 +55,7 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="ewl-pq-nIp" secondAttribute="trailing" constant="20" id="0i6-4X-mMh"/>
-                                        <constraint firstItem="LqJ-PJ-v0y" firstAttribute="top" secondItem="IvQ-Va-sF4" secondAttribute="topMargin" id="FR6-8y-oLu"/>
+                                        <constraint firstItem="LqJ-PJ-v0y" firstAttribute="top" secondItem="IvQ-Va-sF4" secondAttribute="topMargin" constant="12" id="FR6-8y-oLu"/>
                                         <constraint firstItem="ewl-pq-nIp" firstAttribute="top" secondItem="LqJ-PJ-v0y" secondAttribute="bottom" constant="12" id="GIU-mu-yxp"/>
                                         <constraint firstItem="LqJ-PJ-v0y" firstAttribute="leading" secondItem="IvQ-Va-sF4" secondAttribute="leadingMargin" id="LfS-nD-Mcy"/>
                                         <constraint firstItem="ewl-pq-nIp" firstAttribute="leading" secondItem="IvQ-Va-sF4" secondAttribute="leading" constant="20" id="RIo-u1-Jv6"/>
@@ -168,6 +168,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="l7s-01-I2m">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <navigationBarAppearance key="scrollEdgeAppearance"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
