@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:TableViewPractice/TableViewPractice.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Tamagotchi/Tamagotchi.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:AutoLayoutPracitce/AutoLayoutPracitce.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:BMICalculator/BMICalculator.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:NewWordSearcher/NewWordSearcher.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:EmotionDiary/EmotionDiary.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:MovieProject/MovieProject.xcodeproj">
+   </FileRef>
+</Workspace>
