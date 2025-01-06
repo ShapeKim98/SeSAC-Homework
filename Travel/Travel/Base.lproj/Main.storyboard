@@ -267,11 +267,11 @@
             </objects>
             <point key="canvasLocation" x="-161" y="837"/>
         </scene>
-        <!--Item-->
+        <!--메거진-->
         <scene sceneID="MII-6s-eR7">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="THt-yC-hVz" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" selectedImage="magazine.fill" catalog="system" id="Erd-dr-9dt"/>
+                    <tabBarItem key="tabBarItem" title="메거진" image="magazine.fill" catalog="system" selectedImage="magazine.fill" id="Erd-dr-9dt"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="l7s-01-I2m">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
@@ -287,11 +287,11 @@
             </objects>
             <point key="canvasLocation" x="985.49618320610682" y="-10.563380281690142"/>
         </scene>
-        <!--Item-->
+        <!--도시-->
         <scene sceneID="fvE-Kc-Hwe">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="PdB-bL-3Z5" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="cId-Sn-f2N"/>
+                    <tabBarItem key="tabBarItem" title="도시" image="map.fill" catalog="system" selectedImage="map.fill" id="cId-Sn-f2N"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="0D5-yD-eL2">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
@@ -307,11 +307,11 @@
             </objects>
             <point key="canvasLocation" x="985.49618320610682" y="672.53521126760563"/>
         </scene>
-        <!--Item-->
+        <!--쇼핑-->
         <scene sceneID="jPc-ea-nui">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="WfG-nm-S4b" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="omJ-o1-Tfa"/>
+                    <tabBarItem key="tabBarItem" title="쇼핑" image="cart.fill" catalog="system" selectedImage="cart.fill" id="omJ-o1-Tfa"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="jGZ-fx-wJy">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
@@ -457,7 +457,9 @@
         </scene>
     </scenes>
     <resources>
+        <image name="cart.fill" catalog="system" width="128" height="102"/>
         <image name="magazine.fill" catalog="system" width="110" height="128"/>
+        <image name="map.fill" catalog="system" width="128" height="110"/>
         <systemColor name="opaqueSeparatorColor">
             <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
