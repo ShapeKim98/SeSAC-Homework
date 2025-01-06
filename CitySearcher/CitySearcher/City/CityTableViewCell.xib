@@ -44,6 +44,11 @@
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="cityExplainLabel" destination="UJm-iq-Bj8" id="I4F-0x-eRd"/>
+                <outlet property="cityImageView" destination="R77-NF-57j" id="YA4-2Z-vbB"/>
+                <outlet property="cityNameLabel" destination="jNu-vY-0Oj" id="yB3-8M-h3G"/>
+            </connections>
             <point key="canvasLocation" x="138.93129770992365" y="51.408450704225352"/>
         </tableViewCell>
     </objects>
