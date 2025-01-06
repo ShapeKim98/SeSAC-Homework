@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Travel/Travel.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:TableViewPractice/TableViewPractice.xcodeproj">
    </FileRef>
    <FileRef
