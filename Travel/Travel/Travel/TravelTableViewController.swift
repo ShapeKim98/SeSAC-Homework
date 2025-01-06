@@ -8,9 +8,7 @@
 import UIKit
 
 class TravelTableViewController: UITableViewController {
-    private var travelList = TravelInfo().travel {
-        didSet { tableView.reloadData() }
-    }
+    private var travelList = TravelInfo().travel
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,5 +78,9 @@ class TravelTableViewController: UITableViewController {
     @objc
     private func likeButtonTouchUpInside(_ sender: UIButton) {
         travelList[sender.tag].like?.toggle()
+        tableView.reloadRows(
+            at: [.init(row: sender.tag, section: 0)],
+            with: .automatic
+        )
     }
 }
