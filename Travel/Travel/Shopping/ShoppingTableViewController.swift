@@ -14,7 +14,10 @@ class ShoppingTableViewController: UITableViewController {
     @IBOutlet var tableHeaderView: UIView!
      
     private var shoppingList: [Shopping] = Shopping.defaultList {
-        didSet { tableView.reloadData() }
+        didSet(oldValue) {
+            guard oldValue.count == shoppingList.count else { return }
+            tableView.reloadData()
+        }
     }
 
     override func viewDidLoad() {
@@ -63,6 +66,23 @@ class ShoppingTableViewController: UITableViewController {
         return shoppingCell
     }
     
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(
+            style: .destructive,
+            title: "삭제"
+        ) { [weak self] _, _, completion in
+            guard let `self` else { return }
+            self.shoppingList.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            completion(true)
+        }
+        
+        let configuration = UISwipeActionsConfiguration(actions: [
+            deleteAction
+        ])
+        return configuration
+    }
+    
     private func setTableHeaderView() {
         headerViewBackground.backgroundColor = .systemGray5
         headerViewBackground.layer.cornerRadius = 8
@@ -99,6 +119,10 @@ class ShoppingTableViewController: UITableViewController {
             !text.isEmpty
         else { return }
         shoppingList.append(Shopping(title: text))
+        tableView.insertRows(
+            at: [.init(row: shoppingList.count - 1, section: 0)],
+            with: .automatic
+        )
         shoppingTextField.text = ""
         view.endEditing(true)
     }
