@@ -44,20 +44,20 @@ class ShoppingTableViewController: UITableViewController {
         
         let shopping = shoppingList[indexPath.row]
         
-        shoppingCell.setCellBackgroundView()
-        shoppingCell.setTitleLabel(title: shopping.title)
-        shoppingCell.setBoughtButton(
+        shoppingCell.updateTitleLabel(title: shopping.title)
+        shoppingCell.updateBoughtButton(
             isBought: shopping.isBought,
             row: indexPath.row,
             target: self,
             action: #selector(boughtButtonTouchUpInside)
         )
-        shoppingCell.setFavoriteButton(
+        shoppingCell.updateFavoriteButton(
             isFavorite: shopping.isFavorite,
             row: indexPath.row,
             target: self,
             action: #selector(favoriteButtonTouchUpInside)
         )
+        
         return shoppingCell
     }
     

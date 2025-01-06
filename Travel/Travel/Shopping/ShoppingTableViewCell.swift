@@ -13,41 +13,101 @@ class ShoppingTableViewCell: UITableViewCell {
     @IBOutlet var favoriteButton: UIButton!
     @IBOutlet var cellBackgroundView: UIView!
     
-    func setCellBackgroundView() {
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        setCellBackgroundView()
+        
+        setTitleLabel()
+        
+        setBoughtButton()
+        
+        setFavoriteButton()
+    }
+    
+    override func prepareForReuse() {
+        boughtButtonReused()
+        favoriteButtonReused()
+    }
+    
+    func updateTitleLabel(title: String) {
+        titleLabel.text = title
+    }
+    
+    func updateBoughtButton(isBought: Bool, row: Int, target: Any?, action: Selector) {
+        if isBought {
+            boughtButton.setImage(
+                UIImage(systemName: "checkmark.square.fill"),
+                for: .normal
+            )
+        }
+        boughtButton.tag = row
+        boughtButton.addTarget(
+            target,
+            action: action,
+            for: .touchUpInside
+        )
+    }
+    
+    func updateFavoriteButton(isFavorite: Bool, row: Int, target: Any?, action: Selector) {
+        if isFavorite {
+            favoriteButton.setImage(
+                UIImage(systemName: "star.fill"),
+                for: .normal
+            )
+        }
+        favoriteButton.tag = row
+        favoriteButton.addTarget(
+            target,
+            action: action,
+            for: .touchUpInside
+        )
+    }
+    
+    private func setCellBackgroundView() {
         cellBackgroundView.backgroundColor = .systemGray5
         cellBackgroundView.layer.cornerRadius = 8
         cellBackgroundView.clipsToBounds = true
     }
     
-    func setTitleLabel(title: String) {
-        titleLabel.text = title
+    private func setTitleLabel() {
         titleLabel.font = .systemFont(ofSize: 14)
         titleLabel.textAlignment = .left
     }
     
-    func setBoughtButton(isBought: Bool, row: Int, target: Any?, action: Selector) {
-        let imageName = isBought ? "checkmark.square.fill" : "checkmark.square"
+    private func setBoughtButton() {
         boughtButton.setImage(
-            UIImage(systemName: imageName),
+            UIImage(systemName: "checkmark.square"),
             for: .normal
         )
-        setButton(boughtButton, tag: row, target: target, action: action)
+        setButton(boughtButton)
     }
     
-    func setFavoriteButton(isFavorite: Bool, row: Int, target: Any?, action: Selector) {
-        let imageName = isFavorite ? "star.fill" : "star"
+    private func setFavoriteButton() {
         favoriteButton.setImage(
-            UIImage(systemName: imageName),
+            UIImage(systemName: "star"),
             for: .normal
         )
-        setButton(favoriteButton, tag: row, target: target, action: action)
+        setButton(favoriteButton)
     }
     
-    func setButton(_ button: UIButton, tag: Int, target: Any?, action: Selector) {
+    private func setButton(_ button: UIButton) {
         button.setTitle("", for: .normal)
         button.tintColor = .black
-        button.tag = tag
-        button.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
+    private func boughtButtonReused() {
+        boughtButton.setImage(
+            UIImage(systemName: "checkmark.square"),
+            for: .normal
+        )
+    }
+    
+    private func favoriteButtonReused() {
+        favoriteButton.setImage(
+            UIImage(systemName: "star"),
+            for: .normal
+        )
     }
 }
 
