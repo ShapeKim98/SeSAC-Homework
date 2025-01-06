@@ -10,6 +10,7 @@ import UIKit
 import Kingfisher
 
 class CityTableViewCell: UITableViewCell {
+    @IBOutlet var cityExplainBackgroundView: UIView!
     @IBOutlet var cityExplainLabel: UILabel!
     @IBOutlet var cityNameLabel: UILabel!
     @IBOutlet var cityImageView: UIImageView!
@@ -18,6 +19,10 @@ class CityTableViewCell: UITableViewCell {
         super.awakeFromNib()
         
         setCityNameLabel()
+        
+        setCityExplainLabel()
+        
+        setCityExplainBackgroundView()
     }
     
     func updateCity(_ city: City) {
@@ -36,8 +41,13 @@ class CityTableViewCell: UITableViewCell {
     
     private func setCityExplainLabel() {
         cityExplainLabel.font = .systemFont(ofSize: 14)
+        cityExplainLabel.textColor = .white
+        cityExplainLabel.numberOfLines = 0
+    }
+    
+    private func setCityExplainBackgroundView() {
         let color = UIColor(red: 0, green: 0, blue: 0, alpha: 0.4)
-        cityExplainLabel.backgroundColor = color
+        cityExplainBackgroundView.backgroundColor = color
     }
     
     private func updateCityImageView(cityImage: String) {
