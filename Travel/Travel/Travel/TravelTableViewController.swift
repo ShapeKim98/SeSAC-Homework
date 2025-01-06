@@ -57,10 +57,7 @@ class TravelTableViewController: UITableViewController {
     private func setAdTableViewCell(_ cell: UITableViewCell, title: String) {
         guard let adCell = cell as? AdTableViewCell else { return }
         
-        adCell.setTitleLabel(title: title)
-        adCell.setAdLabel()
-        adCell.setAdLabelBackgroundView()
-        adCell.setCellBackgroundView()
+        adCell.updateTitleLabel(title)
     }
     
     @objc
