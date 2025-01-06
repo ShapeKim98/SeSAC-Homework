@@ -23,6 +23,8 @@ class CityTableViewCell: UITableViewCell {
         setCityExplainLabel()
         
         setCityExplainBackgroundView()
+        
+        setCityImageView()
     }
     
     func updateCity(_ city: City, keyword: String) {
@@ -62,13 +64,30 @@ class CityTableViewCell: UITableViewCell {
     private func setCityExplainBackgroundView() {
         let color = UIColor(red: 0, green: 0, blue: 0, alpha: 0.4)
         cityExplainBackgroundView.backgroundColor = color
+        cityExplainBackgroundView.layer.cornerRadius = 16
+        cityExplainBackgroundView.layer.maskedCorners = [
+            .layerMaxXMaxYCorner
+        ]
+        cityExplainBackgroundView.clipsToBounds = true
+    }
+    
+    private func setCityImageView() {
+        cityImageView.contentMode = .scaleAspectFill
+        cityImageView.layer.cornerRadius = 16
+        cityImageView.layer.maskedCorners = [
+            .layerMaxXMaxYCorner,
+            .layerMinXMinYCorner
+        ]
+        cityImageView.clipsToBounds = true
+        contentView.layer.shadowColor = UIColor.black.cgColor
+        contentView.layer.shadowOpacity = 0.3
+        contentView.layer.shadowRadius = 4
+        contentView.layer.shadowOffset = CGSize(width: 5, height: 5)
     }
     
     private func updateCityImageView(cityImage: String) {
         let url = URL(string: cityImage)
         cityImageView.kf.setImage(with: url)
-        cityImageView.contentMode = .scaleAspectFill
-        cityImageView.clipsToBounds = true
     }
     
     private func updateCityNameLabel(cityName: String, keywords: [String]) {

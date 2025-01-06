@@ -39,7 +39,7 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="YfM-4g-CGh">
-                                    <rect key="frame" x="16" y="16" width="361" height="35"/>
+                                    <rect key="frame" x="16" y="16" width="361" height="27"/>
                                     <segments>
                                         <segment title="First"/>
                                         <segment title="Second"/>
@@ -52,7 +52,7 @@
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="trailing" secondItem="YfM-4g-CGh" secondAttribute="trailing" constant="16" id="4GV-pa-XTP"/>
-                                <constraint firstAttribute="bottom" secondItem="YfM-4g-CGh" secondAttribute="bottom" constant="16" id="5nP-n9-K8K"/>
+                                <constraint firstAttribute="bottom" secondItem="YfM-4g-CGh" secondAttribute="bottom" constant="24" id="5nP-n9-K8K"/>
                                 <constraint firstItem="YfM-4g-CGh" firstAttribute="top" secondItem="Ff1-Pv-Ql9" secondAttribute="top" constant="16" id="NhH-FY-Z8Q"/>
                                 <constraint firstItem="YfM-4g-CGh" firstAttribute="leading" secondItem="Ff1-Pv-Ql9" secondAttribute="leading" constant="16" id="q8R-e2-zlV"/>
                             </constraints>
