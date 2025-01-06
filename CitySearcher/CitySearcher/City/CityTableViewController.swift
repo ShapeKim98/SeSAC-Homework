@@ -8,12 +8,24 @@
 import UIKit
 
 class CityTableViewController: UITableViewController {
-    @IBOutlet var domesticSegmentControl: UISegmentedControl!
+    @IBOutlet
+    private var domesticSegmentControl: UISegmentedControl!
     
-    private var cities = CityInfo().city
+    private var domestic = DomesticSegment.all {
+        didSet {
+            let cities = CityInfo().city
+            switch domestic {
+            case .all: cityList = cities
+            case .isDomestic:
+                return cityList = cities.filter(\.domestic_travel)
+            case .isNotDomestic:
+                return cityList = cities.filter { !$0.domestic_travel }
+            }
+        }
+    }
     
-    private var cityList: [City] {
-        return cities
+    private var cityList: [City] = CityInfo().city {
+        didSet { tableView.reloadData() }
     }
     
     override func viewDidLoad() {
@@ -25,6 +37,8 @@ class CityTableViewController: UITableViewController {
         )
         
         tableView.separatorStyle = .none
+        
+        setDomesticSegmentControl()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -44,5 +58,40 @@ class CityTableViewController: UITableViewController {
         cityCell.updateCity(city)
         return cityCell
     }
+    
+    private func setDomesticSegmentControl() {
+        domesticSegmentControl.removeAllSegments()
+        
+        for domestic in DomesticSegment.allCases {
+            domesticSegmentControl.insertSegment(
+                withTitle: domestic.title,
+                at: domestic.rawValue,
+                animated: true
+            )
+        }
+        domesticSegmentControl.selectedSegmentIndex = domestic.rawValue
+    }
+    
+    @IBAction func domesticSegmentedControlValueChanged(_ sender: UISegmentedControl) {
+        let domesticType = DomesticSegment(rawValue: sender.selectedSegmentIndex)
+        guard let domesticType else { return }
+        domestic = domesticType
+    }
+}
 
+
+extension CityTableViewController {
+    fileprivate enum DomesticSegment: Int, CaseIterable {
+        case all
+        case isDomestic
+        case isNotDomestic
+        
+        var title: String {
+            switch self {
+            case .all: return "전체"
+            case .isDomestic: return "국내"
+            case .isNotDomestic: return "해외"
+            }
+        }
+    }
 }
