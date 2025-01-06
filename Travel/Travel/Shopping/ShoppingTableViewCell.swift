@@ -26,6 +26,8 @@ class ShoppingTableViewCell: UITableViewCell {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
+        
         boughtButtonReused()
         favoriteButtonReused()
     }
