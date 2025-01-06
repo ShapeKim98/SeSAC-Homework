@@ -8,10 +8,14 @@
 import UIKit
 
 class ShoppingTableViewCell: UITableViewCell {
-    @IBOutlet var boughtButton: UIButton!
-    @IBOutlet var titleLabel: UILabel!
-    @IBOutlet var favoriteButton: UIButton!
-    @IBOutlet var cellBackgroundView: UIView!
+    @IBOutlet
+    private var boughtButton: UIButton!
+    @IBOutlet
+    private var titleLabel: UILabel!
+    @IBOutlet
+    private var favoriteButton: UIButton!
+    @IBOutlet
+    private var cellBackgroundView: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

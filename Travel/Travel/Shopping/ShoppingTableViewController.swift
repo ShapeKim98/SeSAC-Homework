@@ -8,10 +8,14 @@
 import UIKit
 
 class ShoppingTableViewController: UITableViewController {
-    @IBOutlet var headerViewBackground: UIView!
-    @IBOutlet var shoppingTextField: UITextField!
-    @IBOutlet var addButton: UIButton!
-    @IBOutlet var tableHeaderView: UIView!
+    @IBOutlet
+    private var headerViewBackground: UIView!
+    @IBOutlet
+    private var shoppingTextField: UITextField!
+    @IBOutlet
+    private var addButton: UIButton!
+    @IBOutlet
+    private var tableHeaderView: UIView!
      
     private var shoppingList: [Shopping] = Shopping.defaultList
 
@@ -117,7 +121,8 @@ class ShoppingTableViewController: UITableViewController {
         updateCell(row: sender.tag)
     }
 
-    @IBAction func addButtonTouchUpInside(_ sender: UIButton) {
+    @IBAction
+    private func addButtonTouchUpInside(_ sender: UIButton) {
         guard
             let text = shoppingTextField.text,
             !text.isEmpty

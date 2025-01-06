@@ -10,13 +10,20 @@ import UIKit
 import Kingfisher
 
 class TravelTableViewCell: UITableViewCell {
-    @IBOutlet var separatorView: UIView!
-    @IBOutlet var likeButtonBackgroundImageView: UIImageView!
-    @IBOutlet var likeButton: UIButton!
-    @IBOutlet var saveAndLikeLabel: UILabel!
-    @IBOutlet var descriptionLabel: UILabel!
-    @IBOutlet var titleLabel: UILabel!
-    @IBOutlet var travelImageView: UIImageView!
+    @IBOutlet
+    private var separatorView: UIView!
+    @IBOutlet
+    private var likeButtonBackgroundImageView: UIImageView!
+    @IBOutlet
+    private var likeButton: UIButton!
+    @IBOutlet
+    private var saveAndLikeLabel: UILabel!
+    @IBOutlet
+    private var descriptionLabel: UILabel!
+    @IBOutlet
+    private var titleLabel: UILabel!
+    @IBOutlet
+    private var travelImageView: UIImageView!
 
     override func awakeFromNib() {
         super.awakeFromNib()

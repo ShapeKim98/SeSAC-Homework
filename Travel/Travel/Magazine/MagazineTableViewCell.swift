@@ -10,10 +10,14 @@ import UIKit
 import Kingfisher
 
 class MagazineTableViewCell: UITableViewCell {
-    @IBOutlet var dateLabel: UILabel!
-    @IBOutlet var subtitleLabel: UILabel!
-    @IBOutlet var titleLabel: UILabel!
-    @IBOutlet var photoImageView: UIImageView!
+    @IBOutlet
+    private var dateLabel: UILabel!
+    @IBOutlet
+    private var subtitleLabel: UILabel!
+    @IBOutlet
+    private var titleLabel: UILabel!
+    @IBOutlet
+    private var photoImageView: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
