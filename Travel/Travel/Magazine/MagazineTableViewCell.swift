@@ -15,30 +15,39 @@ class MagazineTableViewCell: UITableViewCell {
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var photoImageView: UIImageView!
     
-    func setPhotoImageView(photoImage: String) {
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        setPhotoImageView()
+        
+        setTitleLabel()
+        
+        setSubtitleLabel()
+        
+        setDateLabel()
+    }
+    
+    func updateMagazine(_ magazine: Magazine) {
+        updatePhotoImageView(photoImage: magazine.photo_image)
+        updateTitleLabel(title: magazine.title)
+        updateSubtitleLabel(subtitle: magazine.subtitle)
+        updateDateLabel(dateString: magazine.date)
+    }
+    
+    private func updatePhotoImageView(photoImage: String) {
         let url = URL(string: photoImage)
         photoImageView.kf.setImage(with: url)
-        photoImageView.contentMode = .scaleAspectFill
-        photoImageView.layer.cornerRadius = 12
-        photoImageView.clipsToBounds = true
     }
     
-    func setTitleLabel(title: String) {
+    private func updateTitleLabel(title: String) {
         titleLabel.text = title
-        titleLabel.font = .boldSystemFont(ofSize: 20)
-        titleLabel.numberOfLines = 0
-        titleLabel.textAlignment = .left
     }
     
-    func setSubtitleLabel(subtitle: String) {
+    private func updateSubtitleLabel(subtitle: String) {
         subtitleLabel.text = subtitle
-        subtitleLabel.font = .systemFont(ofSize: 14)
-        subtitleLabel.numberOfLines = 1
-        subtitleLabel.textColor = .secondaryLabel
-        subtitleLabel.textAlignment = .left
     }
     
-    func setDateLabel(dateString: String) {
+    private func updateDateLabel(dateString: String) {
         guard
             let numberOnlyFormatter = DateStyle.cachedDateFormatter[.numberOnly],
             let date = numberOnlyFormatter.date(from: dateString),
@@ -48,10 +57,32 @@ class MagazineTableViewCell: UITableViewCell {
         let formattedDate = numberAndStringFormatter.string(from: date)
         
         dateLabel.text = formattedDate
+    }
+    
+    private func setPhotoImageView() {
+        photoImageView.contentMode = .scaleAspectFill
+        photoImageView.layer.cornerRadius = 12
+        photoImageView.clipsToBounds = true
+    }
+    
+    private func setDateLabel() {
         dateLabel.font = .systemFont(ofSize: 12)
         dateLabel.numberOfLines = 1
         dateLabel.textColor = .secondaryLabel
         dateLabel.textAlignment = .right
+    }
+    
+    private func setTitleLabel() {
+        titleLabel.font = .boldSystemFont(ofSize: 20)
+        titleLabel.numberOfLines = 0
+        titleLabel.textAlignment = .left
+    }
+    
+    private func setSubtitleLabel() {
+        subtitleLabel.font = .systemFont(ofSize: 14)
+        subtitleLabel.numberOfLines = 1
+        subtitleLabel.textColor = .secondaryLabel
+        subtitleLabel.textAlignment = .left
     }
 }
 
