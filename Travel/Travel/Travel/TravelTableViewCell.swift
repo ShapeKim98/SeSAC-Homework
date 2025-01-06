@@ -10,7 +10,7 @@ import UIKit
 import Kingfisher
 
 class TravelTableViewCell: UITableViewCell {
-    @IBOutlet var seperatorView: UIView!
+    @IBOutlet var separatorView: UIView!
     @IBOutlet var likeButtonBackgroundImageView: UIImageView!
     @IBOutlet var likeButton: UIButton!
     @IBOutlet var saveAndLikeLabel: UILabel!
@@ -18,23 +18,63 @@ class TravelTableViewCell: UITableViewCell {
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var travelImageView: UIImageView!
 
-    
-    func setTitleLabel(title: String) {
-        titleLabel.text = title
-        titleLabel.font = .boldSystemFont(ofSize: 16)
-        titleLabel.textAlignment = .left
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        setTitleLabel()
+        
+        setDescriptionLabel()
+        
+        setSaveAndLikeLabel()
+        
+        setLikeButton()
+        
+        setTravelImageView()
+        
+        separatorView.backgroundColor = .systemGray5
     }
     
-    func setDescriptionLabel(description: String?) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        likeButtonReused()
+    }
+    
+    func updateTravel(_ travel: Travel) {
+        updateTitleLabel(title: travel.title)
+        
+        updateDescriptionLabel(description: travel.description)
+        
+        updateSaveAndLikeLabel(save: travel.save, grade: travel.grade)
+        
+        updateTravelImageView(travelImage: travel.travel_image)
+    }
+    
+    func updateLikeButton(like: Bool?, row: Int, target: Any?, action: Selector) {
+        if let like, like {
+            likeButton.setImage(
+                UIImage(systemName: "heart.fill"),
+                for: .normal
+            )
+        }
+        likeButton.tag = row
+        likeButton.addTarget(target, action: action, for: .touchUpInside)
+    }
+    
+    func updateSeparatorView(row: Int) {
+        separatorView.isHidden = row == 0
+    }
+    
+    private func updateTitleLabel(title: String) {
+        titleLabel.text = title
+    }
+    
+    private func updateDescriptionLabel(description: String?) {
         guard let description else { return }
         descriptionLabel.text = description
-        descriptionLabel.font = .systemFont(ofSize: 12)
-        descriptionLabel.textAlignment = .left
-        descriptionLabel.textColor = .secondaryLabel
-        descriptionLabel.numberOfLines = 0
     }
     
-    func setSaveAndLikeLabel(save: Int?, grade: Double?) {
+    private func updateSaveAndLikeLabel(save: Int?, grade: Double?) {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         guard
@@ -43,40 +83,57 @@ class TravelTableViewCell: UITableViewCell {
         else { return }
         
         saveAndLikeLabel.text = "(\(grade)) ∙ 저장 \(saveString)"
+    }
+    
+    private func updateTravelImageView(travelImage: String?) {
+        guard let travelImage else { return }
+        let url = URL(string: travelImage)
+        travelImageView.kf.setImage(with: url)
+    }
+    
+    private func setTitleLabel() {
+        titleLabel.font = .boldSystemFont(ofSize: 16)
+        titleLabel.textAlignment = .left
+    }
+    
+    private func setDescriptionLabel() {
+        descriptionLabel.font = .systemFont(ofSize: 12)
+        descriptionLabel.textAlignment = .left
+        descriptionLabel.textColor = .secondaryLabel
+        descriptionLabel.numberOfLines = 0
+    }
+    
+    private func setSaveAndLikeLabel() {
         saveAndLikeLabel.font = .systemFont(ofSize: 10)
         saveAndLikeLabel.textAlignment = .left
         saveAndLikeLabel.textColor = .lightGray
     }
     
-    func setLikeButton(like: Bool?, row: Int, target: Any?, action: Selector) {
-        let like = like ?? false
+    private func setLikeButton() {
         likeButton.setTitle("", for: .normal)
-        likeButton.setImage(
-            UIImage(systemName: like ? "heart" : "heart.fill"),
-            for: .normal
-        )
         likeButton.backgroundColor = .clear
         likeButton.tintColor = .white
-        likeButton.addTarget(target, action: action, for: .touchUpInside)
-        likeButton.tag = row
+        likeButton.setImage(
+            UIImage(systemName: "heart"),
+            for: .normal
+        )
         
         likeButtonBackgroundImageView.image = UIImage(systemName: "heart.fill")
         likeButtonBackgroundImageView.alpha = 0.3
         likeButtonBackgroundImageView.tintColor = .black
     }
     
-    func setTravelImageView(travelImage: String?) {
-        guard let travelImage else { return }
-        let url = URL(string: travelImage)
-        travelImageView.kf.setImage(with: url)
+    private func likeButtonReused() {
+        likeButton.setImage(
+            UIImage(systemName: "heart"),
+            for: .normal
+        )
+    }
+    
+    private func setTravelImageView() {
         travelImageView.contentMode = .scaleAspectFill
         travelImageView.layer.cornerRadius = 8
         travelImageView.clipsToBounds = true
-    }
-    
-    func setSeperatorView(row: Int) {
-        seperatorView.isHidden = row == 0
-        seperatorView.backgroundColor = .systemGray5
     }
 }
 

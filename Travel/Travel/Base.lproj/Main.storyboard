@@ -171,7 +171,7 @@
                                     <outlet property="likeButton" destination="RVA-AC-VcT" id="5N2-b2-3V3"/>
                                     <outlet property="likeButtonBackgroundImageView" destination="vhu-BP-fSM" id="Uum-c7-rSX"/>
                                     <outlet property="saveAndLikeLabel" destination="3yp-bi-kbu" id="WXX-9M-DPw"/>
-                                    <outlet property="seperatorView" destination="2be-r7-Whd" id="hvY-iZ-Z5I"/>
+                                    <outlet property="separatorView" destination="2be-r7-Whd" id="hvY-iZ-Z5I"/>
                                     <outlet property="titleLabel" destination="Kik-qW-SmO" id="Fk3-J2-Glj"/>
                                     <outlet property="travelImageView" destination="v3h-Az-qAx" id="0hS-h3-gms"/>
                                 </connections>
@@ -254,6 +254,7 @@
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="kHN-28-HeH" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="7Mv-sX-wKJ">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
@@ -464,7 +465,7 @@
         <image name="magazine.fill" catalog="system" width="110" height="128"/>
         <image name="map.fill" catalog="system" width="128" height="110"/>
         <systemColor name="opaqueSeparatorColor">
-            <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
