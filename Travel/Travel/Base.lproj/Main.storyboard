@@ -386,7 +386,7 @@
                                             <rect key="frame" x="16" y="2" width="361" height="51"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UP6-ad-Ice">
-                                                    <rect key="frame" x="12" y="13.666666666666664" width="24" height="24"/>
+                                                    <rect key="frame" x="12" y="12" width="24" height="27"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="24" id="8Td-iV-BTC"/>
                                                         <constraint firstAttribute="width" constant="24" id="QcS-XH-ojQ"/>
@@ -395,7 +395,7 @@
                                                     <buttonConfiguration key="configuration" style="plain" title="Button"/>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fz7-71-UEu">
-                                                    <rect key="frame" x="325" y="13.666666666666664" width="24" height="24"/>
+                                                    <rect key="frame" x="325" y="12" width="24" height="27"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="24" id="Scc-dz-PJD"/>
                                                         <constraint firstAttribute="height" constant="24" id="cAX-BC-XDl"/>
@@ -412,11 +412,14 @@
                                             </subviews>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <constraints>
+                                                <constraint firstItem="UP6-ad-Ice" firstAttribute="top" secondItem="9gT-MB-CxD" secondAttribute="top" constant="12" id="2U0-rh-JIl"/>
+                                                <constraint firstAttribute="bottom" secondItem="UP6-ad-Ice" secondAttribute="bottom" constant="12" id="5xC-un-67u"/>
                                                 <constraint firstItem="KIE-eu-SES" firstAttribute="leading" secondItem="UP6-ad-Ice" secondAttribute="trailing" constant="16" id="6a7-67-gWc"/>
                                                 <constraint firstItem="KIE-eu-SES" firstAttribute="centerY" secondItem="9gT-MB-CxD" secondAttribute="centerY" id="FJv-jf-lZ4"/>
                                                 <constraint firstItem="UP6-ad-Ice" firstAttribute="centerY" secondItem="9gT-MB-CxD" secondAttribute="centerY" id="JiB-ky-TUQ"/>
-                                                <constraint firstAttribute="height" constant="51" id="Jwg-kt-jrK"/>
+                                                <constraint firstItem="fz7-71-UEu" firstAttribute="top" secondItem="9gT-MB-CxD" secondAttribute="top" constant="12" id="gLP-Is-euR"/>
                                                 <constraint firstAttribute="trailing" secondItem="fz7-71-UEu" secondAttribute="trailing" constant="12" id="hJj-AQ-NtK"/>
+                                                <constraint firstAttribute="bottom" secondItem="fz7-71-UEu" secondAttribute="bottom" constant="12" id="hct-cG-FWh"/>
                                                 <constraint firstItem="fz7-71-UEu" firstAttribute="leading" secondItem="KIE-eu-SES" secondAttribute="trailing" constant="16" id="iRd-K7-EJQ"/>
                                                 <constraint firstItem="UP6-ad-Ice" firstAttribute="leading" secondItem="9gT-MB-CxD" secondAttribute="leading" constant="12" id="kNW-h0-n2G"/>
                                                 <constraint firstItem="fz7-71-UEu" firstAttribute="centerY" secondItem="9gT-MB-CxD" secondAttribute="centerY" id="z39-Vv-JFm"/>
