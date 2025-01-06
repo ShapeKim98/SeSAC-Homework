@@ -82,7 +82,7 @@
             </objects>
             <point key="canvasLocation" x="1912.2137404580151" y="-10.563380281690142"/>
         </scene>
-        <!--Travel Table View Controller-->
+        <!--도시 상세 정보-->
         <scene sceneID="gGY-ID-REP">
             <objects>
                 <tableViewController id="4Lz-qR-98y" customClass="TravelTableViewController" customModule="Travel" customModuleProvider="target" sceneMemberID="viewController">
@@ -242,7 +242,7 @@
                             <outlet property="delegate" destination="4Lz-qR-98y" id="qHg-1Q-X1v"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="8GC-Fw-Mti"/>
+                    <navigationItem key="navigationItem" title="도시 상세 정보" id="8GC-Fw-Mti"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3Ep-lw-DFK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
