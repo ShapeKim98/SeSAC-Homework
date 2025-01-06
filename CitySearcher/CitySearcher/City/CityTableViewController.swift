@@ -66,6 +66,7 @@ class CityTableViewController: UITableViewController {
     private func setSearchController() {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
+        searchController.searchBar.placeholder = "도시를 입력해 주세요."
         navigationItem.hidesSearchBarWhenScrolling = true
         navigationItem.searchController = searchController
     }
