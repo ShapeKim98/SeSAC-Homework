@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import UIKit
  
 public struct City {
     public let city_name: String
@@ -15,6 +16,19 @@ public struct City {
     
     public var cityName: String {
         return "\(city_name) | \(city_english_name)"
+    }
+    
+    public func isContains(keyword: String) -> Bool {
+        guard !keyword.isEmpty else { return true }
+        
+        let lowercaseKeyword = keyword.lowercased().filter { !$0.isWhitespace }
+        let lowerCaseCityName = city_name.lowercased().filter { !$0.isWhitespace }
+        let lowerCaseCityEnglishName = city_english_name.lowercased().filter { !$0.isWhitespace }
+        let lowerCaseCityExplain = city_explain.lowercased().filter { !$0.isWhitespace }
+        
+        return lowerCaseCityName.contains(lowercaseKeyword) ||
+        lowerCaseCityEnglishName.contains(lowercaseKeyword) ||
+        lowerCaseCityExplain.contains(lowercaseKeyword)
     }
 }
 

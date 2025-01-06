@@ -25,12 +25,26 @@ class CityTableViewCell: UITableViewCell {
         setCityExplainBackgroundView()
     }
     
-    func updateCity(_ city: City) {
+    func updateCity(_ city: City, keyword: String) {
         updateCityImageView(cityImage: city.city_image)
         
-        updateCityNameLabel(cityName: city.cityName)
+        let keywords = keyword.split(separator: " ").map { String($0) }
         
-        updateCityExplainLabel(cityExplain: city.city_explain)
+        updateCityNameLabel(cityName: city.cityName, keywords: keywords)
+        
+        updateCityExplainLabel(cityExplain: city.city_explain, keywords: keywords)
+    }
+    
+    private func highlightAttributedString(text: String, keywords: [String]) -> NSAttributedString {
+        let mutableAttributedString = NSMutableAttributedString(string: text)
+        for keyword in keywords {
+            let range = mutableAttributedString.mutableString.range(of: keyword)
+            mutableAttributedString.addAttributes(
+                [.foregroundColor: UIColor.yellow],
+                range: range
+            )
+        }
+        return mutableAttributedString
     }
     
     private func setCityNameLabel() {
@@ -57,12 +71,20 @@ class CityTableViewCell: UITableViewCell {
         cityImageView.clipsToBounds = true
     }
     
-    private func updateCityNameLabel(cityName: String) {
+    private func updateCityNameLabel(cityName: String, keywords: [String]) {
         cityNameLabel.text = cityName
+        cityNameLabel.attributedText = highlightAttributedString(
+            text: cityName,
+            keywords: keywords
+        )
     }
     
-    private func updateCityExplainLabel(cityExplain: String) {
+    private func updateCityExplainLabel(cityExplain: String, keywords: [String]) {
         cityExplainLabel.text = cityExplain
+        cityExplainLabel.attributedText = highlightAttributedString(
+            text: cityExplain,
+            keywords: keywords
+        )
     }
 }
 

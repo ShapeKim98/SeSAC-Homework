@@ -28,6 +28,8 @@ class CityTableViewController: UITableViewController {
         didSet { tableView.reloadData() }
     }
     
+    private var keyword: String = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,6 +37,8 @@ class CityTableViewController: UITableViewController {
             UINib(nibName: .cityCell, bundle: nil),
             forCellReuseIdentifier: .cityCell
         )
+        
+        setSearchController()
         
         tableView.separatorStyle = .none
         
@@ -55,8 +59,15 @@ class CityTableViewController: UITableViewController {
             return cell
         }
         let city = cityList[indexPath.row]
-        cityCell.updateCity(city)
+        cityCell.updateCity(city, keyword: keyword)
         return cityCell
+    }
+    
+    private func setSearchController() {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        navigationItem.hidesSearchBarWhenScrolling = true
+        navigationItem.searchController = searchController
     }
     
     private func setDomesticSegmentControl() {
@@ -79,6 +90,23 @@ class CityTableViewController: UITableViewController {
     }
 }
 
+extension CityTableViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text else { return }
+        keyword = text
+        cityList = CityInfo().city.filter({ city in
+            switch domestic {
+            case .all: return city.isContains(keyword: text)
+            case .isDomestic:
+                return city.domestic_travel &&
+                city.isContains(keyword: text)
+            case .isNotDomestic:
+                return !city.domestic_travel &&
+                city.isContains(keyword: text)
+            }
+        })
+    }
+}
 
 extension CityTableViewController {
     fileprivate enum DomesticSegment: Int, CaseIterable {
