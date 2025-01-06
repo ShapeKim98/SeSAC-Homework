@@ -31,6 +31,7 @@ class TravelTableViewCell: UITableViewCell {
         descriptionLabel.font = .systemFont(ofSize: 12)
         descriptionLabel.textAlignment = .left
         descriptionLabel.textColor = .secondaryLabel
+        descriptionLabel.numberOfLines = 0
     }
     
     func setSaveAndLikeLabel(save: Int?, grade: Double?) {
