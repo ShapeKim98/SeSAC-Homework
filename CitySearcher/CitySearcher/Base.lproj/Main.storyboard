@@ -70,6 +70,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="인기 도시" id="FvE-2r-x4T"/>
+                    <connections>
+                        <outlet property="domesticSegmentControl" destination="YfM-4g-CGh" id="dkT-Ak-sPc"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="stj-mF-KyM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
