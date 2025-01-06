@@ -13,12 +13,7 @@ class ShoppingTableViewController: UITableViewController {
     @IBOutlet var addButton: UIButton!
     @IBOutlet var tableHeaderView: UIView!
      
-    private var shoppingList: [Shopping] = Shopping.defaultList {
-        didSet(oldValue) {
-            guard oldValue.count == shoppingList.count else { return }
-            tableView.reloadData()
-        }
-    }
+    private var shoppingList: [Shopping] = Shopping.defaultList
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,14 +98,23 @@ class ShoppingTableViewController: UITableViewController {
         addButton.configuration?.buttonSize = .mini
     }
     
+    private func updateCell(row: Int) {
+        tableView.reloadRows(
+            at: [.init(row: row, section: 0)],
+            with: .automatic
+        )
+    }
+    
     @objc
     private func boughtButtonTouchUpInside(_ sender: UIButton) {
         shoppingList[sender.tag].isBought.toggle()
+        updateCell(row: sender.tag)
     }
     
     @objc
     private func favoriteButtonTouchUpInside(_ sender: UIButton) {
         shoppingList[sender.tag].isFavorite.toggle()
+        updateCell(row: sender.tag)
     }
 
     @IBAction func addButtonTouchUpInside(_ sender: UIButton) {
