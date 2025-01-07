@@ -7,9 +7,11 @@
 
 import UIKit
 
-class CityTableViewController: UITableViewController {
+class CityCollectionViewController: UIViewController {
     @IBOutlet
     private var domesticSegmentControl: UISegmentedControl!
+    @IBOutlet
+    private var cityCollectionView: UICollectionView!
     
     private var domestic = DomesticSegment.all {
         didSet {
@@ -25,7 +27,7 @@ class CityTableViewController: UITableViewController {
     }
     
     private var cityList: [City] = CityInfo().city {
-        didSet { tableView.reloadData() }
+        didSet { cityCollectionView.reloadData() }
     }
     
     private var keyword: String = ""
@@ -33,34 +35,28 @@ class CityTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.register(
-            UINib(nibName: .cityCell, bundle: nil),
-            forCellReuseIdentifier: .cityCell
+        cityCollectionView.dataSource = self
+        cityCollectionView.delegate = self
+        
+        cityCollectionView.register(
+            UINib(nibName: .cityCollectionCell, bundle: nil),
+            forCellWithReuseIdentifier: .cityCollectionCell
         )
         
-        setSearchController()
+        setCollectionViewLayout()
         
-        tableView.separatorStyle = .none
+        setSearchController()
         
         setDomesticSegmentControl()
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return cityList.count
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: .cityCell,
-            for: indexPath
-        )
-        guard let cityCell = cell as? CityTableViewCell else {
-            return cell
-        }
-        let city = cityList[indexPath.row]
-        cityCell.updateCity(city, keyword: keyword)
-        return cityCell
+    private func setCollectionViewLayout() {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.itemSize = CGSize(width: 150, height: 250)
+        layout.minimumLineSpacing = 20
+        layout.minimumInteritemSpacing = 20
+        cityCollectionView.collectionViewLayout = layout
     }
     
     private func setSearchController() {
@@ -91,7 +87,7 @@ class CityTableViewController: UITableViewController {
     }
 }
 
-extension CityTableViewController: UISearchResultsUpdating {
+extension CityCollectionViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
         keyword = text
@@ -109,7 +105,30 @@ extension CityTableViewController: UISearchResultsUpdating {
     }
 }
 
-extension CityTableViewController {
+extension CityCollectionViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return cityList.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: .cityCollectionCell,
+            for: indexPath
+        )
+        guard let cityCell = cell as? CityCollectionViewCell else {
+            return cell
+        }
+        let city = cityList[indexPath.row]
+        cityCell.updateCity(city, keyword: keyword)
+        return cityCell
+    }
+}
+
+extension CityCollectionViewController: UICollectionViewDelegate {
+    
+}
+
+extension CityCollectionViewController {
     fileprivate enum DomesticSegment: Int, CaseIterable {
         case all
         case isDomestic
