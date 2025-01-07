@@ -25,6 +25,13 @@ class CityCollectionViewCell: UICollectionViewCell {
         setCityImageView()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let height = cityImageView.frame.width
+        cityImageView.layer.cornerRadius = height / 2
+    }
+    
     func updateCity(_ city: City, keyword: String) {
         updateCityImageView(cityImage: city.city_image)
         
@@ -73,7 +80,6 @@ class CityCollectionViewCell: UICollectionViewCell {
     
     private func setCityImageView() {
         cityImageView.contentMode = .scaleAspectFill
-//        cityImageView.layer.cornerRadius = 9999
         cityImageView.clipsToBounds = true
     }
     

@@ -50,6 +50,10 @@ class CityCollectionViewController: UIViewController {
         setDomesticSegmentControl()
     }
     
+    override func viewDidLayoutSubviews() {
+        
+    }
+    
     private func setCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
