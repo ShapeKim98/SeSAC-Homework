@@ -332,7 +332,7 @@
         <!--광고 화면-->
         <scene sceneID="ih9-k7-uJJ">
             <objects>
-                <viewController id="lPz-g7-JQs" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AdViewController" id="lPz-g7-JQs" customClass="AdViewController" customModule="Travel" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zma-11-zwd">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -352,6 +352,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="광고 화면" id="nua-Hj-fBA"/>
+                    <connections>
+                        <outlet property="titleLabel" destination="Jr9-J5-KJC" id="2wo-iu-hfS"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sK7-zd-Wg9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
