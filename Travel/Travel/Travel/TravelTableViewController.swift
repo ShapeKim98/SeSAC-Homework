@@ -22,12 +22,7 @@ class TravelTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let travel = travelList[indexPath.row]
-        let isAd = travel.ad ?? false ||
-        travel.description == nil ||
-        travel.travel_image == nil ||
-        travel.grade == nil ||
-        travel.save == nil ||
-        travel.like == nil
+        let isAd = isAd(travel)
         
         let cell = tableView.dequeueReusableCell(
             withIdentifier: isAd ? .adCell : .travelCell,
@@ -39,6 +34,26 @@ class TravelTableViewController: UITableViewController {
         setTravelTableViewCell(cell, row: indexPath.row, travel: travel)
         
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let travel = travelList[indexPath.row]
+        
+        let isAd = isAd(travel)
+        let viewController = storyboard?.instantiateViewController(
+            withIdentifier: .touristController
+        )
+        if !isAd {
+            guard
+                let viewController = viewController as? TouristViewController
+            else { return }
+            viewController.setTravel(travel)
+            
+            navigationController?.pushViewController(
+                viewController,
+                animated: true
+            )
+        }
     }
     
     private func setTravelTableViewCell(_ cell: UITableViewCell, row: Int, travel: Travel) {
@@ -58,6 +73,15 @@ class TravelTableViewController: UITableViewController {
         guard let adCell = cell as? AdTableViewCell else { return }
         
         adCell.updateTitleLabel(title)
+    }
+    
+    private func isAd(_ travel: Travel) -> Bool {
+        return travel.ad ?? false ||
+        travel.description == nil ||
+        travel.travel_image == nil ||
+        travel.grade == nil ||
+        travel.save == nil ||
+        travel.like == nil
     }
     
     @objc
