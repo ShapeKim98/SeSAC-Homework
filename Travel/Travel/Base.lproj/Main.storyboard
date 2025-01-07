@@ -557,7 +557,7 @@
         <!--관광지 화면-->
         <scene sceneID="ag0-QM-TM6">
             <objects>
-                <viewController id="qNb-ab-StJ" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TouristViewController" id="qNb-ab-StJ" customClass="TouristViewController" customModule="Travel" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Wa1-bc-OLT">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -584,6 +584,9 @@
                                 <rect key="frame" x="159" y="526" width="75" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                <connections>
+                                    <action selector="anotherTravelButtonTouchUpInside:" destination="qNb-ab-StJ" eventType="touchUpInside" id="ysN-WN-xYF"/>
+                                </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="2GI-0d-5Gq"/>
@@ -603,6 +606,12 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="관광지 화면" id="I03-T6-pUz"/>
+                    <connections>
+                        <outlet property="anotherTravelButton" destination="vJw-ht-D1D" id="vYi-7G-dTa"/>
+                        <outlet property="descriptionLabel" destination="VVS-Bf-eZP" id="AZd-UY-H9y"/>
+                        <outlet property="titleLabel" destination="pjH-hv-fC8" id="ziW-Fe-Apl"/>
+                        <outlet property="travelImageView" destination="ZcD-XU-OKe" id="iIt-bz-guy"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OYs-wX-gWP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
