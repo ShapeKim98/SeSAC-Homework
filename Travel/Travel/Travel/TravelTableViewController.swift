@@ -41,7 +41,7 @@ class TravelTableViewController: UITableViewController {
         
         let isAd = isAd(travel)
         let viewController = storyboard?.instantiateViewController(
-            withIdentifier: .touristController
+            withIdentifier: isAd ? .adController : .touristController
         )
         if !isAd {
             guard
@@ -53,6 +53,17 @@ class TravelTableViewController: UITableViewController {
                 viewController,
                 animated: true
             )
+        } else {
+            guard
+                let viewController = viewController as? AdViewController
+            else { return }
+            viewController.setTitleText(title: travel.title)
+            let navigationController = UINavigationController(
+                rootViewController: viewController
+            )
+            navigationController.modalPresentationStyle = .fullScreen
+            
+            present(navigationController, animated: true)
         }
     }
     
