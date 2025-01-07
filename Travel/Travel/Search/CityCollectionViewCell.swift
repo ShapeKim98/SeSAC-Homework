@@ -7,6 +7,8 @@
 
 import UIKit
 
+import Kingfisher
+
 class CityCollectionViewCell: UICollectionViewCell {
     @IBOutlet var cityExplainLabel: UILabel!
     @IBOutlet var cityNameLabel: UILabel!
@@ -71,7 +73,7 @@ class CityCollectionViewCell: UICollectionViewCell {
     
     private func setCityImageView() {
         cityImageView.contentMode = .scaleAspectFill
-        cityImageView.layer.cornerRadius = 9999
+//        cityImageView.layer.cornerRadius = 9999
         cityImageView.clipsToBounds = true
     }
     
