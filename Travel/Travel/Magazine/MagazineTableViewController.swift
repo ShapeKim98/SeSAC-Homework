@@ -32,10 +32,7 @@ class MagazineTableViewController: UITableViewController {
         
         let magazine = magazineList[indexPath.row]
         
-        magazineCell.setPhotoImageView(photoImage: magazine.photo_image)
-        magazineCell.setTitleLabel(title: magazine.title)
-        magazineCell.setSubtitleLabel(subtitle: magazine.subtitle)
-        magazineCell.setDateLabel(dateString: magazine.date)
+        magazineCell.updateMagazine(magazine)
         
         return magazineCell
     }

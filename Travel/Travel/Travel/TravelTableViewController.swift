@@ -44,36 +44,21 @@ class TravelTableViewController: UITableViewController {
     private func setTravelTableViewCell(_ cell: UITableViewCell, row: Int, travel: Travel) {
         guard let travelCell = cell as? TravelTableViewCell else { return }
         
-        travelCell.setTitleLabel(title: travel.title)
-        
-        travelCell.setDescriptionLabel(description: travel.description)
-        
-        travelCell.setSaveAndLikeLabel(
-            save: travel.save,
-            grade: travel.grade
-        )
-        
-        travelCell.setLikeButton(
+        travelCell.updateTravel(travel)
+        travelCell.updateSeparatorView(row: row)
+        travelCell.updateLikeButton(
             like: travel.like,
             row: row,
             target: self,
             action: #selector(likeButtonTouchUpInside)
         )
-        
-        travelCell.setTravelImageView(travelImage: travel.travel_image)
-        
-        travelCell.setSeperatorView(row: row)
     }
     
     private func setAdTableViewCell(_ cell: UITableViewCell, title: String) {
         guard let adCell = cell as? AdTableViewCell else { return }
         
-        adCell.setTitleLabel(title: title)
-        adCell.setAdLabel()
-        adCell.setAdLabelBackgroundView()
-        adCell.setCellBackgroundView()
+        adCell.updateTitleLabel(title)
     }
-    
     
     @objc
     private func likeButtonTouchUpInside(_ sender: UIButton) {
