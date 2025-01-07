@@ -42,6 +42,8 @@ class TravelTableViewController: UITableViewController {
         isAd(travel)
         ? presentAdViewController(travel)
         : pushTouristViewController(travel)
+        
+        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
     private func setTravelTableViewCell(_ cell: UITableViewCell, row: Int, travel: Travel) {
