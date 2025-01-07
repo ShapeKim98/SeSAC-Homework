@@ -59,7 +59,7 @@ class CityCollectionViewCell: UICollectionViewCell {
                 of: keyword
             )
             mutableAttributedString.addAttributes(
-                [.foregroundColor: UIColor.yellow],
+                [.foregroundColor: UIColor.systemBlue],
                 range: range
             )
         }
