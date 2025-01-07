@@ -572,7 +572,7 @@
                                 </connections>
                             </segmentedControl>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="X14-bF-hjx">
-                                <rect key="frame" x="16" y="166" width="361" height="603"/>
+                                <rect key="frame" x="0.0" y="166" width="393" height="603"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="yzf-AS-9tS">
                                     <size key="itemSize" width="128" height="128"/>
@@ -582,10 +582,10 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="KMp-h9-O3e">
-                                        <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="127.99999999999997" height="128"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="0vu-hC-upi">
-                                            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="127.99999999999997" height="128"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </collectionViewCellContentView>
                                     </collectionViewCell>
@@ -595,11 +595,11 @@
                         <viewLayoutGuide key="safeArea" id="bqn-cR-JeZ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="bqn-cR-JeZ" firstAttribute="trailing" secondItem="X14-bF-hjx" secondAttribute="trailing" constant="16" id="Hgi-z2-uoa"/>
+                            <constraint firstItem="bqn-cR-JeZ" firstAttribute="trailing" secondItem="X14-bF-hjx" secondAttribute="trailing" id="Hgi-z2-uoa"/>
                             <constraint firstItem="MSn-Mx-N3R" firstAttribute="top" secondItem="bqn-cR-JeZ" secondAttribute="top" constant="16" id="SKo-tL-fvf"/>
                             <constraint firstItem="bqn-cR-JeZ" firstAttribute="trailing" secondItem="MSn-Mx-N3R" secondAttribute="trailing" constant="16" id="W8g-TV-2OR"/>
                             <constraint firstItem="bqn-cR-JeZ" firstAttribute="bottom" secondItem="X14-bF-hjx" secondAttribute="bottom" id="e7w-JL-fXL"/>
-                            <constraint firstItem="X14-bF-hjx" firstAttribute="leading" secondItem="bqn-cR-JeZ" secondAttribute="leading" constant="16" id="jue-KK-uWC"/>
+                            <constraint firstItem="X14-bF-hjx" firstAttribute="leading" secondItem="bqn-cR-JeZ" secondAttribute="leading" id="jue-KK-uWC"/>
                             <constraint firstItem="X14-bF-hjx" firstAttribute="top" secondItem="MSn-Mx-N3R" secondAttribute="bottom" constant="16" id="p3f-kW-pCx"/>
                             <constraint firstItem="MSn-Mx-N3R" firstAttribute="leading" secondItem="bqn-cR-JeZ" secondAttribute="leading" constant="16" id="qga-E1-jwg"/>
                         </constraints>

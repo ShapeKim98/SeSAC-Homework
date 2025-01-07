@@ -50,16 +50,16 @@ class CityCollectionViewController: UIViewController {
         setDomesticSegmentControl()
     }
     
-    override func viewDidLayoutSubviews() {
-        
-    }
-    
     private func setCollectionViewLayout() {
+        let screenWidth = self.view.frame.width
+        let width = (screenWidth - 52) / 2
+        
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.itemSize = CGSize(width: 150, height: 250)
+        layout.itemSize = CGSize(width: width, height: 250)
         layout.minimumLineSpacing = 20
         layout.minimumInteritemSpacing = 20
+        layout.sectionInset = .init(top: 0, left: 16, bottom: 0, right: 16)
         cityCollectionView.collectionViewLayout = layout
     }
     
