@@ -17,13 +17,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Upj-67-tCq">
-                                <rect key="frame" x="20" y="159" width="353" height="21"/>
+                                <rect key="frame" x="20" y="119" width="353" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FLy-BS-8wW">
-                                <rect key="frame" x="20" y="220" width="353" height="58"/>
+                                <rect key="frame" x="20" y="180" width="353" height="58"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Hhh-rj-7YP">
                                         <rect key="frame" x="16" y="12" width="321" height="34"/>
@@ -40,13 +40,13 @@
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dRK-X0-XJ4">
-                                <rect key="frame" x="20" y="314" width="353" height="21"/>
+                                <rect key="frame" x="20" y="274" width="353" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2w2-50-p8y">
-                                <rect key="frame" x="20" y="395" width="353" height="21"/>
+                                <rect key="frame" x="20" y="335" width="353" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -62,10 +62,10 @@
                             <constraint firstItem="dRK-X0-XJ4" firstAttribute="leading" secondItem="2w2-50-p8y" secondAttribute="leading" id="Eb1-UM-ci5"/>
                             <constraint firstItem="dRK-X0-XJ4" firstAttribute="leading" secondItem="FLy-BS-8wW" secondAttribute="leading" id="Eg0-Y2-zye"/>
                             <constraint firstItem="FLy-BS-8wW" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" constant="-20" id="NM3-kR-t3t"/>
-                            <constraint firstItem="Upj-67-tCq" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="100" id="TE1-IA-vAm"/>
+                            <constraint firstItem="Upj-67-tCq" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="60" id="TE1-IA-vAm"/>
                             <constraint firstItem="Upj-67-tCq" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="a5O-kU-lOd"/>
                             <constraint firstItem="dRK-X0-XJ4" firstAttribute="top" secondItem="FLy-BS-8wW" secondAttribute="bottom" constant="36" id="ca1-BX-AVp"/>
-                            <constraint firstItem="2w2-50-p8y" firstAttribute="top" secondItem="dRK-X0-XJ4" secondAttribute="bottom" constant="60" id="gRt-CS-hLI"/>
+                            <constraint firstItem="2w2-50-p8y" firstAttribute="top" secondItem="dRK-X0-XJ4" secondAttribute="bottom" constant="40" id="gRt-CS-hLI"/>
                             <constraint firstItem="dRK-X0-XJ4" firstAttribute="trailing" secondItem="2w2-50-p8y" secondAttribute="trailing" id="hOr-ja-B85"/>
                         </constraints>
                     </view>

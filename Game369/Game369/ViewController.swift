@@ -20,7 +20,8 @@ class ViewController: UIViewController {
     
     private let numberPickerView = UIPickerView()
     
-    private var numberList: [String] = (1...100).reversed().map { String($0) }
+    private var numberList = (1...100).reversed().map { String($0) }
+    private var resultList: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,13 +40,13 @@ class ViewController: UIViewController {
     
     private func configureTitleLabel() {
         titleLabel.text = "369게임"
-        titleLabel.font = .boldSystemFont(ofSize: 36)
+        titleLabel.font = .boldSystemFont(ofSize: 28)
         titleLabel.textAlignment = .center
     }
     
     private func configureNumberTextField() {
         numberTextField.placeholder = "최대 숫자를 입력하세요"
-        numberTextField.font = .systemFont(ofSize: 28)
+        numberTextField.font = .systemFont(ofSize: 24)
         numberTextField.borderStyle = .none
         numberTextField.inputView = numberPickerView
         numberTextField.tintColor = .clear
@@ -63,20 +64,30 @@ class ViewController: UIViewController {
     
     private func configureResultLabel() {
         resultLabel.text = ""
-        resultLabel.font = .boldSystemFont(ofSize: 36)
+        resultLabel.font = .boldSystemFont(ofSize: 28)
         resultLabel.textAlignment = .center
         resultLabel.numberOfLines = 0
     }
     
-    private func makeProcess(_ max: Int) -> String {
+    private func updateProcessLabel(_ max: Int) {
         let numbers = (1...max).map { String($0) }
-        let result = numbers.map { number in
+        let results = numbers.map { number in
             number
                 .replacingOccurrences(of: "3", with: "👏")
                 .replacingOccurrences(of: "6", with: "👏")
                 .replacingOccurrences(of: "9", with: "👏")
-        }.joined(separator: ", ")
-        return result
+        }
+        resultList = results
+        processLabel.text = resultList.joined(separator: ", ")
+    }
+    
+    private func updateResultLabel(_ max: Int) {
+        var count = 0
+        for result in resultList {
+            count += result.filter { $0 == "👏" }.count
+        }
+        resultLabel.text = "숫자 \(max)까지 총 박수는 \(count)번 입니다."
+        print(#function)
     }
 }
 
@@ -97,8 +108,8 @@ extension ViewController: UIPickerViewDelegate {
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         numberTextField.text = numberList[row]
-        guard let selectedNumber = Int(numberList[row]) else { return }
-        processLabel.text = makeProcess(selectedNumber)
-        print(selectedNumber)
+        guard let max = Int(numberList[row]) else { return }
+        updateProcessLabel(max)
+        updateResultLabel(max)
     }
 }
