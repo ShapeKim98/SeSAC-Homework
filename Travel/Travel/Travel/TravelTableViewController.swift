@@ -22,12 +22,7 @@ class TravelTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let travel = travelList[indexPath.row]
-        let isAd = travel.ad ?? false ||
-        travel.description == nil ||
-        travel.travel_image == nil ||
-        travel.grade == nil ||
-        travel.save == nil ||
-        travel.like == nil
+        let isAd = isAd(travel)
         
         let cell = tableView.dequeueReusableCell(
             withIdentifier: isAd ? .adCell : .travelCell,
@@ -39,6 +34,16 @@ class TravelTableViewController: UITableViewController {
         setTravelTableViewCell(cell, row: indexPath.row, travel: travel)
         
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let travel = travelList[indexPath.row]
+        
+        isAd(travel)
+        ? presentAdViewController(travel)
+        : pushTouristViewController(travel)
+        
+        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
     private func setTravelTableViewCell(_ cell: UITableViewCell, row: Int, travel: Travel) {
@@ -58,6 +63,44 @@ class TravelTableViewController: UITableViewController {
         guard let adCell = cell as? AdTableViewCell else { return }
         
         adCell.updateTitleLabel(title)
+    }
+    
+    private func isAd(_ travel: Travel) -> Bool {
+        return travel.ad ?? false ||
+        travel.description == nil ||
+        travel.travel_image == nil ||
+        travel.grade == nil ||
+        travel.save == nil ||
+        travel.like == nil
+    }
+    
+    private func pushTouristViewController(_ travel: Travel) {
+        let viewController = storyboard?.instantiateViewController(
+            withIdentifier: .touristController
+        ) as? TouristViewController
+        guard let viewController else { return }
+        
+        viewController.setTravel(travel)
+        
+        navigationController?.pushViewController(
+            viewController,
+            animated: true
+        )
+    }
+    
+    private func presentAdViewController(_ travel: Travel) {
+        let viewController = storyboard?.instantiateViewController(
+            withIdentifier: .adController
+        ) as? AdViewController
+        guard let viewController else { return }
+        
+        viewController.setTitleText(title: travel.title)
+        let navigationController = UINavigationController(
+            rootViewController: viewController
+        )
+        navigationController.modalPresentationStyle = .fullScreen
+        
+        present(navigationController, animated: true)
     }
     
     @objc

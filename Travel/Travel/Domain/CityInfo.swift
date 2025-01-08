@@ -21,14 +21,24 @@ public struct City {
     public func isContains(keyword: String) -> Bool {
         guard !keyword.isEmpty else { return true }
         
-        let lowercaseKeyword = keyword.lowercased().filter { !$0.isWhitespace }
-        let lowerCaseCityName = city_name.lowercased().filter { !$0.isWhitespace }
-        let lowerCaseCityEnglishName = city_english_name.lowercased().filter { !$0.isWhitespace }
-        let lowerCaseCityExplain = city_explain.lowercased().filter { !$0.isWhitespace }
+        let keywords = keyword.split(separator: " ").map { String($0) }
         
-        return lowerCaseCityName.contains(lowercaseKeyword) ||
-        lowerCaseCityEnglishName.contains(lowercaseKeyword) ||
-        lowerCaseCityExplain.contains(lowercaseKeyword)
+        let lowercaseKeywords = keywords.map { keyword in
+            keyword.lowercased()
+        }
+        let lowerCaseCityName = city_name.lowercased()
+        let lowerCaseCityEnglishName = city_english_name.lowercased()
+        let lowerCaseCityExplain = city_explain.lowercased()
+        
+        for lowercaseKeyword in lowercaseKeywords {
+            let isContain = lowerCaseCityName.contains(lowercaseKeyword) ||
+            lowerCaseCityEnglishName.contains(lowercaseKeyword) ||
+            lowerCaseCityExplain.contains(lowercaseKeyword)
+            
+            if isContain { return true }
+        }
+        
+        return false
     }
 }
 
