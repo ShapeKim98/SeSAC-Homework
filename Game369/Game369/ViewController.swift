@@ -8,7 +8,8 @@
 import UIKit
 
 class ViewController: UIViewController {
-    @IBOutlet var numberTextFieldBackgroundView: UIView!
+    @IBOutlet
+    private var numberTextFieldBackgroundView: UIView!
     @IBOutlet
     private var resultLabel: UILabel!
     @IBOutlet
@@ -89,6 +90,12 @@ class ViewController: UIViewController {
         resultLabel.text = "숫자 \(max)까지 총 박수는 \(count)번 입니다."
         print(#function)
     }
+    
+    @IBAction
+    private func tapGestureRecognizerAction(_ sender: UITapGestureRecognizer) {
+        view.endEditing(true)
+    }
+    
 }
 
 extension ViewController: UIPickerViewDataSource {
