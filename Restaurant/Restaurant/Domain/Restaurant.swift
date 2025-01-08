@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct Restaurant {
     let image: String

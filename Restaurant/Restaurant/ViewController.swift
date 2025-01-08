@@ -13,38 +13,50 @@ class ViewController: UIViewController {
     private var mapView: MKMapView!
     
     private var currentCategory = Category.전체
-    private var restaurants: [Restaurant] {
-        let list = RestaurantList().restaurantArray
-        
-        if case .전체 = currentCategory {
-            return list
-        } else {
-            return list.filter { restaurant in
-                restaurant.category == currentCategory.rawValue
-            }
-        }
-    }
-    
-    private var annotations: [MKPointAnnotation] {
-        let annotations = restaurants.map { restaurant in
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = CLLocationCoordinate2D(
-                latitude: restaurant.latitude,
-                longitude: restaurant.longitude
-            )
-            annotation.title = restaurant.name
-            return annotation
-        }
-        return annotations
-    }
+    private var cachedRestaurants = [Category: [Restaurant]]()
+    private var cachedAnnotations = [Category: [MKPointAnnotation]]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        configureRestaurants()
+        
+        configureAnnotations()
+        
         configureNavigationBar()
         
         configureMapView()
+    }
+    
+    private func configureRestaurants() {
+        for category in Category.allCases {
+            let list = RestaurantList().restaurantArray
+            
+            if case .전체 = category {
+                cachedRestaurants[category] = list
+            } else {
+                cachedRestaurants[category] = list.filter({ restaurant in
+                    category.rawValue == restaurant.category
+                })
+            }
+        }
+    }
+    
+    private func configureAnnotations() {
+        for category in Category.allCases {
+            let restaurants = cachedRestaurants[category]
+            let annotations = restaurants?.map { restaurant in
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = CLLocationCoordinate2D(
+                    latitude: restaurant.latitude,
+                    longitude: restaurant.longitude
+                )
+                annotation.title = restaurant.name
+                return annotation
+            }
+            cachedAnnotations[category] = annotations
+        }
     }
     
     private func configureNavigationBar() {
@@ -61,6 +73,7 @@ class ViewController: UIViewController {
 
     private func configureMapView() {
         guard
+            let restaurants = cachedRestaurants[currentCategory],
             let maxLatitude = restaurants.maxLatitude,
             let maxLongitude = restaurants.maxLongitude,
             let minLatitude = restaurants.minLatitude,
@@ -74,22 +87,31 @@ class ViewController: UIViewController {
             minLongitude: minLongitude
         )
         
-        let maxLocation = CLLocation(
-            latitude: maxLatitude,
-            longitude: maxLongitude
+        let distance = updateDistanace(
+            maxLatitude: maxLatitude,
+            maxLongitude: maxLongitude,
+            minLatitude: minLatitude,
+            minLongitude: minLongitude
         )
-        let minLocation = CLLocation(
-            latitude: minLatitude,
-            longitude: minLongitude
+        mapView.setRegion(
+            MKCoordinateRegion(
+                center: center,
+                latitudinalMeters: distance,
+                longitudinalMeters: distance
+            ),
+            animated: true
         )
-        let distance = maxLocation.distance(from: minLocation)
         
-        mapView.region = MKCoordinateRegion(
-            center: center,
-            latitudinalMeters: distance,
-            longitudinalMeters: distance
-        )
-        mapView.addAnnotations(annotations)
+        guard let annotations = cachedAnnotations[currentCategory] else {
+            return
+        }
+        mapView.showAnnotations(annotations, animated: true)
+    }
+    
+    private func updateMapView() {
+        let oldAnnotations = mapView.annotations
+        mapView.removeAnnotations(oldAnnotations)
+        configureMapView()
     }
     
     private func updateCenter(
@@ -107,14 +129,30 @@ class ViewController: UIViewController {
         )
     }
     
+    private func updateDistanace(
+        maxLatitude: Double,
+        maxLongitude: Double,
+        minLatitude: Double,
+        minLongitude: Double
+    ) -> CLLocationDistance {
+        let maxLocation = CLLocation(
+            latitude: maxLatitude,
+            longitude: maxLongitude
+        )
+        let minLocation = CLLocation(
+            latitude: minLatitude,
+            longitude: minLongitude
+        )
+        return maxLocation.distance(from: minLocation)
+    }
+    
     private func alertActionHandler(_ alertAction: UIAlertAction) {
         guard
             let title = alertAction.title,
             let category = Category(rawValue: title)
         else { return }
         currentCategory = category
-        mapView.removeAnnotations(mapView.annotations)
-        configureMapView()
+        updateMapView()
     }
     
     @objc
