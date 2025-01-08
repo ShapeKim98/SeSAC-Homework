@@ -16,15 +16,18 @@ class ViewController: UIViewController {
     private var restaurants: [Restaurant] {
         let list = RestaurantList().restaurantArray
         
-        switch currentCategory {
-        case .전체: return list
-        case .한식: return list.filter { $0.category == "한식" }
-        case .양식: return list.filter { $0.category == "양식" }
+        if case .전체 = currentCategory {
+            return list
+        } else {
+            return list.filter { restaurant in
+                restaurant.category == currentCategory.rawValue
+            }
         }
     }
+    
     private var annotations: [MKPointAnnotation] {
         let annotations = restaurants.map { restaurant in
-            var annotation = MKPointAnnotation()
+            let annotation = MKPointAnnotation()
             annotation.coordinate = CLLocationCoordinate2D(
                 latitude: restaurant.latitude,
                 longitude: restaurant.longitude
@@ -39,7 +42,21 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        configureNavigationBar()
+        
         configureMapView()
+    }
+    
+    private func configureNavigationBar() {
+        navigationController?
+            .navigationBar
+            .topItem?
+            .rightBarButtonItem = UIBarButtonItem(
+                title: "Filter",
+                style: .plain,
+                target: self,
+                action: #selector(filterButtonTouchUpInside)
+            )
     }
 
     private func configureMapView() {
@@ -72,7 +89,6 @@ class ViewController: UIViewController {
             latitudinalMeters: distance,
             longitudinalMeters: distance
         )
-        
         mapView.addAnnotations(annotations)
     }
     
@@ -90,12 +106,49 @@ class ViewController: UIViewController {
             longitude: longitude
         )
     }
+    
+    private func alertActionHandler(_ alertAction: UIAlertAction) {
+        guard
+            let title = alertAction.title,
+            let category = Category(rawValue: title)
+        else { return }
+        currentCategory = category
+        mapView.removeAnnotations(mapView.annotations)
+        configureMapView()
+    }
+    
+    @objc
+    private func filterButtonTouchUpInside() {
+        let alert = UIAlertController(
+            title: nil,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        
+        let cancel = UIAlertAction(title: "취소", style: .cancel)
+        alert.addAction(cancel)
+        
+        for category in Category.allCases {
+            let action = UIAlertAction(
+                title: category.rawValue,
+                style: .default,
+                handler: alertActionHandler
+            )
+            alert.addAction(action)
+        }
+        present(alert, animated: true)
+    }
 }
 
 extension ViewController {
-    enum Category {
-        case 전체
-        case 한식
-        case 양식
+    enum Category: String, CaseIterable {
+        case 전체 = "전체"
+        case 한식 = "한식"
+        case 양식 = "양식"
+        case 분식 = "분식"
+        case 카페 = "카페"
+        case 샐러드 = "샐러드"
+        case 중식 = "중식"
+        case 일식 = "일식"
     }
 }
