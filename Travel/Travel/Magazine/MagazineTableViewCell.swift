@@ -40,7 +40,17 @@ class MagazineTableViewCell: UITableViewCell {
     
     private func updatePhotoImageView(photoImage: String) {
         let url = URL(string: photoImage)
-        photoImageView.kf.setImage(with: url)
+        let size = photoImageView.bounds.size
+        
+        photoImageView.kf.indicatorType = .activity
+        photoImageView.kf.setImage(
+            with: url,
+            options: [
+                .processor(DownsamplingImageProcessor(size: size)),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage
+            ]
+        )
     }
     
     private func updateTitleLabel(title: String) {

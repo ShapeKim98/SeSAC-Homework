@@ -87,7 +87,15 @@ class CityTableViewCell: UITableViewCell {
     
     private func updateCityImageView(cityImage: String) {
         let url = URL(string: cityImage)
-        cityImageView.kf.setImage(with: url)
+        cityImageView.kf.indicatorType = .activity
+        cityImageView.kf.setImage(
+            with: url,
+            options: [
+                .processor(DownsamplingImageProcessor(size: cityImageView.bounds.size)),
+                .progressiveJPEG(.init(isBlur: true, isFastestScan: true, scanInterval: 0.5)),
+                .cacheOriginalImage
+            ]
+        )
     }
     
     private func updateCityNameLabel(cityName: String, keywords: [String]) {
