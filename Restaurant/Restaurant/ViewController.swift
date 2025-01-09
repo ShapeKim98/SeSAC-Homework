@@ -72,35 +72,35 @@ class ViewController: UIViewController {
     }
 
     private func configureMapView() {
-        guard
-            let restaurants = cachedRestaurants[currentCategory],
-            let maxLatitude = restaurants.maxLatitude,
-            let maxLongitude = restaurants.maxLongitude,
-            let minLatitude = restaurants.minLatitude,
-            let minLongitude = restaurants.minLongitude
-        else { return }
-        
-        let center = updateCenter(
-            maxLatitude: maxLatitude,
-            maxLongitude: maxLongitude,
-            minLatitude: minLatitude,
-            minLongitude: minLongitude
-        )
-        
-        let distance = updateDistanace(
-            maxLatitude: maxLatitude,
-            maxLongitude: maxLongitude,
-            minLatitude: minLatitude,
-            minLongitude: minLongitude
-        )
-        mapView.setRegion(
-            MKCoordinateRegion(
-                center: center,
-                latitudinalMeters: distance,
-                longitudinalMeters: distance
-            ),
-            animated: true
-        )
+//        guard
+//            let restaurants = cachedRestaurants[currentCategory],
+//            let maxLatitude = restaurants.maxLatitude,
+//            let maxLongitude = restaurants.maxLongitude,
+//            let minLatitude = restaurants.minLatitude,
+//            let minLongitude = restaurants.minLongitude
+//        else { return }
+//        
+//        let center = updateCenter(
+//            maxLatitude: maxLatitude,
+//            maxLongitude: maxLongitude,
+//            minLatitude: minLatitude,
+//            minLongitude: minLongitude
+//        )
+//        
+//        let distance = updateDistanace(
+//            maxLatitude: maxLatitude,
+//            maxLongitude: maxLongitude,
+//            minLatitude: minLatitude,
+//            minLongitude: minLongitude
+//        )
+//        mapView.setRegion(
+//            MKCoordinateRegion(
+//                center: center,
+//                latitudinalMeters: distance,
+//                longitudinalMeters: distance
+//            ),
+//            animated: true
+//        )
         
         guard let annotations = cachedAnnotations[currentCategory] else {
             return
