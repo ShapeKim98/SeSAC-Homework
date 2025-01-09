@@ -27,3 +27,7 @@ class InGameViewController: UIViewController {
     */
 
 }
+
+extension String {
+    static let inGameViewController = "InGameViewController"
+}
