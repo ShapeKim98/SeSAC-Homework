@@ -90,8 +90,17 @@ private extension ViewController {
         let viewController = storyboard?.instantiateViewController(
             withIdentifier: .inGameViewController
         ) as? InGameViewController
-        guard let viewController else { return }
+        guard
+            let viewController,
+            let text = numberTextField.text,
+            let number = Int(text)
+        else { return }
+        
+        viewController.setMaxNumber(number)
         viewController.modalPresentationStyle = .fullScreen
-        present(viewController, animated: true)
+        present(viewController, animated: true) { [weak self] in
+            guard let `self` else { return }
+            self.numberTextField.text = ""
+        }
     }
 }

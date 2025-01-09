@@ -16,8 +16,8 @@ class InGameViewController: UIViewController {
     private var gameState: GameState? {
         didSet { didSetGameState() }
     }
-    private var result = (1...30).randomElement()!
-    private var numbers: [Int] = Array(1...30)
+    private var result = 0
+    private var numbers: [Int] = []
     private var tryCount: Int = 0 {
         didSet { tryCountLabel.text = "시도 횟수: \(tryCount)" }
     }
@@ -41,7 +41,8 @@ class InGameViewController: UIViewController {
         configureInGameCollectionViewLayout()
     }
     
-    @IBAction func resultButtonTouchUpInside(_ sender: UIButton) {
+    @IBAction
+    private func resultButtonTouchUpInside(_ sender: UIButton) {
         guard gameState != .good else {
             dismiss(animated: true)
             return
@@ -67,6 +68,11 @@ class InGameViewController: UIViewController {
             inGameCollectionView.reloadData()
             return
         }
+    }
+    
+    func setMaxNumber(_ maxNumber: Int) {
+        self.numbers = Array(1...maxNumber)
+        self.result = Int.random(in: 1...maxNumber)
     }
 }
 
