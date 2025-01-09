@@ -14,10 +14,7 @@ class InGameViewController: UIViewController {
     @IBOutlet var resultLabel: UILabel!
     
     private var gameState: GameState? {
-        didSet {
-            guard let gameState else { return }
-            resultLabel.text = gameState.result
-        }
+        didSet { didSetGameState() }
     }
     private var result = (1...30).randomElement()!
     private var numbers: [Int] = Array(1...30)
@@ -25,13 +22,7 @@ class InGameViewController: UIViewController {
         didSet { tryCountLabel.text = "시도 횟수: \(tryCount)" }
     }
     private var selectedNumber: Int? {
-        didSet {
-            if selectedNumber != nil {
-                enableResultButton()
-            } else {
-                disableResultButton()
-            }
-        }
+        didSet { didSetSelectedNumber() }
     }
     
     override func viewDidLoad() {
@@ -51,7 +42,13 @@ class InGameViewController: UIViewController {
     }
     
     @IBAction func resultButtonTouchUpInside(_ sender: UIButton) {
+        guard gameState != .good else {
+            dismiss(animated: true)
+            return
+        }
+        
         guard let selectedNumber else { return }
+        self.selectedNumber = nil
         tryCount += 1
         guard selectedNumber != result else {
             gameState = .good
@@ -133,6 +130,26 @@ private extension InGameViewController {
         resultButton.isEnabled = true
         resultButton.backgroundColor = .black
         resultButton.setTitleColor(.white, for: .normal)
+    }
+}
+
+// MARK: Functions
+private extension InGameViewController {
+    func didSetGameState() {
+        guard let gameState else { return }
+        resultLabel.text = gameState.result
+        enableResultButton()
+        if gameState == .good {
+            resultButton.setTitle("다시 하기", for: .normal)
+        }
+    }
+    
+    func didSetSelectedNumber() {
+        if selectedNumber != nil {
+            enableResultButton()
+        } else {
+            disableResultButton()
+        }
     }
 }
 
