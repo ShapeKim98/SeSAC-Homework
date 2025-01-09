@@ -85,7 +85,17 @@ class CityCollectionViewCell: UICollectionViewCell {
     
     private func updateCityImageView(cityImage: String) {
         let url = URL(string: cityImage)
-        cityImageView.kf.setImage(with: url)
+        let size = cityImageView.bounds.size
+        
+        cityImageView.kf.indicatorType = .activity
+        cityImageView.kf.setImage(
+            with: url,
+            options: [
+                .processor(DownsamplingImageProcessor(size: size)),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage
+            ]
+        )
     }
     
     private func updateCityNameLabel(cityName: String, keywords: [String]) {

@@ -95,7 +95,17 @@ class TravelTableViewCell: UITableViewCell {
     private func updateTravelImageView(travelImage: String?) {
         guard let travelImage else { return }
         let url = URL(string: travelImage)
-        travelImageView.kf.setImage(with: url)
+        let size = travelImageView.bounds.size
+        
+        travelImageView.kf.indicatorType = .activity
+        travelImageView.kf.setImage(
+            with: url,
+            options: [
+                .processor(DownsamplingImageProcessor(size: size)),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage
+            ]
+        )
     }
     
     private func setTitleLabel() {
