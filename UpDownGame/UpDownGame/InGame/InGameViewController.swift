@@ -13,8 +13,17 @@ class InGameViewController: UIViewController {
     @IBOutlet var tryCountLabel: UILabel!
     @IBOutlet var resultLabel: UILabel!
     
+    private var gameState: GameState? {
+        didSet {
+            guard let gameState else { return }
+            resultLabel.text = gameState.result
+        }
+    }
+    private var result = (1...30).randomElement()!
     private var numbers: [Int] = Array(1...30)
-    private var tryCount: Int = 0
+    private var tryCount: Int = 0 {
+        didSet { tryCountLabel.text = "시도 횟수: \(tryCount)" }
+    }
     private var selectedNumber: Int? {
         didSet {
             if selectedNumber != nil {
@@ -39,6 +48,28 @@ class InGameViewController: UIViewController {
         configureInGameCollectionView()
         
         configureInGameCollectionViewLayout()
+    }
+    
+    @IBAction func resultButtonTouchUpInside(_ sender: UIButton) {
+        guard let selectedNumber else { return }
+        tryCount += 1
+        guard selectedNumber != result else {
+            gameState = .good
+            return
+        }
+        if result > selectedNumber {
+            gameState = .up
+            numbers = numbers.filter { selectedNumber < $0 }
+            inGameCollectionView.reloadData()
+            return
+        }
+        
+        if result < selectedNumber {
+            gameState = .down
+            numbers = numbers.filter { selectedNumber > $0 }
+            inGameCollectionView.reloadData()
+            return
+        }
     }
 }
 

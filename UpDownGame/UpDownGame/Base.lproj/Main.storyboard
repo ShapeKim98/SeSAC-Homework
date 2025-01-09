@@ -154,6 +154,9 @@
                                 </constraints>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                <connections>
+                                    <action selector="resultButtonTouchUpInside:" destination="QGj-0M-btI" eventType="touchUpInside" id="Clf-3J-Zq8"/>
+                                </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="HGx-8W-Bbf"/>
