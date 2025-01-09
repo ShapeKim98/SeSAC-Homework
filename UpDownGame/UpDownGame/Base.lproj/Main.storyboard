@@ -77,10 +77,10 @@
             </objects>
             <point key="canvasLocation" x="140" y="5"/>
         </scene>
-        <!--View Controller-->
+        <!--In Game View Controller-->
         <scene sceneID="QDx-bI-G9n">
             <objects>
-                <viewController id="QGj-0M-btI" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="InGameViewController" id="QGj-0M-btI" customClass="InGameViewController" customModule="UpDownGame" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OqW-gP-VeT">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
