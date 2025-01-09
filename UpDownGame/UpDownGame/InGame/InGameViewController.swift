@@ -15,7 +15,15 @@ class InGameViewController: UIViewController {
     
     private var numbers: [Int] = Array(1...30)
     private var tryCount: Int = 0
-    private var selectedNumber: Int?
+    private var selectedNumber: Int? {
+        didSet {
+            if selectedNumber != nil {
+                enableResultButton()
+            } else {
+                disableResultButton()
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +58,7 @@ private extension InGameViewController {
     
     func configureResultButton() {
         resultButton.setUDButtonStyle(title: "결과 확인하기")
+        disableResultButton()
     }
     
     func configureInGameCollectionView() {
@@ -82,6 +91,18 @@ private extension InGameViewController {
         )
         inGameCollectionView.collectionViewLayout = layout
     }
+    
+    func disableResultButton() {
+        resultButton.isEnabled = false
+        resultButton.backgroundColor = .lightGray
+        resultButton.setTitleColor(.white, for: .normal)
+    }
+    
+    func enableResultButton() {
+        resultButton.isEnabled = true
+        resultButton.backgroundColor = .black
+        resultButton.setTitleColor(.white, for: .normal)
+    }
 }
 
 // MARK: CollectionView DataSource
@@ -98,14 +119,26 @@ extension InGameViewController: UICollectionViewDataSource {
         guard let inGameCell = cell as? InGameCollectionViewCell else {
             return cell
         }
+        
         inGameCell.setNumber(numbers[indexPath.item])
+        guard let selectedNumber else {
+            return inGameCell
+        }
+        inGameCell.didSelected(String(selectedNumber))
         return inGameCell
     }
 }
 
 // MARK: CollectionView Delegate
 extension InGameViewController: UICollectionViewDelegate {
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        guard let inGameCell = cell as? InGameCollectionViewCell else {
+            return
+        }
+        selectedNumber = inGameCell.onSelect()
+        inGameCollectionView.reloadData()
+    }
 }
 
 private extension InGameViewController {

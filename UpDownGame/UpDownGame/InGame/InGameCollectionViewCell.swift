@@ -21,6 +21,11 @@ class InGameCollectionViewCell: UICollectionViewCell {
         configureBackgroundView()
     }
     
+    override func prepareForReuse() {
+        numberBackgroundView.backgroundColor = .white
+        numberLabel.textColor = .black
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -31,6 +36,18 @@ class InGameCollectionViewCell: UICollectionViewCell {
     
     func setNumber(_ number: Int) {
         numberLabel.text = String(number)
+    }
+    
+    func didSelected(_ number: String) {
+        guard number == numberLabel.text else { return }
+        
+        numberBackgroundView.backgroundColor = .black
+        numberLabel.textColor = .white
+    }
+    
+    func onSelect() -> Int? {
+        guard let text = numberLabel.text else { return nil }
+        return Int(text)
     }
 }
 
