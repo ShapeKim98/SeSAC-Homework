@@ -18,12 +18,19 @@ class InGameCollectionViewCell: UICollectionViewCell {
         // Initialization code
         
         configureNumberLabel()
+        configureBackgroundView()
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        configureBackgroundView()
+        let width = frame.width
+        
+        numberBackgroundView.layer.cornerRadius = width / 2
+    }
+    
+    func setNumber(_ number: Int) {
+        numberLabel.text = String(number)
     }
 }
 
@@ -31,14 +38,11 @@ class InGameCollectionViewCell: UICollectionViewCell {
 private extension InGameCollectionViewCell {
     func configureBackgroundView() {
         numberBackgroundView.backgroundColor = .white
-        let width = numberBackgroundView.frame.width
-        
-        numberBackgroundView.layer.cornerRadius = width / 2
     }
     
     func configureNumberLabel() {
         numberLabel.textColor = .black
-        numberLabel.font = .systemFont(ofSize: 12)
+        numberLabel.font = .systemFont(ofSize: 14)
     }
 }
 

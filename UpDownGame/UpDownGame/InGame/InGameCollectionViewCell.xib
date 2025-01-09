@@ -18,10 +18,10 @@
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yjW-rX-AUR">
-                        <rect key="frame" x="72.666666666666671" y="48.666666666666657" width="74.000000000000014" height="74"/>
+                        <rect key="frame" x="0.0" y="0.0" width="219" height="171"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rIC-X7-iio">
-                                <rect key="frame" x="16" y="26.333333333333336" width="42" height="21"/>
+                                <rect key="frame" x="88.666666666666671" y="75" width="42.000000000000014" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -29,19 +29,20 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="rIC-X7-iio" firstAttribute="centerY" secondItem="yjW-rX-AUR" secondAttribute="centerY" id="DMM-q4-3mI"/>
-                            <constraint firstAttribute="trailing" secondItem="rIC-X7-iio" secondAttribute="trailing" constant="16" id="LJJ-Ac-GK9"/>
-                            <constraint firstAttribute="width" secondItem="yjW-rX-AUR" secondAttribute="height" multiplier="1:1" id="YjJ-BT-S2w"/>
-                            <constraint firstItem="rIC-X7-iio" firstAttribute="centerX" secondItem="yjW-rX-AUR" secondAttribute="centerX" id="kbj-gs-8Lu"/>
-                            <constraint firstItem="rIC-X7-iio" firstAttribute="leading" secondItem="yjW-rX-AUR" secondAttribute="leading" constant="16" id="xbA-o4-W5o"/>
+                            <constraint firstItem="rIC-X7-iio" firstAttribute="centerX" secondItem="yjW-rX-AUR" secondAttribute="centerX" id="Wgh-C0-yph"/>
+                            <constraint firstItem="rIC-X7-iio" firstAttribute="centerY" secondItem="yjW-rX-AUR" secondAttribute="centerY" id="kNF-yl-Q5t"/>
                         </constraints>
                     </view>
                 </subviews>
             </view>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <constraints>
-                <constraint firstItem="yjW-rX-AUR" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="Ekj-cK-cB9"/>
-                <constraint firstItem="yjW-rX-AUR" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="lag-7J-e9u"/>
+                <constraint firstItem="yjW-rX-AUR" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="BQV-4q-DZ8"/>
+                <constraint firstItem="yjW-rX-AUR" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="Bu3-fU-C3b"/>
+                <constraint firstAttribute="bottom" secondItem="yjW-rX-AUR" secondAttribute="bottom" id="MeG-jn-NJI"/>
+                <constraint firstItem="yjW-rX-AUR" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="ljO-OZ-x1x"/>
+                <constraint firstAttribute="trailing" secondItem="yjW-rX-AUR" secondAttribute="trailing" id="pIn-PE-mpY"/>
+                <constraint firstItem="yjW-rX-AUR" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="vfx-EP-MCz"/>
             </constraints>
             <size key="customSize" width="219" height="171"/>
             <connections>
