@@ -8,6 +8,7 @@
 import UIKit
 
 class ViewController: UIViewController {
+    @IBOutlet var bottomBackgroundView: UIView!
     @IBOutlet
     private var numberTextField: UITextField!
     @IBOutlet
@@ -25,6 +26,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .accent
+        
+        bottomBackgroundView.backgroundColor = .accent
         
         configureResultLabel()
         
@@ -81,6 +84,14 @@ private extension ViewController {
     
     func configureStartButton() {
         startButton.setUDButtonStyle(title: "시작하기")
+        view
+            .keyboardLayoutGuide
+            .topAnchor
+            .constraint(
+                equalToSystemSpacingBelow: startButton.bottomAnchor,
+                multiplier: 0
+            )
+            .isActive = true
     }
 }
 
