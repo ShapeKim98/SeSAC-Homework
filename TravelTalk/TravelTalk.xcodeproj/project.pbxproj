@@ -14,7 +14,7 @@
 		C9872F532D3112F900DC8D9F /* Exceptions for "TravelTalk" folder in "TravelTalk" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				App/Info.plist,
 			);
 			target = C9872F402D3112F700DC8D9F /* TravelTalk */;
 		};
