@@ -115,7 +115,7 @@ private extension ChattingViewController {
 // MARK: Data Binding
 private extension ChattingViewController {
     func didSetMessage() {
-        sendButton.isEnabled = !message.isEmpty
+        sendButton.isEnabled = message.contains(where: \.isLetter)
         let size = messageTextView.sizeThatFits(CGSize(
             width: messageTextView.frame.width,
             height: .infinity
