@@ -32,7 +32,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="TRAVEL TALK" id="Fy3-LV-vr1"/>
                     <connections>
-                        <outlet property="chatTableView" destination="eOn-9a-GnE" id="6uF-OK-MbO"/>
+                        <outlet property="roomTableView" destination="eOn-9a-GnE" id="6uF-OK-MbO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

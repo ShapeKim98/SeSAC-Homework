@@ -9,14 +9,17 @@ import UIKit
 
 class ViewController: UIViewController {
     @IBOutlet
-    private var chatTableView: UITableView!
+    private var roomTableView: UITableView!
     
-    private var chatList = mockList {
-        didSet { chatTableView.reloadData() }
+    private var roomList = mockChatList {
+        didSet { roomTableView.reloadData() }
     }
+    private var cachedUsers = [Int: Set<String>]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        cacheUser()
         
         configureChatRoomTableView()
         
@@ -27,14 +30,14 @@ class ViewController: UIViewController {
 // MARK: Configure View
 private extension ViewController {
     func configureChatRoomTableView() {
-        chatTableView.delegate = self
-        chatTableView.dataSource = self
+        roomTableView.delegate = self
+        roomTableView.dataSource = self
         
-        chatTableView.register(
-            UINib(nibName: .chatTableCell, bundle: nil),
-            forCellReuseIdentifier: .chatTableCell
+        roomTableView.register(
+            UINib(nibName: .roomTableCell, bundle: nil),
+            forCellReuseIdentifier: .roomTableCell
         )
-        chatTableView.separatorStyle = .none
+        roomTableView.separatorStyle = .none
     }
     
     func configureSearchController() {
@@ -48,9 +51,26 @@ private extension ViewController {
 
 // MARK: Data Binding
 private extension ViewController {
-    func injectDataAtChatCell(_ cell: ChatTableViewCell, row: Int) {
-        let chat = chatList[row]
-        cell.injectCellData(chat)
+    func injectDataAtChatCell(_ cell: RoomTableViewCell, row: Int) {
+        let room = roomList[row]
+        let count = cachedUsers[room.chatroomId]?.count ?? 0
+        cell.injectCellData(room, userCount: count)
+    }
+}
+
+// MARK: Functions
+private extension ViewController {
+    func cacheUser() {
+        for room in roomList {
+            var users: Set<String> = []
+            for chat in room.chatList {
+                guard chat.user != .user else { continue }
+                users.insert(chat.user.rawValue.lowercased())
+            }
+            cachedUsers[room.chatroomId] = users
+        }
+        
+        print(cachedUsers)
     }
 }
 
@@ -58,26 +78,29 @@ extension ViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text?.lowercased() else { return }
         guard !text.isEmpty else {
-            chatList = mockList
+            roomList = mockChatList
             return
         }
-        chatList = mockList.filter { chat in
-            chat.user.rawValue.lowercased().contains(text)
+        roomList = mockChatList.filter { room in
+            let isContains = cachedUsers[room.chatroomId]?.contains(where: {
+                $0.contains(text)
+            })
+            return isContains ?? false
         }
     }
 }
 
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return chatList.count
+        return roomList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = chatTableView.dequeueReusableCell(
-            withIdentifier: .chatTableCell,
+        let cell = roomTableView.dequeueReusableCell(
+            withIdentifier: .roomTableCell,
             for: indexPath
         )
-        guard let chatRoomCell = cell as? ChatTableViewCell else { return cell }
+        guard let chatRoomCell = cell as? RoomTableViewCell else { return cell }
         injectDataAtChatCell(chatRoomCell, row: indexPath.row)
         return chatRoomCell
     }
