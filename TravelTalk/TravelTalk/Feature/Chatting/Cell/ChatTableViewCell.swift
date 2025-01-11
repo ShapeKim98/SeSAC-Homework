@@ -37,7 +37,9 @@ class ChatTableViewCell: UITableViewCell {
         messageLabel.text = chat.message
         
         let rawFormatter: DateFormatter = .cachedFormatter(.chatRaw)
-        guard let date = rawFormatter.date(from: chat.date) else { return }
+        guard let date = rawFormatter.date(from: chat.date) else {
+            return
+        }
         let formatter: DateFormatter = .cachedFormatter(.message)
         dateLabel.text = formatter.string(from: date)
     }
@@ -50,10 +52,7 @@ private extension ChatTableViewCell {
     }
     
     func configureBubbleView() {
-        bubbleView.layer.borderColor = UIColor.gray.cgColor
-        bubbleView.layer.borderWidth = 1
-        bubbleView.layer.cornerRadius = 8
-        bubbleView.clipsToBounds = true
+        bubbleView.ttBubbleStyle(color: .white)
     }
     
     func configureNameLabel() {
@@ -62,13 +61,11 @@ private extension ChatTableViewCell {
     }
     
     func configureMessageLabel() {
-        messageLabel.font = .systemFont(ofSize: 16)
-        messageLabel.numberOfLines = 0
+        messageLabel.ttMessageStyle()
     }
     
     func configureDateLabel() {
-        dateLabel.font = .systemFont(ofSize: 12)
-        dateLabel.textColor = .secondaryLabel
+        dateLabel.ttDateStyle()
     }
 }
 

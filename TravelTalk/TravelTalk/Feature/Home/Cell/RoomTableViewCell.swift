@@ -113,8 +113,7 @@ private extension RoomTableViewCell {
     }
     
     func configureChatDateLabel() {
-        chatDateLabel.font = .systemFont(ofSize: 12)
-        chatDateLabel.textColor = .secondaryLabel
+        chatDateLabel.ttDateStyle()
     }
     
     func configureUserCountLabel() {
