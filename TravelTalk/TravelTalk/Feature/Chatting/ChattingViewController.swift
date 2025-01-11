@@ -19,7 +19,9 @@ class ChattingViewController: UIViewController {
     @IBOutlet
     private var messageTextFieldBackgroundView: UIView!
     
-    private var room: ChatRoom = mockChatList[3]
+    private var room: ChatRoom = mockChatList[3] {
+        didSet { didSetRoom() }
+    }
     private var chatList: [Chat] {
         room.chatList.reversed()
     }
@@ -43,7 +45,12 @@ class ChattingViewController: UIViewController {
     }
     
     @IBAction func sendButtonTouchUpInside(_ sender: UIButton) {
-        
+        let formatter: DateFormatter = .cachedFormatter(.chatRaw)
+        let date = formatter.string(from: Date())
+        let newChat = Chat(user: .user, date: date, message: message)
+        room.chatList.append(newChat)
+        message = ""
+        messageTextView.text = ""
     }
     
     @IBAction func tapGestureRecognizerAction(_ sender: UITapGestureRecognizer) {
@@ -138,6 +145,13 @@ private extension ChattingViewController {
             }
         }
     }
+    
+    func didSetRoom() {
+        chatTableView.insertRows(
+            at: [IndexPath(row: 0, section: 0)],
+            with: .top
+        )
+    }
 }
 
 extension ChattingViewController: UITextViewDelegate {
@@ -160,7 +174,7 @@ extension ChattingViewController: UITextViewDelegate {
 
 extension ChattingViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return room.chatList.count
+        return chatList.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
