@@ -43,7 +43,7 @@ class RoomTableViewCell: UITableViewCell {
         circleImageView(chat4ImageViewList)
     }
     
-    func injectCellData(_ room: ChatRoom, userCount: Int) {
+    func forRowAt(_ room: ChatRoom, userCount: Int) {
         let uiImages = room.chatroomImage.compactMap { UIImage(named: $0) }
         if userCount > 1 {
             userCountLabel.text = "\(userCount)"

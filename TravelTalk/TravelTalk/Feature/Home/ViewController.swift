@@ -51,10 +51,10 @@ private extension ViewController {
 
 // MARK: Data Binding
 private extension ViewController {
-    func injectDataAtChatCell(_ cell: RoomTableViewCell, row: Int) {
+    func roomCellForRowAt(_ cell: RoomTableViewCell, row: Int) {
         let room = roomList[row]
         let count = cachedUsers[room.chatroomId]?.count ?? 0
-        cell.injectCellData(room, userCount: count)
+        cell.forRowAt(room, userCount: count)
     }
 }
 
@@ -99,7 +99,7 @@ extension ViewController: UITableViewDataSource {
             for: indexPath
         )
         guard let chatRoomCell = cell as? RoomTableViewCell else { return cell }
-        injectDataAtChatCell(chatRoomCell, row: indexPath.row)
+        roomCellForRowAt(chatRoomCell, row: indexPath.row)
         return chatRoomCell
     }
 }
