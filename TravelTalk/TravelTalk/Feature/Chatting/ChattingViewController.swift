@@ -19,7 +19,7 @@ class ChattingViewController: UIViewController {
     @IBOutlet
     private var messageTextFieldBackgroundView: UIView!
     
-    private var room: ChatRoom = mockChatList[3] {
+    private var room: ChatRoom = mockChatList[4] {
         didSet { didSetRoom() }
     }
     private var chatList: [Chat] {
