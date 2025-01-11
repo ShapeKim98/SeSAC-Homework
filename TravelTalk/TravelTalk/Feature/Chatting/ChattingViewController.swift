@@ -60,6 +60,10 @@ private extension ChattingViewController {
             UINib(nibName: .chatTableCell, bundle: nil),
             forCellReuseIdentifier: .chatTableCell
         )
+        chatTableView.register(
+            UINib(nibName: .userTableCell, bundle: nil),
+            forCellReuseIdentifier: .userTableCell
+        )
         chatTableView.transform = CGAffineTransform(scaleX: 1, y: -1)
         chatTableView.separatorStyle = .none
     }
@@ -81,7 +85,7 @@ private extension ChattingViewController {
     }
     
     func configureMessageTextFieldBackgroundView() {
-        messageTextFieldBackgroundView.backgroundColor = .systemGray5
+        messageTextFieldBackgroundView.backgroundColor = .systemGray6
         messageTextFieldBackgroundView.layer.cornerRadius = 4
         messageTextFieldBackgroundView.clipsToBounds = true
     }
@@ -108,6 +112,10 @@ private extension ChattingViewController {
 // MARK: Data Binding
 private extension ChattingViewController {
     func chatCellForRowAt(_ cell: ChatTableViewCell, chat: Chat) {
+        cell.forRowAt(chat)
+    }
+    
+    func userCellForRowAt(_ cell: UserTableViewCell, chat: Chat) {
         cell.forRowAt(chat)
     }
     
@@ -162,13 +170,20 @@ extension ChattingViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let chat = chatList[indexPath.row]
         let cell = chatTableView.dequeueReusableCell(
-            withIdentifier: .chatTableCell,
+            withIdentifier: chat.user == .user
+            ? .userTableCell
+            : .chatTableCell,
             for: indexPath
         )
         cell.contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
-        guard let chatCell = cell as? ChatTableViewCell else { return cell }
-        chatCellForRowAt(chatCell, chat: chat)
-        return chatCell
+        if chat.user == .user {
+            guard let chatCell = cell as? UserTableViewCell else { return cell }
+            userCellForRowAt(chatCell, chat: chat)
+        } else {
+            guard let chatCell = cell as? ChatTableViewCell else { return cell }
+            chatCellForRowAt(chatCell, chat: chat)
+        }
+        return cell
     }
 }
 
