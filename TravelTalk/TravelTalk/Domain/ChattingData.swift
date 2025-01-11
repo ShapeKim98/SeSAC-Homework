@@ -214,3 +214,13 @@ let mockChatList: [ChatRoom] = [
              ]
             ),
 ]
+
+let mockList: [Chat] = mockChatList.compactMap { chatRoom in
+    chatRoom.chatList.first { $0.user != .user }
+}
+.sorted { lhs, rhs in
+    let formatter: DateFormatter = .cachedFormatter(.chatRaw)
+    let lhsDate = formatter.date(from: lhs.date) ?? .now
+    let rhsDate = formatter.date(from: rhs.date) ?? .now
+    return lhsDate > rhsDate
+}
