@@ -69,8 +69,6 @@ private extension ViewController {
             }
             cachedUsers[room.chatroomId] = users
         }
-        
-        print(cachedUsers)
     }
 }
 

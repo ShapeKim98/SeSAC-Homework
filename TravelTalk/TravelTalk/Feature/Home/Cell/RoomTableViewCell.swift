@@ -27,6 +27,13 @@ class RoomTableViewCell: UITableViewCell {
         configureUserCountLabel()
     }
     
+    override func prepareForReuse() {
+        chatImageView.forEach { $0.isHidden = true }
+        chat2ImageViewList.forEach { $0.isHidden = true }
+        chat3ImageViewList.forEach { $0.isHidden = true }
+        chat4ImageViewList.forEach { $0.isHidden = true }
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -45,26 +52,10 @@ class RoomTableViewCell: UITableViewCell {
         }
         
         switch uiImages.count {
-        case 1:
-            updateImages(chatImageView, images: uiImages)
-            chat2ImageViewList.forEach { $0.isHidden = true }
-            chat3ImageViewList.forEach { $0.isHidden = true }
-            chat4ImageViewList.forEach { $0.isHidden = true }
-        case 2:
-            updateImages(chat2ImageViewList, images: uiImages)
-            chatImageView.forEach { $0.isHidden = true }
-            chat3ImageViewList.forEach { $0.isHidden = true }
-            chat4ImageViewList.forEach { $0.isHidden = true }
-        case 3:
-            updateImages(chat3ImageViewList, images: uiImages)
-            chatImageView.forEach { $0.isHidden = true }
-            chat2ImageViewList.forEach { $0.isHidden = true }
-            chat4ImageViewList.forEach { $0.isHidden = true }
-        case 4...:
-            updateImages(chat4ImageViewList, images: uiImages)
-            chatImageView.forEach { $0.isHidden = true }
-            chat2ImageViewList.forEach { $0.isHidden = true }
-            chat3ImageViewList.forEach { $0.isHidden = true }
+        case 1: updateImages(chatImageView, images: uiImages)
+        case 2: updateImages(chat2ImageViewList, images: uiImages)
+        case 3: updateImages(chat3ImageViewList, images: uiImages)
+        case 4...: updateImages(chat4ImageViewList, images: uiImages)
         default: break
         }
         
