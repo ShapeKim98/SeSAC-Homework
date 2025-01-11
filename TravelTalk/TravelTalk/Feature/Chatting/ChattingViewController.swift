@@ -112,20 +112,8 @@ private extension ChattingViewController {
     }
 }
 
-// MARK: Functions
-private extension ChattingViewController {
-}
-
 // MARK: Data Binding
 private extension ChattingViewController {
-    func chatCellForRowAt(_ cell: ChatTableViewCell, chat: Chat) {
-        cell.forRowAt(chat)
-    }
-    
-    func userCellForRowAt(_ cell: UserTableViewCell, chat: Chat) {
-        cell.forRowAt(chat)
-    }
-    
     func didSetMessage() {
         sendButton.isEnabled = !message.isEmpty
         let size = messageTextView.sizeThatFits(CGSize(
@@ -191,10 +179,10 @@ extension ChattingViewController: UITableViewDataSource {
         )
         if chat.user == .user {
             guard let chatCell = cell as? UserTableViewCell else { return cell }
-            userCellForRowAt(chatCell, chat: chat)
+            chatCell.forRowAt(chat)
         } else {
             guard let chatCell = cell as? ChatTableViewCell else { return cell }
-            chatCellForRowAt(chatCell, chat: chat)
+            chatCell.forRowAt(chat)
         }
         return cell
     }

@@ -49,15 +49,6 @@ private extension ViewController {
     }
 }
 
-// MARK: Data Binding
-private extension ViewController {
-    func roomCellForRowAt(_ cell: RoomTableViewCell, row: Int) {
-        let room = roomList[row]
-        let count = cachedUsers[room.chatroomId]?.count ?? 0
-        cell.forRowAt(room, userCount: count)
-    }
-}
-
 // MARK: Functions
 private extension ViewController {
     func cacheUser() {
@@ -99,7 +90,9 @@ extension ViewController: UITableViewDataSource {
             for: indexPath
         )
         guard let chatRoomCell = cell as? RoomTableViewCell else { return cell }
-        roomCellForRowAt(chatRoomCell, row: indexPath.row)
+        let room = roomList[indexPath.row]
+        let count = cachedUsers[room.chatroomId]?.count ?? 0
+        chatRoomCell.forRowAt(room, userCount: count)
         return chatRoomCell
     }
 }
