@@ -47,7 +47,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="hjt-eG-Mt1">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="749" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="hjt-eG-Mt1">
                                 <rect key="frame" x="0.0" y="59" width="393" height="701"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
@@ -101,8 +101,8 @@
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="hjt-eG-Mt1" firstAttribute="leading" secondItem="Mnp-XU-VyU" secondAttribute="leading" id="4gP-IB-LYa"/>
+                            <constraint firstItem="w2L-ri-g00" firstAttribute="top" secondItem="hjt-eG-Mt1" secondAttribute="bottom" id="8uF-yT-Stt"/>
                             <constraint firstItem="w2L-ri-g00" firstAttribute="leading" secondItem="Mnp-XU-VyU" secondAttribute="leading" id="BE8-tQ-aew"/>
-                            <constraint firstItem="w2L-ri-g00" firstAttribute="top" secondItem="hjt-eG-Mt1" secondAttribute="bottom" id="JN1-78-YZA"/>
                             <constraint firstItem="Mnp-XU-VyU" firstAttribute="trailing" secondItem="hjt-eG-Mt1" secondAttribute="trailing" id="KK0-tM-p7T"/>
                             <constraint firstItem="Mnp-XU-VyU" firstAttribute="trailing" secondItem="w2L-ri-g00" secondAttribute="trailing" id="aAD-Bf-ChT"/>
                             <constraint firstItem="hjt-eG-Mt1" firstAttribute="top" secondItem="Mnp-XU-VyU" secondAttribute="top" id="gfp-ek-EyZ"/>

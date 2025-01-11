@@ -20,6 +20,9 @@ class ChattingViewController: UIViewController {
     private var messageTextFieldBackgroundView: UIView!
     
     private var room: ChatRoom = mockChatList[3]
+    private var chatList: [Chat] {
+        room.chatList.reversed()
+    }
     private var message = "" {
         didSet { didSetMessage() }
     }
@@ -37,14 +40,6 @@ class ChattingViewController: UIViewController {
         configureMessageTextFieldBackgroundView()
         
         configureMessageInputView()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        chatTableView.scrollToRow(
-            at: IndexPath(row: room.chatList.count - 1, section: 0),
-            at: .bottom,
-            animated: false
-        )
     }
     
     @IBAction func sendButtonTouchUpInside(_ sender: UIButton) {
@@ -65,6 +60,7 @@ private extension ChattingViewController {
             UINib(nibName: .chatTableCell, bundle: nil),
             forCellReuseIdentifier: .chatTableCell
         )
+        chatTableView.transform = CGAffineTransform(scaleX: 1, y: -1)
         chatTableView.separatorStyle = .none
     }
     
@@ -103,6 +99,10 @@ private extension ChattingViewController {
             )
             .isActive = true
     }
+}
+
+// MARK: Functions
+private extension ChattingViewController {
 }
 
 // MARK: Data Binding
@@ -160,11 +160,12 @@ extension ChattingViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let chat = room.chatList[indexPath.row]
+        let chat = chatList[indexPath.row]
         let cell = chatTableView.dequeueReusableCell(
             withIdentifier: .chatTableCell,
             for: indexPath
         )
+        cell.contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
         guard let chatCell = cell as? ChatTableViewCell else { return cell }
         chatCellForRowAt(chatCell, chat: chat)
         return chatCell
