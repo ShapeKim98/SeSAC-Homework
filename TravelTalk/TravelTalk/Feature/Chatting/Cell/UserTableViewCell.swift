@@ -19,6 +19,9 @@ class UserTableViewCell: UITableViewCell {
         configureDateLabel()
         configureMessageLabel()
         configureBubbleView()
+        
+        selectionStyle = .none
+        contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
     }
     
     func forRowAt(_ chat: Chat) {

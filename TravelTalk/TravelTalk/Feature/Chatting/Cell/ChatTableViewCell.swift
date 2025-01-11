@@ -22,6 +22,9 @@ class ChatTableViewCell: UITableViewCell {
         configureNameLabel()
         configureMessageLabel()
         configureDateLabel()
+        
+        selectionStyle = .none
+        contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
     }
     
     override func layoutSubviews() {

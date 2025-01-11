@@ -189,7 +189,6 @@ extension ChattingViewController: UITableViewDataSource {
             : .chatTableCell,
             for: indexPath
         )
-        cell.contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
         if chat.user == .user {
             guard let chatCell = cell as? UserTableViewCell else { return cell }
             userCellForRowAt(chatCell, chat: chat)
