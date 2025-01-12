@@ -11,6 +11,8 @@ public enum DateStyle: String, CaseIterable {
     case chatRaw = "yyyy-MM-dd HH:mm"
     case chat = "yy.MM.dd"
     case message = "hh:mm a"
+    case separator = "yyyy년 MM월 dd일 EEEE"
+    case normalization = "yyyyMMdd"
     
     public static var cachedDateFormatter: [DateStyle: DateFormatter] {
         var cachedFormatter = [DateStyle: DateFormatter]()

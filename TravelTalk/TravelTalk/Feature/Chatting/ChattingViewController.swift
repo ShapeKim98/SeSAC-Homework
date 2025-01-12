@@ -165,6 +165,20 @@ private extension ChattingViewController {
     }
 }
 
+// MARK: Functions
+private extension ChattingViewController {
+    func isSameDay(from: String, to: String) -> Bool {
+        let formatter: DateFormatter = .cachedFormatter(.chatRaw)
+        guard
+            let fromDate = formatter.date(from: from),
+            let toDate = formatter.date(from: to)
+        else { return false }
+        let calendar = Calendar.current
+       
+        return calendar.isDate(fromDate, inSameDayAs: toDate)
+    }
+}
+
 extension ChattingViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         message = textView.text
@@ -196,12 +210,17 @@ extension ChattingViewController: UITableViewDataSource {
             : .chatTableCell,
             for: indexPath
         )
+        var isSameDay: Bool = true
+        if indexPath.row < chatList.count - 1 {
+            let beforeChat = chatList[indexPath.row + 1]
+            isSameDay = self.isSameDay(from: chat.date, to: beforeChat.date)
+        }
         if chat.user == .user {
             guard let chatCell = cell as? UserTableViewCell else { return cell }
-            chatCell.forRowAt(chat)
+            chatCell.forRowAt(chat, isSameDay: isSameDay)
         } else {
             guard let chatCell = cell as? ChatTableViewCell else { return cell }
-            chatCell.forRowAt(chat)
+            chatCell.forRowAt(chat, isSameDay: isSameDay)
         }
         return cell
     }

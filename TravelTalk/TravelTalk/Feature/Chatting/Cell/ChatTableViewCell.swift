@@ -8,6 +8,8 @@
 import UIKit
 
 class ChatTableViewCell: UITableViewCell {
+    @IBOutlet var dateSeparatorLabel: UILabel!
+    @IBOutlet var dateSeparatorView: UIView!
     @IBOutlet var dateLabel: UILabel!
     @IBOutlet var messageLabel: UILabel!
     @IBOutlet var bubbleView: UIView!
@@ -22,6 +24,7 @@ class ChatTableViewCell: UITableViewCell {
         configureNameLabel()
         configureMessageLabel()
         configureDateLabel()
+        configureDateSeparator()
         
         selectionStyle = .none
         contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
@@ -32,9 +35,24 @@ class ChatTableViewCell: UITableViewCell {
         
         let height = profileImageView.frame.height
         profileImageView.layer.cornerRadius = height / 2
+        
+        guard !dateSeparatorView.isHidden else { return }
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` else { return }
+            let separatorHeight = self.dateSeparatorView.frame.height
+            self.dateSeparatorView.layer.cornerRadius = separatorHeight / 2
+        }
     }
     
-    func forRowAt(_ chat: Chat) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        dateSeparatorView.isHidden = true
+        dateSeparatorLabel.isHidden = true
+    }
+    
+    func forRowAt(_ chat: Chat, isSameDay: Bool) {
         profileImageView.image = UIImage(named: chat.user.profileImage)
         nameLabel.text = chat.user.rawValue
         messageLabel.text = chat.message
@@ -45,6 +63,14 @@ class ChatTableViewCell: UITableViewCell {
         }
         let formatter: DateFormatter = .cachedFormatter(.message)
         dateLabel.text = formatter.string(from: date)
+        
+        if !isSameDay {
+            let separatorFormatter: DateFormatter = .cachedFormatter(.separator)
+            let separatorText = separatorFormatter.string(from: date)
+            dateSeparatorLabel.text = separatorText
+            dateSeparatorView.isHidden = false
+            dateSeparatorLabel.isHidden = false
+        }
     }
 }
 
@@ -69,6 +95,14 @@ private extension ChatTableViewCell {
     
     func configureDateLabel() {
         dateLabel.ttDateStyle()
+    }
+    
+    func configureDateSeparator() {
+        dateSeparatorView.backgroundColor = .gray
+        dateSeparatorLabel.font = .systemFont(ofSize: 12)
+        dateSeparatorLabel.textColor = .white
+        dateSeparatorView.isHidden = true
+        dateSeparatorLabel.isHidden = true
     }
 }
 

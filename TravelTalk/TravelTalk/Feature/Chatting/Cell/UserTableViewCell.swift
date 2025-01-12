@@ -8,6 +8,8 @@
 import UIKit
 
 class UserTableViewCell: UITableViewCell {
+    @IBOutlet var dateSeparatorLabel: UILabel!
+    @IBOutlet var dateSeparatorView: UIView!
     @IBOutlet var dateLabel: UILabel!
     @IBOutlet var messageLabel: UILabel!
     @IBOutlet var bubbleView: UIView!
@@ -19,12 +21,32 @@ class UserTableViewCell: UITableViewCell {
         configureDateLabel()
         configureMessageLabel()
         configureBubbleView()
+        configureDateSeparator()
         
         selectionStyle = .none
         contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
     }
     
-    func forRowAt(_ chat: Chat) {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        guard !dateSeparatorView.isHidden else { return }
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` else { return }
+            let separatorHeight = self.dateSeparatorView.frame.height
+            self.dateSeparatorView.layer.cornerRadius = separatorHeight / 2
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        dateSeparatorView.isHidden = true
+        dateSeparatorLabel.isHidden = true
+    }
+    
+    func forRowAt(_ chat: Chat, isSameDay: Bool) {
         messageLabel.text = chat.message
         
         let rawFormatter: DateFormatter = .cachedFormatter(.chatRaw)
@@ -33,6 +55,14 @@ class UserTableViewCell: UITableViewCell {
         }
         let formatter: DateFormatter = .cachedFormatter(.message)
         dateLabel.text = formatter.string(from: date)
+        
+        if !isSameDay {
+            let separatorFormatter: DateFormatter = .cachedFormatter(.separator)
+            let separatorText = separatorFormatter.string(from: date)
+            dateSeparatorLabel.text = separatorText
+            dateSeparatorView.isHidden = false
+            dateSeparatorLabel.isHidden = false
+        }
     }
 }
 
@@ -48,6 +78,14 @@ private extension UserTableViewCell {
     
     func configureMessageLabel() {
         messageLabel.ttMessageStyle()
+    }
+    
+    func configureDateSeparator() {
+        dateSeparatorView.backgroundColor = .gray
+        dateSeparatorLabel.font = .systemFont(ofSize: 12)
+        dateSeparatorLabel.textColor = .white
+        dateSeparatorView.isHidden = true
+        dateSeparatorLabel.isHidden = true
     }
 }
 

@@ -131,7 +131,6 @@ extension ViewController: UITableViewDelegate {
 
 extension ViewController: ChattingViewControllerDelegate {
     func sendButtonTouchUpInside(_ viewController: ChattingViewController, room: ChatRoom) {
-        print(#function)
         let row = roomList.firstIndex { $0.chatroomId == room.chatroomId }
         guard let row else { return }
         roomList.remove(at: row)

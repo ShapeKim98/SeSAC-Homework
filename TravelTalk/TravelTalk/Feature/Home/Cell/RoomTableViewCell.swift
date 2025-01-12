@@ -28,6 +28,8 @@ class RoomTableViewCell: UITableViewCell {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
+        
         chatImageView.forEach { $0.isHidden = true }
         chat2ImageViewList.forEach { $0.isHidden = true }
         chat3ImageViewList.forEach { $0.isHidden = true }
