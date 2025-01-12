@@ -8,14 +8,22 @@
 import UIKit
 
 class RoomTableViewCell: UITableViewCell {
-    @IBOutlet var userCountLabel: UILabel!
-    @IBOutlet var chat4ImageViewList: [UIImageView]!
-    @IBOutlet var chat3ImageViewList: [UIImageView]!
-    @IBOutlet var chat2ImageViewList: [UIImageView]!
-    @IBOutlet var chatImageView: [UIImageView]!
-    @IBOutlet var chatDateLabel: UILabel!
-    @IBOutlet var chatMessageLabel: UILabel!
-    @IBOutlet var chatNameLabel: UILabel!
+    @IBOutlet
+    private var userCountLabel: UILabel!
+    @IBOutlet
+    private var chat4ImageViewList: [UIImageView]!
+    @IBOutlet
+    private var chat3ImageViewList: [UIImageView]!
+    @IBOutlet
+    private var chat2ImageViewList: [UIImageView]!
+    @IBOutlet
+    private var chatImageView: [UIImageView]!
+    @IBOutlet
+    private var chatDateLabel: UILabel!
+    @IBOutlet
+    private var chatMessageLabel: UILabel!
+    @IBOutlet
+    private var chatNameLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -80,20 +88,6 @@ class RoomTableViewCell: UITableViewCell {
         
         chatDateLabel.text = dateString
     }
-    
-    func updateImages(_ imageViewList: [UIImageView], images: [UIImage]) {
-        for (index, imageView) in imageViewList.enumerated() {
-            imageView.isHidden = false
-            imageView.image = images[index]
-        }
-    }
-    
-    func circleImageView(_ imageViewList: [UIImageView]) {
-        for imageView in imageViewList {
-            let height = imageView.frame.height
-            imageView.layer.cornerRadius = height / 2
-        }
-    }
 }
 
 // MARK: Configure View
@@ -121,6 +115,20 @@ private extension RoomTableViewCell {
     func configureUserCountLabel() {
         userCountLabel.textColor = .secondaryLabel
         userCountLabel.font = .boldSystemFont(ofSize: 14)
+    }
+    
+    func updateImages(_ imageViewList: [UIImageView], images: [UIImage]) {
+        for (index, imageView) in imageViewList.enumerated() {
+            imageView.isHidden = false
+            imageView.image = images[index]
+        }
+    }
+    
+    func circleImageView(_ imageViewList: [UIImageView]) {
+        for imageView in imageViewList {
+            let height = imageView.frame.height
+            imageView.layer.cornerRadius = height / 2
+        }
     }
 }
 

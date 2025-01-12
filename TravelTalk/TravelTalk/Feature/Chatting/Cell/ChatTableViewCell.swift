@@ -8,13 +8,20 @@
 import UIKit
 
 class ChatTableViewCell: UITableViewCell {
-    @IBOutlet var dateSeparatorLabel: UILabel!
-    @IBOutlet var dateSeparatorView: UIView!
-    @IBOutlet var dateLabel: UILabel!
-    @IBOutlet var messageLabel: UILabel!
-    @IBOutlet var bubbleView: UIView!
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var profileImageView: UIImageView!
+    @IBOutlet
+    private var dateSeparatorLabel: UILabel!
+    @IBOutlet
+    private var dateSeparatorView: UIView!
+    @IBOutlet
+    private var dateLabel: UILabel!
+    @IBOutlet
+    private var messageLabel: UILabel!
+    @IBOutlet
+    private var bubbleView: UIView!
+    @IBOutlet
+    private var nameLabel: UILabel!
+    @IBOutlet
+    private var profileImageView: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

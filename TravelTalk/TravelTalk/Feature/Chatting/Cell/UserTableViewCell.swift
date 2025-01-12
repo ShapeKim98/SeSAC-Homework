@@ -8,11 +8,16 @@
 import UIKit
 
 class UserTableViewCell: UITableViewCell {
-    @IBOutlet var dateSeparatorLabel: UILabel!
-    @IBOutlet var dateSeparatorView: UIView!
-    @IBOutlet var dateLabel: UILabel!
-    @IBOutlet var messageLabel: UILabel!
-    @IBOutlet var bubbleView: UIView!
+    @IBOutlet
+    private var dateSeparatorLabel: UILabel!
+    @IBOutlet
+    private var dateSeparatorView: UIView!
+    @IBOutlet
+    private var dateLabel: UILabel!
+    @IBOutlet
+    private var messageLabel: UILabel!
+    @IBOutlet
+    private var bubbleView: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
