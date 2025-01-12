@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol ChattingViewControllerDelegate: AnyObject {
+    func sendButtonTouchUpInside(_ viewController: ChattingViewController, room: ChatRoom)
+}
+
 class ChattingViewController: UIViewController {
     @IBOutlet
     private var messageInputView: UIView!
@@ -19,19 +23,31 @@ class ChattingViewController: UIViewController {
     @IBOutlet
     private var messageTextFieldBackgroundView: UIView!
     
-    private var room: ChatRoom = mockChatList[4] {
-        didSet { didSetRoom() }
-    }
+    private var room: ChatRoom
     private var chatList: [Chat] {
-        room.chatList.reversed()
+        didSet { didChatList() }
     }
     private var message = "" {
         didSet { didSetMessage() }
     }
     private let placeholder = "메세지를 입력하세요"
     
+    weak var delegate: (any ChattingViewControllerDelegate)?
+    
+    init?(coder: NSCoder, room: ChatRoom) {
+        self.room = room
+        self.chatList = room.chatList.reversed()
+        super.init(coder: coder)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        configureNavigationBar()
         
         configureChatTableView()
         
@@ -48,7 +64,9 @@ class ChattingViewController: UIViewController {
         let formatter: DateFormatter = .cachedFormatter(.chatRaw)
         let date = formatter.string(from: Date())
         let newChat = Chat(user: .user, date: date, message: message)
+        chatList.insert(newChat, at: 0)
         room.chatList.append(newChat)
+        delegate?.sendButtonTouchUpInside(self, room: room)
         message = ""
         messageTextView.text = ""
     }
@@ -60,6 +78,11 @@ class ChattingViewController: UIViewController {
 
 // MARK: Configure View
 private extension ChattingViewController {
+    func configureNavigationBar() {
+        navigationItem.title = room.chatroomName
+        navigationController?.navigationBar.topItem?.title = ""
+    }
+    
     func configureChatTableView() {
         chatTableView.dataSource = self
         chatTableView.delegate = self
@@ -134,7 +157,7 @@ private extension ChattingViewController {
         }
     }
     
-    func didSetRoom() {
+    func didChatList() {
         chatTableView.insertRows(
             at: [IndexPath(row: 0, section: 0)],
             with: .top
@@ -165,10 +188,6 @@ extension ChattingViewController: UITableViewDataSource {
         return chatList.count
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return tableView.estimatedRowHeight
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let chat = chatList[indexPath.row]
         let cell = chatTableView.dequeueReusableCell(
@@ -189,5 +208,11 @@ extension ChattingViewController: UITableViewDataSource {
 }
 
 extension ChattingViewController: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return tableView.estimatedRowHeight
+    }
+}
+
+extension String {
+    static let chattingViewController = "ChattingViewController"
 }

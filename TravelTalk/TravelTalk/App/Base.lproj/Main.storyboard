@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="0at-j2-Mmh">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="5qi-iS-1GW">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
@@ -42,7 +42,7 @@
         <!--Chatting View Controller-->
         <scene sceneID="Xmx-89-gU9">
             <objects>
-                <viewController id="0at-j2-Mmh" customClass="ChattingViewController" customModule="TravelTalk" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChattingViewController" id="0at-j2-Mmh" customClass="ChattingViewController" customModule="TravelTalk" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="UQG-oc-sOu">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -126,7 +126,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1977.8625954198471" y="4.9295774647887329"/>
+            <point key="canvasLocation" x="1966" y="12"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="FFR-4t-Fi0">

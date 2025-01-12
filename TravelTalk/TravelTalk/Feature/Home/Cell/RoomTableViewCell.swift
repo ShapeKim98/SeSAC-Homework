@@ -62,15 +62,15 @@ class RoomTableViewCell: UITableViewCell {
         chatNameLabel.text = room.chatroomName
         
         let chatList = room.chatList.sorted { lhs, rhs in
-            let formatter: DateFormatter = .cachedFormatter(.chatRaw)
+            let formatter: DateFormatter = .cachedFormatter(.message)
             let lhsDate = formatter.date(from: lhs.date) ?? .now
             let rhsDate = formatter.date(from: rhs.date) ?? .now
             return lhsDate > rhsDate
         }
         
-        chatMessageLabel.text = chatList.first?.message
+        chatMessageLabel.text = chatList.last?.message
         
-        guard let lastChat = chatList.first else { return }
+        guard let lastChat = chatList.last else { return }
         let rawFormatter: DateFormatter = .cachedFormatter(.chatRaw)
         guard let date = rawFormatter.date(from: lastChat.date) else { return }
         let formatter: DateFormatter = .cachedFormatter(.chat)
