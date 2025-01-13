@@ -56,7 +56,8 @@ private extension JackflixViewController {
         vstack.distribution = .fillEqually
         vstack.alignment = .center
         vstack.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
+//            make.centerY.equalToSuperview()
+            make.centerY.lessThanOrEqualToSuperview()
             make.horizontalEdges.equalToSuperview().inset(32)
         }
     }
@@ -128,6 +129,7 @@ private extension JackflixViewController {
         addInfoSwitch.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(32)
             make.top.equalTo(signUpButton.snp.bottom).offset(20)
+            make.bottom.lessThanOrEqualTo(view.keyboardLayoutGuide.snp.top)
         }
     }
 }
