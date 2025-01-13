@@ -65,7 +65,7 @@ private extension ViewController {
             for: .touchUpInside
         )
         movieSearchButton.snp.makeConstraints { make in
-            make.bottom.equalTo(naverPayButton.snp.bottom).offset(60)
+            make.top.equalTo(naverPayButton.snp.bottom).offset(60)
             make.centerX.equalToSuperview()
         }
     }
