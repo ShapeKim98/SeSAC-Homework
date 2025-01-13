@@ -55,7 +55,7 @@ class RoomTableViewCell: UITableViewCell {
     
     func forRowAt(_ room: ChatRoom, userCount: Int) {
         let uiImages = room.chatroomImage.compactMap { UIImage(named: $0) }
-        if userCount > 1 {
+        if userCount > 2 {
             userCountLabel.text = "\(userCount)"
         } else {
             userCountLabel.text = ""

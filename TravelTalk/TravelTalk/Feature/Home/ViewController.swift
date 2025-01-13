@@ -101,7 +101,7 @@ extension ViewController: UITableViewDataSource {
         guard let chatRoomCell = cell as? RoomTableViewCell else { return cell }
         let room = filteredRoomList[indexPath.row]
         let count = cachedUsers[room.chatroomId]?.count ?? 0
-        chatRoomCell.forRowAt(room, userCount: count)
+        chatRoomCell.forRowAt(room, userCount: count + 1)
         return chatRoomCell
     }
 }
