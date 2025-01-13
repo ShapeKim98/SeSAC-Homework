@@ -20,6 +20,8 @@ class ViewController: UIViewController {
         configureNaverPayButton()
         
         configureJackflixButton()
+        
+        configureMovieSearchButton()
     }
 }
 
@@ -53,6 +55,21 @@ private extension ViewController {
         }
     }
     
+    func configureMovieSearchButton() {
+        view.addSubview(movieSearchButton)
+        movieSearchButton.setTitle("영화 검색", for: .normal)
+        movieSearchButton.setTitleColor(.blue, for: .normal)
+        movieSearchButton.addTarget(
+            self,
+            action: #selector(movieSearchButtonTouchUpInside),
+            for: .touchUpInside
+        )
+        movieSearchButton.snp.makeConstraints { make in
+            make.bottom.equalTo(naverPayButton.snp.bottom).offset(60)
+            make.centerX.equalToSuperview()
+        }
+    }
+    
     @objc
     func jackflixButtonTouchUpInside() {
         let viewController = JackflixViewController()
@@ -62,6 +79,12 @@ private extension ViewController {
     @objc
     func naverPayButtonTouchUpInside() {
         let viewController = NaverPayViewController()
+        present(viewController, animated: true)
+    }
+    
+    @objc
+    func movieSearchButtonTouchUpInside() {
+        let viewController = MovieSearchViewController()
         present(viewController, animated: true)
     }
 }
