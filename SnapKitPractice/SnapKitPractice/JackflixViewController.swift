@@ -44,7 +44,7 @@ private extension JackflixViewController {
         titleLabel.font = .systemFont(ofSize: 28, weight: .heavy)
         titleLabel.textColor = .red
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(50)
             make.centerX.equalToSuperview()
         }
     }
