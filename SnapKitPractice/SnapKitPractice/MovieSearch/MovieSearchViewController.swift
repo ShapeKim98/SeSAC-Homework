@@ -63,6 +63,7 @@ private extension MovieSearchViewController {
     
     func configureSearchTextField() {
         view.addSubview(searchTextField)
+        searchTextField.delegate = self
         searchTextField.borderStyle = .none
         searchTextField.backgroundColor = .clear
         searchTextField.textColor = .white
@@ -133,6 +134,23 @@ extension MovieSearchViewController: UITableViewDelegate,
         let movie = boxOffice[indexPath.row]
         movieCell.configure(movie: movie)
         return movieCell
+    }
+}
+
+extension MovieSearchViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return true }
+        let newText = text + string
+        guard
+            newText.date(format: .yyyyMMdd) != nil,
+            newText.count == 8
+        else { return true }
+        fetchBoxOffice(date: newText)
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
     }
 }
 
