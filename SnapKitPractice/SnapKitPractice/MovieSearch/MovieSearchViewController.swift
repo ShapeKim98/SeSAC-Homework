@@ -30,7 +30,14 @@ class MovieSearchViewController: UIViewController {
         
         configureCollectionView()
         
-        fetchBoxOffice()
+        guard
+            let date = Calendar.current.date(byAdding: .day, value: -1, to: .now)
+        else { return }
+        let dateString = date.string(format: .yyyyMMdd)
+        
+        searchTextField.text = dateString
+        
+        fetchBoxOffice(date: dateString)
     }
 }
 
@@ -93,9 +100,8 @@ private extension MovieSearchViewController {
 
 // MARK: Functions
 private extension MovieSearchViewController {
-    func fetchBoxOffice() {
+    func fetchBoxOffice(date: String) {
         let apiKey = Bundle.main.kobisApiKey
-        let date = "20241225"
         
         let url = "https://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=\(apiKey)&targetDt=\(date)&itemPerPage=10"
         AF
