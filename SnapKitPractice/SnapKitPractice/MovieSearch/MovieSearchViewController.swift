@@ -8,13 +8,16 @@
 import UIKit
 
 import SnapKit
+import Alamofire
 
 class MovieSearchViewController: UIViewController {
     private let tableView = UITableView()
     private let searchTextField = UITextField()
     private let searchButton = UIButton()
     
-    private let movieList = Movie.mock
+    private var boxOffice: [BoxOffice] = [] {
+        didSet { tableView.reloadData() }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,9 +29,12 @@ class MovieSearchViewController: UIViewController {
         configureSearchButton()
         
         configureCollectionView()
+        
+        fetchBoxOffice()
     }
 }
 
+// MARK: Configure Views
 private extension MovieSearchViewController {
     func configureCollectionView() {
         view.addSubview(tableView)
@@ -85,10 +91,31 @@ private extension MovieSearchViewController {
     }
 }
 
+// MARK: Functions
+private extension MovieSearchViewController {
+    func fetchBoxOffice() {
+        let apiKey = Bundle.main.kobisApiKey
+        let date = "20241225"
+        
+        let url = "https://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=\(apiKey)&targetDt=\(date)&itemPerPage=10"
+        AF
+            .request(url)
+            .responseDecodable(of: BoxOfficeDTO.self) { [weak self] response in
+                guard let `self` else { return }
+                switch response.result {
+                case .success(let data):
+                    self.boxOffice = data.toEntity()
+                case .failure(let error):
+                    print(error)
+                }
+            }
+    }
+}
+
 extension MovieSearchViewController: UITableViewDelegate,
                                      UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        movieList.count
+        boxOffice.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -97,7 +124,7 @@ extension MovieSearchViewController: UITableViewDelegate,
             for: indexPath
         )
         guard let movieCell = cell as? MovieTableViewCell else { return cell }
-        let movie = movieList[indexPath.row]
+        let movie = boxOffice[indexPath.row]
         movieCell.configure(movie: movie)
         return movieCell
     }
