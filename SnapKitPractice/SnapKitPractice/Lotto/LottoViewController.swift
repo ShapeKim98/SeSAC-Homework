@@ -8,6 +8,7 @@
 import UIKit
 
 import SnapKit
+import Alamofire
 
 class LottoViewController: UIViewController {
     private let drwNoTextField = UITextField()
@@ -21,17 +22,19 @@ class LottoViewController: UIViewController {
     private var drwNoList = [DRWNoCell]()
     private let bonusLabel = UILabel()
     
-    private let lotto: Lotto = .mock
+    private var lotto: Lotto? {
+        didSet { didSetLotto() }
+    }
     private var drwNos: [String] {
         return [
-            "\(lotto.drwtNo1)",
-            "\(lotto.drwtNo2)",
-            "\(lotto.drwtNo3)",
-            "\(lotto.drwtNo4)",
-            "\(lotto.drwtNo5)",
-            "\(lotto.drwtNo6)",
+            "\(lotto?.drwtNo1 ?? 0)",
+            "\(lotto?.drwtNo2 ?? 0)",
+            "\(lotto?.drwtNo3 ?? 0)",
+            "\(lotto?.drwtNo4 ?? 0)",
+            "\(lotto?.drwtNo5 ?? 0)",
+            "\(lotto?.drwtNo6 ?? 0)",
             "+",
-            "\(lotto.bnusNo)"
+            "\(lotto?.bnusNo ?? 0)"
         ]
     }
     
@@ -41,6 +44,8 @@ class LottoViewController: UIViewController {
         configureUI()
         
         configureLayout()
+        
+        fetchLotto(no: "113")
     }
     
     override func viewDidLayoutSubviews() {
@@ -79,7 +84,7 @@ private extension LottoViewController {
         drwNoInfoLabel.font = .systemFont(ofSize: 16)
         
         view.addSubview(drwNoDateLabel)
-        drwNoDateLabel.text = "\(lotto.drwNoDate) 추첨"
+        drwNoDateLabel.text = "\(lotto?.drwNoDate ?? "") 추첨"
         drwNoDateLabel.font = .systemFont(ofSize: 12)
         drwNoDateLabel.textColor = .secondaryLabel
         
@@ -88,18 +93,7 @@ private extension LottoViewController {
         
         view.addSubview(drwNoLabel)
         drwNoLabel.font = .systemFont(ofSize: 28)
-        let attributedString = NSMutableAttributedString(
-            string: "\(lotto.drwNo)회 당첨결과"
-        )
-        let range = attributedString.mutableString.range(
-            of: "\(lotto.drwNo)회"
-        )
-        attributedString.addAttributes(
-            [.foregroundColor: UIColor.systemYellow,
-             .font: UIFont.systemFont(ofSize: 28, weight: .bold)],
-            range: range
-        )
-        drwNoLabel.attributedText = attributedString
+        updateDRWNoLabelAttributedText()
         
         view.addSubview(drwNoHStack)
         drwNoHStack.axis = .horizontal
@@ -168,8 +162,69 @@ private extension LottoViewController {
         }
     }
     
-    func fetchLotto() {
+    func updateDRWNoLabelAttributedText() {
+        let attributedString = NSMutableAttributedString(
+            string: "\(lotto?.drwNo ?? 0)회 당첨결과"
+        )
+        let range = attributedString.mutableString.range(
+            of: "\(lotto?.drwNo ?? 0)회"
+        )
+        attributedString.addAttributes(
+            [.foregroundColor: UIColor.systemYellow,
+             .font: UIFont.systemFont(ofSize: 28, weight: .bold)],
+            range: range
+        )
+        drwNoLabel.attributedText = attributedString
+    }
+}
+
+// MARK: Data Bindings
+private extension LottoViewController {
+    func didSetLotto() {
+        updateDRWNoLabelAttributedText()
         
+        drwNoDateLabel.text = "\(lotto?.drwNoDate ?? "") 추첨"
+        
+        for cell in drwNoList {
+            drwNoHStack.removeArrangedSubview(cell)
+        }
+        drwNoList.removeAll()
+        
+        for no in drwNos {
+            let drwNoCell = DRWNoCell()
+            drwNoHStack.addArrangedSubview(drwNoCell)
+            drwNoList.append(drwNoCell)
+            drwNoCell.configureUI(no)
+        }
+        
+        for cell in drwNoList {
+            cell.configureLayout()
+            if drwNoList.last == cell {
+                bonusLabel.snp.makeConstraints { make in
+                    make.top.equalTo(cell.snp.bottom).offset(4)
+                    make.centerX.equalTo(cell)
+                }
+            }
+        }
+    }
+}
+
+// MARK: Functions
+private extension LottoViewController {
+    func fetchLotto(no: String) {
+        let url = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=\(no)"
+        AF
+            .request(url)
+            .responseDecodable(of: Lotto.self) { [weak self] response in
+                guard let `self` else { return }
+                
+                switch response.result {
+                case .success(let data):
+                    self.lotto = data
+                case .failure(let error):
+                    print(error)
+                }
+            }
     }
 }
 
