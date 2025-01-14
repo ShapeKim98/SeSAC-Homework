@@ -39,12 +39,8 @@ class LottoViewController: UIViewController {
     }
     private var lotteryDay: Int? {
         let firstLottery = "2002-12-07"
-        let strategy = Date.ParseStrategy(
-            format: "\(year: .defaultDigits)-\(month: .twoDigits)-\(day: .twoDigits)",
-            timeZone: .autoupdatingCurrent
-        )
         guard
-            let date = try? Date(firstLottery, strategy: strategy)
+            let date = firstLottery.date(format: .yyyy_MM_dd)
         else { return nil }
         
         let count = Calendar
