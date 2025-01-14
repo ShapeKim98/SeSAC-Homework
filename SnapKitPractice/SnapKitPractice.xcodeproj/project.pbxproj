@@ -153,6 +153,8 @@
 /* Begin XCBuildConfiguration section */
 		C9A4D8032D34F89100966911 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C9A4D7F12D34F88F00966911 /* SnapKitPractice */;
+			baseConfigurationReferenceRelativePath = Key.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -181,6 +183,8 @@
 		};
 		C9A4D8042D34F89100966911 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C9A4D7F12D34F88F00966911 /* SnapKitPractice */;
+			baseConfigurationReferenceRelativePath = Key.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

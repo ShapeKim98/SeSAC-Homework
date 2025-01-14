@@ -14,7 +14,6 @@ class MovieSearchViewController: UIViewController {
     private let searchTextField = UITextField()
     private let searchButton = UIButton()
     
-    
     private let movieList = Movie.mock
     
     override func viewDidLoad() {
