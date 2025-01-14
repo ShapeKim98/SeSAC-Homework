@@ -37,15 +37,40 @@ class LottoViewController: UIViewController {
             "\(lotto?.bnusNo ?? 0)"
         ]
     }
+    private var lotteryDay: Int? {
+        let firstLottery = "2002-12-07"
+        let strategy = Date.ParseStrategy(
+            format: "\(year: .defaultDigits)-\(month: .twoDigits)-\(day: .twoDigits)",
+            timeZone: .autoupdatingCurrent
+        )
+        guard
+            let date = try? Date(firstLottery, strategy: strategy)
+        else { return nil }
+        
+        let count = Calendar
+            .current
+            .dateComponents(
+                [.weekdayOrdinal],
+                from: date,
+                to: .now
+            )
+            .weekdayOrdinal
+        return count
+    }
+    private var lotteryRange = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        guard let lotteryDay else { return }
+        
+        lotteryRange = Array(1...lotteryDay).reversed().map { String($0) }
         
         configureUI()
         
         configureLayout()
         
-        fetchLotto(no: "113")
+        fetchLotto(no: "\(lotteryDay)")
     }
     
     override func viewDidLayoutSubviews() {
@@ -64,6 +89,7 @@ class LottoViewController: UIViewController {
 // MARK: Configure View
 private extension LottoViewController {
     func configureUI() {
+        
         view.backgroundColor = .white
         
         view.addSubview(drwNoTextFieldContainer)
@@ -71,6 +97,7 @@ private extension LottoViewController {
         drwNoTextFieldContainer.border(radius: 4, color: .separator, width: 1)
         drwNoTextFieldContainer.addSubview(drwNoTextField)
         
+        drwNoTextField.text = "\(lotteryDay ?? 0)"
         drwNoTextField.borderStyle = .none
         drwNoTextField.textAlignment = .center
         drwNoTextField.font = .systemFont(ofSize: 24)
@@ -285,11 +312,16 @@ extension LottoViewController: UIPickerViewDataSource, UIPickerViewDelegate {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return 1
+        return lotteryRange.count
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        drwNoTextField.text = "\(1154)"
+        drwNoTextField.text = lotteryRange[row]
+        fetchLotto(no: lotteryRange[row])
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return lotteryRange[row]
     }
 }
 
