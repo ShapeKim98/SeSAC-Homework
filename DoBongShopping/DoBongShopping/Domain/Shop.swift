@@ -32,10 +32,10 @@ extension Shop {
 public extension ShopResponse.Item {
     func toEntity() -> Shop.Item {
         return Shop.Item(
-            title: self.title,
+            title: self.title.removeHTMLTags(),
             image: self.image,
             lprice: self.lprice,
-            mallName: self.mallName
+            mallName: self.mallName.removeHTMLTags()
         )
     }
 }
