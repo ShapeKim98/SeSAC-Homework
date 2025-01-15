@@ -13,15 +13,20 @@ class ViewController: UIViewController {
     let jackflixButton = UIButton()
     let naverPayButton = UIButton()
     let movieSearchButton = UIButton()
+    let lottoButton = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.backgroundColor = .white
         
         configureNaverPayButton()
         
         configureJackflixButton()
         
         configureMovieSearchButton()
+        
+        configureLottoButton()
     }
 }
 
@@ -70,6 +75,21 @@ private extension ViewController {
         }
     }
     
+    func configureLottoButton() {
+        view.addSubview(lottoButton)
+        lottoButton.setTitle("로또 조회", for: .normal)
+        lottoButton.setTitleColor(.blue, for: .normal)
+        lottoButton.addTarget(
+            self,
+            action: #selector(lottoButtonTouchUpInside),
+            for: .touchUpInside
+        )
+        lottoButton.snp.makeConstraints { make in
+            make.top.equalTo(movieSearchButton.snp.bottom).offset(60)
+            make.centerX.equalToSuperview()
+        }
+    }
+    
     @objc
     func jackflixButtonTouchUpInside() {
         let viewController = JackflixViewController()
@@ -85,6 +105,12 @@ private extension ViewController {
     @objc
     func movieSearchButtonTouchUpInside() {
         let viewController = MovieSearchViewController()
+        present(viewController, animated: true)
+    }
+    
+    @objc
+    func lottoButtonTouchUpInside() {
+        let viewController = LottoViewController()
         present(viewController, animated: true)
     }
 }

@@ -8,14 +8,16 @@
 import UIKit
 
 import SnapKit
+import Alamofire
 
 class MovieSearchViewController: UIViewController {
     private let tableView = UITableView()
     private let searchTextField = UITextField()
     private let searchButton = UIButton()
     
-    
-    private let movieList = Movie.mock
+    private var boxOffice: [BoxOffice] = [] {
+        didSet { tableView.reloadData() }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,9 +29,19 @@ class MovieSearchViewController: UIViewController {
         configureSearchButton()
         
         configureCollectionView()
+        
+        guard
+            let date = Calendar.current.date(byAdding: .day, value: -1, to: .now)
+        else { return }
+        let dateString = date.string(format: .yyyyMMdd)
+        
+        searchTextField.text = dateString
+        
+        fetchBoxOffice(date: dateString)
     }
 }
 
+// MARK: Configure Views
 private extension MovieSearchViewController {
     func configureCollectionView() {
         view.addSubview(tableView)
@@ -51,6 +63,7 @@ private extension MovieSearchViewController {
     
     func configureSearchTextField() {
         view.addSubview(searchTextField)
+        searchTextField.delegate = self
         searchTextField.borderStyle = .none
         searchTextField.backgroundColor = .clear
         searchTextField.textColor = .white
@@ -86,10 +99,30 @@ private extension MovieSearchViewController {
     }
 }
 
+// MARK: Functions
+private extension MovieSearchViewController {
+    func fetchBoxOffice(date: String) {
+        let apiKey = Bundle.main.kobisApiKey
+        
+        let url = "https://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=\(apiKey)&targetDt=\(date)&itemPerPage=10"
+        AF
+            .request(url)
+            .responseDecodable(of: BoxOfficeDTO.self) { [weak self] response in
+                guard let `self` else { return }
+                switch response.result {
+                case .success(let data):
+                    self.boxOffice = data.toEntity()
+                case .failure(let error):
+                    print(error)
+                }
+            }
+    }
+}
+
 extension MovieSearchViewController: UITableViewDelegate,
                                      UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        movieList.count
+        boxOffice.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -98,9 +131,26 @@ extension MovieSearchViewController: UITableViewDelegate,
             for: indexPath
         )
         guard let movieCell = cell as? MovieTableViewCell else { return cell }
-        let movie = movieList[indexPath.row]
+        let movie = boxOffice[indexPath.row]
         movieCell.configure(movie: movie)
         return movieCell
+    }
+}
+
+extension MovieSearchViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return true }
+        let newText = text + string
+        guard
+            newText.date(format: .yyyyMMdd) != nil,
+            newText.count == 8
+        else { return true }
+        fetchBoxOffice(date: newText)
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
     }
 }
 

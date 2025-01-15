@@ -14,7 +14,7 @@ class MovieTableViewCell: UITableViewCell {
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     
-    private var movie: Movie?
+    private var movie: BoxOffice?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -24,7 +24,7 @@ class MovieTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(movie: Movie) {
+    func configure(movie: BoxOffice) {
         self.movie = movie
         
         backgroundColor = .clear
@@ -40,7 +40,7 @@ class MovieTableViewCell: UITableViewCell {
 private extension MovieTableViewCell {
     func configureNumberLabel() {
         contentView.addSubview(numberLabel)
-        numberLabel.text = "\(movie?.number ?? 0)"
+        numberLabel.text = "\(movie?.rank ?? "")"
         numberLabel.font = .systemFont(ofSize: 16, weight: .bold)
         numberLabel.textColor = .black
         numberLabel.backgroundColor = .white
@@ -54,7 +54,7 @@ private extension MovieTableViewCell {
     
     func configureTitleLabel() {
         contentView.addSubview(titleLabel)
-        titleLabel.text = movie?.title
+        titleLabel.text = movie?.movieNm
         titleLabel.font = .systemFont(ofSize: 16, weight: .bold)
         titleLabel.textColor = .white
         titleLabel.snp.makeConstraints { make in
@@ -65,7 +65,7 @@ private extension MovieTableViewCell {
     
     func configureDateLabel() {
         contentView.addSubview(dateLabel)
-        dateLabel.text = movie?.date
+        dateLabel.text = movie?.openDt
         dateLabel.font = .systemFont(ofSize: 12, weight: .regular)
         dateLabel.textColor = .white
         dateLabel.textAlignment = .right
