@@ -24,6 +24,6 @@ extension Shop {
         public let title: String
         public let image: String
         public let lprice: Int
-        public let mailName: String
+        public let mallName: String
     }
 }
