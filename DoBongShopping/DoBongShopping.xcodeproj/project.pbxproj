@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C92079872D3794CB0016889E /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C92079862D3794CB0016889E /* Alamofire */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		C920796D2D3792A10016889E /* DoBongShopping.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoBongShopping.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C92079872D3794CB0016889E /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = DoBongShopping;
 			packageProductDependencies = (
+				C92079862D3794CB0016889E /* Alamofire */,
 			);
 			productName = DoBongShopping;
 			productReference = C920796D2D3792A10016889E /* DoBongShopping.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = C92079642D3792A00016889E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C92079852D3794CB0016889E /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C920796E2D3792A10016889E /* Products */;
 			projectDirPath = "";
@@ -335,6 +344,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C92079852D3794CB0016889E /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C92079862D3794CB0016889E /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C92079852D3794CB0016889E /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C92079652D3792A00016889E /* Project object */;
 }
