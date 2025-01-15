@@ -9,7 +9,7 @@ import Foundation
 
 import Alamofire
 
-public actor ShopClient {
+public class ShopClient {
     public static let shared = ShopClient()
     
     public func fetchShop(_ model: ShopRequest) async throws -> ShopResponse {
