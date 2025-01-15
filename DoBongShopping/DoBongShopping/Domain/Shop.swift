@@ -34,7 +34,7 @@ public extension ShopResponse.Item {
         return Shop.Item(
             title: self.title.removeHTMLTags(),
             image: self.image,
-            lprice: self.lprice,
+            lprice: Int(self.lprice)?.formatted() ?? "",
             mallName: self.mallName.removeHTMLTags()
         )
     }
