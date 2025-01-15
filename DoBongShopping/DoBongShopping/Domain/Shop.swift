@@ -8,6 +8,7 @@
 import Foundation
 
 public struct Shop {
+    public let total: Int
     public let page: Page
     public let list: [Item]
 }
@@ -25,5 +26,29 @@ extension Shop {
         public let image: String
         public let lprice: Int
         public let mallName: String
+    }
+}
+
+public extension ShopResponse.Item {
+    func toEntity() -> Shop.Item {
+        return Shop.Item(
+            title: self.title,
+            image: self.image,
+            lprice: self.lprice,
+            mallName: self.mallName
+        )
+    }
+}
+
+public extension ShopResponse {
+    func toEntity() -> Shop {
+        return Shop(
+            total: self.total,
+            page: Shop.Page(
+                start: self.start,
+                display: self.display
+            ),
+            list: self.items.map { $0.toEntity() }
+        )
     }
 }
