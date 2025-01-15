@@ -31,10 +31,10 @@ public class ShopClient {
         return try await withCheckedThrowingContinuation { continuation in
             AF
                 .request(url, method: .get, headers: header)
-                .responseString { print($0) }
                 .responseDecodable(of: ShopResponse.self) { response in
                     switch response.result {
                     case .success(let data):
+                        dump(data)
                         continuation.resume(returning: data)
                     case .failure(let error):
                         continuation.resume(throwing: error)
