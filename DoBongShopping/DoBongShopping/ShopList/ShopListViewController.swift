@@ -8,6 +8,7 @@
 import UIKit
 
 import SnapKit
+import Alamofire
 
 class ShopListViewController: UIViewController {
     private let totalLabel = UILabel()
@@ -19,7 +20,9 @@ class ShopListViewController: UIViewController {
     }()
     
     private let query: String
-    private var shop: Shop
+    private var shop: Shop {
+        didSet { didSetShop() }
+    }
     private var selectedSort: Sort = .sim {
         didSet { didSetSelectedSort() }
     }
@@ -161,12 +164,34 @@ private extension ShopListViewController {
             }
         }
     }
+    
+    func didSetShop() {
+        collectionView.reloadData()
+    }
 }
 
 // MARK: Functions
 private extension ShopListViewController {
     func sortButtonTouchUpInside(sort: Sort) {
         selectedSort = sort
+        
+        fetchShop()
+    }
+    
+    func fetchShop() {
+        Task { [weak self] in
+            guard let `self` else { return }
+            
+            let request = ShopRequest(
+                query: self.query,
+                sort: self.selectedSort.rawValue
+            )
+            do {
+                self.shop = try await ShopClient.shared.fetchShop(request).toEntity()
+            } catch {
+                print(error as? AFError)
+            }
+        }
     }
 }
 
