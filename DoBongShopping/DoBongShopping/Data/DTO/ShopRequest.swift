@@ -12,4 +12,16 @@ public struct ShopRequest {
     public let start: Int
     public let display: Int
     public let sort: String
+    
+    public init(
+        query: String,
+        start: Int = 1,
+        display: Int = 100,
+        sort: String = "sim"
+    ) {
+        self.query = query
+        self.start = start
+        self.display = display
+        self.sort = sort
+    }
 }

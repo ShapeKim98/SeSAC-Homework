@@ -19,13 +19,17 @@ class ShopListViewController: UIViewController {
     }()
     
     private let query: String
-    private var shop: Shop = ShopResponse.mock.toEntity()
+    private var shop: Shop
     private var selectedSort: Sort = .sim {
         didSet { didSetSelectedSort() }
     }
     
-    init(query: String) {
+    init(
+        query: String,
+        shop: Shop = ShopResponse.mock.toEntity()
+    ) {
         self.query = query
+        self.shop = shop
         
         super.init(nibName: nil, bundle: nil)
     }

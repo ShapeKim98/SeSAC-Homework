@@ -55,7 +55,7 @@ class ShopCollectionViewCell: UICollectionViewCell {
             make.horizontalEdges.equalToSuperview().inset(12)
         }
         
-        lpriceLabel.text = shopItem.lprice.formatted()
+        lpriceLabel.text = shopItem.lprice
         lpriceLabel.font = .systemFont(ofSize: 18, weight: .bold)
         lpriceLabel.textColor = .white
         contentView.addSubview(lpriceLabel)

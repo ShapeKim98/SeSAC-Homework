@@ -24,7 +24,7 @@ extension Shop {
     public struct Item {
         public let title: String
         public let image: String
-        public let lprice: Int
+        public let lprice: String
         public let mallName: String
     }
 }

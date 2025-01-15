@@ -8,6 +8,7 @@
 import UIKit
 
 import SnapKit
+import Alamofire
 
 class SearchViewController: UIViewController {
     let searchBar = UISearchBar()
@@ -56,7 +57,17 @@ private extension SearchViewController {
 
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        
+        guard let query = searchBar.text else { return }
+        Task { [weak self] in
+            guard let `self` else { return }
+            let request = ShopRequest(query: query)
+            do {
+                let shop = try await ShopClient.shared.fetchShop(request).toEntity()
+                self.present(ShopListViewController(query: query, shop: shop), animated: true)
+            } catch {
+                print(error as? AFError)
+            }
+        }
     }
 }
 

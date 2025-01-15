@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
         
-        let viewController = UINavigationController(rootViewController: ShopListViewController(query: "캠핑카"))
+        let viewController = UINavigationController(rootViewController: SearchViewController())
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }
