@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C92079872D3794CB0016889E /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C92079862D3794CB0016889E /* Alamofire */; };
+		C92079C92D37A02C0016889E /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C92079C82D37A02C0016889E /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C92079872D3794CB0016889E /* Alamofire in Frameworks */,
+				C92079C92D37A02C0016889E /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +86,7 @@
 			name = DoBongShopping;
 			packageProductDependencies = (
 				C92079862D3794CB0016889E /* Alamofire */,
+				C92079C82D37A02C0016889E /* SnapKit */,
 			);
 			productName = DoBongShopping;
 			productReference = C920796D2D3792A10016889E /* DoBongShopping.app */;
@@ -115,6 +118,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C92079852D3794CB0016889E /* XCRemoteSwiftPackageReference "Alamofire" */,
+				C92079C72D37A02C0016889E /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C920796E2D3792A10016889E /* Products */;
@@ -354,6 +358,14 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		C92079C72D37A02C0016889E /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -361,6 +373,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C92079852D3794CB0016889E /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		C92079C82D37A02C0016889E /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C92079C72D37A02C0016889E /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
