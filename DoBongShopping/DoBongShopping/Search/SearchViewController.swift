@@ -63,7 +63,10 @@ extension SearchViewController: UISearchBarDelegate {
             let request = ShopRequest(query: query)
             do {
                 let shop = try await ShopClient.shared.fetchShop(request).toEntity()
-                self.present(ShopListViewController(query: query, shop: shop), animated: true)
+                self.navigationController?.pushViewController(
+                    ShopListViewController(query: query, shop: shop),
+                    animated: true
+                )
             } catch {
                 print(error as? AFError)
             }
