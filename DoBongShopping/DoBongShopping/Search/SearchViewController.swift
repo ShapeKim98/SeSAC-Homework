@@ -108,7 +108,7 @@ extension SearchViewController: UISearchBarDelegate {
                     animated: true
                 )
             } catch {
-                print(error as? AFError)
+                print((error as? AFError) ?? error)
             }
         }
     }
