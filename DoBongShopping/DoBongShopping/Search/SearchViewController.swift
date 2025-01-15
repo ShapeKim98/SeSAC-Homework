@@ -58,6 +58,14 @@ private extension SearchViewController {
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
+        guard query.count >= 2 else {
+            presentAlert(
+                title: "검색어 오류",
+                message: "두 글자 이상 입력해주세요."
+            )
+            return
+        }
+        
         Task { [weak self] in
             guard let `self` else { return }
             let request = ShopRequest(query: query)
@@ -71,6 +79,17 @@ extension SearchViewController: UISearchBarDelegate {
                 print(error as? AFError)
             }
         }
+    }
+    
+    func presentAlert(title: String?, message: String? = nil) {
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        let confirm = UIAlertAction(title: "확인", style: .default)
+        alert.addAction(confirm)
+        present(alert, animated: true)
     }
 }
 
