@@ -14,13 +14,14 @@ class ShopListViewController: UIViewController {
     private let totalLabel = UILabel()
     private let sortButtonHStack = UIStackView()
     private var sortButtons = [SortButton]()
+    private let indicatorView = UIActivityIndicatorView(style: .large)
     
     private lazy var collectionView: UICollectionView = {
         configureCollectionView()
     }()
     
     private let query: String
-    private var shop: Shop {
+    private var shop: Shop? {
         didSet { didSetShop() }
     }
     private var selectedSort: Sort = .sim {
@@ -63,6 +64,8 @@ private extension ShopListViewController {
         configureSortButtonHStack()
         
         configureSortButtons()
+        
+        configureIndicatorView()
     }
     
     func configureLayout() {
@@ -81,6 +84,10 @@ private extension ShopListViewController {
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+        
+        indicatorView.snp.makeConstraints { make in
+            make.center.equalTo(collectionView)
+        }
     }
     
     func configureNavigation() {
@@ -91,7 +98,7 @@ private extension ShopListViewController {
     }
     
     func configureTotalLabel() {
-        totalLabel.text = "\(shop.total.formatted())개의 검색 결과"
+        totalLabel.text = "\(shop?.total.formatted() ?? "")개의 검색 결과"
         totalLabel.textColor = .systemGreen
         totalLabel.font = .systemFont(ofSize: 16, weight: .bold)
         view.addSubview(totalLabel)
@@ -153,6 +160,12 @@ private extension ShopListViewController {
         
         return collectionView
     }
+    
+    func configureIndicatorView() {
+        indicatorView.isHidden = true
+        indicatorView.color = .white
+        view.addSubview(indicatorView)
+    }
 }
 
 // MARK: Data Bindings
@@ -166,7 +179,14 @@ private extension ShopListViewController {
     }
     
     func didSetShop() {
+        guard shop != nil else {
+            indicatorView.isHidden = false
+            indicatorView.startAnimating()
+            return
+        }
         collectionView.reloadData()
+        indicatorView.isHidden = true
+        indicatorView.stopAnimating()
     }
 }
 
@@ -181,7 +201,7 @@ private extension ShopListViewController {
     func fetchShop() {
         Task { [weak self] in
             guard let `self` else { return }
-            
+            self.shop = nil
             let request = ShopRequest(
                 query: self.query,
                 sort: self.selectedSort.rawValue
@@ -203,7 +223,7 @@ private extension ShopListViewController {
 extension ShopListViewController: UICollectionViewDataSource,
                                   UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        shop.list.count
+        return shop?.list.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -211,8 +231,11 @@ extension ShopListViewController: UICollectionViewDataSource,
             withReuseIdentifier: .shopCollectionCell,
             for: indexPath
         ) as? ShopCollectionViewCell
-        guard let cell else { return UICollectionViewCell() }
-        let shopItem = shop.list[indexPath.item]
+        guard
+            let cell,
+            let shopItem = shop?.list[indexPath.item]
+        else { return UICollectionViewCell() }
+        
         cell.cellForItemAt(shopItem)
         
         return cell
