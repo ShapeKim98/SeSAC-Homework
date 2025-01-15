@@ -231,7 +231,7 @@ private extension ShopListViewController {
             guard let `self` else { return }
             let request = ShopRequest(
                 query: self.query,
-                start: self.shop?.page.start ?? 0 + 1,
+                start: (self.shop?.page.start ?? 0) + 1,
                 display: 10,
                 sort: self.selectedSort.rawValue
             )
