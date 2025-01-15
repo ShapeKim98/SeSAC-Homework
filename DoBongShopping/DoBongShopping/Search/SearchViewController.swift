@@ -11,7 +11,12 @@ import SnapKit
 import Alamofire
 
 class SearchViewController: UIViewController {
-    let searchBar = UISearchBar()
+    private let searchBar = UISearchBar()
+    private let indicatorView = UIActivityIndicatorView(style: .large)
+    
+    private var isLoading = false {
+        didSet { didSetIsLoading() }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,12 +35,18 @@ private extension SearchViewController {
         configureNavigation()
         
         configureSearchBar()
+        
+        configureIndicatorView()
     }
     
     func configureLayout() {
         searchBar.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        indicatorView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
         }
     }
     
@@ -53,6 +64,25 @@ private extension SearchViewController {
         searchBar.searchTextField.textColor = .white
         view.addSubview(searchBar)
     }
+    
+    func configureIndicatorView() {
+        indicatorView.isHidden = true
+        indicatorView.color = .white
+        view.addSubview(indicatorView)
+    }
+}
+
+// MARK: Data Bindings
+private extension SearchViewController {
+    func didSetIsLoading() {
+        indicatorView.isHidden = !isLoading
+        
+        if isLoading {
+            indicatorView.startAnimating()
+        } else {
+            indicatorView.stopAnimating()
+        }
+    }
 }
 
 extension SearchViewController: UISearchBarDelegate {
@@ -68,6 +98,8 @@ extension SearchViewController: UISearchBarDelegate {
         
         Task { [weak self] in
             guard let `self` else { return }
+            self.isLoading = true
+            defer { self.isLoading = false }
             let request = ShopRequest(query: query)
             do {
                 let shop = try await ShopClient.shared.fetchShop(request).toEntity()
