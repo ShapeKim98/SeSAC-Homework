@@ -188,6 +188,11 @@ private extension ShopListViewController {
             )
             do {
                 self.shop = try await ShopClient.shared.fetchShop(request).toEntity()
+                self.collectionView.scrollToItem(
+                    at: IndexPath(item: 0, section: 0),
+                    at: .top,
+                    animated: true
+                )
             } catch {
                 print(error as? AFError)
             }
