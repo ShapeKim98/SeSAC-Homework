@@ -14,6 +14,10 @@ class ShopListViewController: UIViewController {
     private let sortButtonHStack = UIStackView()
     private var sortButtons = [SortButton]()
     
+    private lazy var collectionView: UICollectionView = {
+        configureCollectionView()
+    }()
+    
     private let query: String
     private var shop: Shop = ShopResponse.mock.toEntity()
     private var selectedSort: Sort = .sim {
@@ -57,12 +61,18 @@ private extension ShopListViewController {
     func configureLayout() {
         totalLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(16)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(16)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(12)
         }
         
         sortButtonHStack.snp.makeConstraints { make in
             make.top.equalTo(totalLabel.snp.bottom).offset(12)
-            make.leading.equalToSuperview().inset(16)
+            make.leading.equalToSuperview().inset(12)
+        }
+        
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(sortButtonHStack.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
@@ -103,6 +113,34 @@ private extension ShopListViewController {
             sortButtonHStack.addArrangedSubview(button)
         }
     }
+    
+    func configureCollectionView() -> UICollectionView {
+        let spacing: CGFloat = 12
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        let width = (view.frame.width - (3 * spacing)) / 2
+        layout.itemSize = CGSize(width: width, height: 300)
+        layout.minimumLineSpacing = 16
+        layout.minimumInteritemSpacing = spacing
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 12, bottom: 24, right: 12)
+        
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: layout
+        )
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        collectionView.register(
+            ShopCollectionViewCell.self,
+            forCellWithReuseIdentifier: .shopCollectionCell
+        )
+        collectionView.backgroundColor = .clear
+        collectionView.collectionViewLayout = layout
+        view.addSubview(collectionView)
+        
+        return collectionView
+    }
 }
 
 // MARK: Data Bindings
@@ -120,6 +158,25 @@ private extension ShopListViewController {
 private extension ShopListViewController {
     func sortButtonTouchUpInside(sort: Sort) {
         selectedSort = sort
+    }
+}
+
+extension ShopListViewController: UICollectionViewDataSource,
+                                  UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        shop.list.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: .shopCollectionCell,
+            for: indexPath
+        ) as? ShopCollectionViewCell
+        guard let cell else { return UICollectionViewCell() }
+        let shopItem = shop.list[indexPath.item]
+        cell.cellForItemAt(shopItem)
+        
+        return cell
     }
 }
 
@@ -170,6 +227,6 @@ extension ShopListViewController {
     }
 }
 
-#Preview {
-    UINavigationController(rootViewController: ShopListViewController(query: "캠핑카"))
-}
+//#Preview {
+//    UINavigationController(rootViewController: ShopListViewController(query: "캠핑카"))
+//}
