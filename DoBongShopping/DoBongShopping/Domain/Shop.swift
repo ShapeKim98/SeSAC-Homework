@@ -9,14 +9,14 @@ import Foundation
 
 public struct Shop {
     public let total: Int
-    public let page: Page
-    public let list: [Item]
+    public var page: Page
+    public var list: [Item]
 }
 
 extension Shop {
     public struct Page {
-        public let start: Int
-        public let display: Int
+        public var start: Int
+        public var display: Int
     }
 }
 

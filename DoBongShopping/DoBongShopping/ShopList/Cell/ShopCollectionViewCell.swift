@@ -28,10 +28,10 @@ class ShopCollectionViewCell: UICollectionViewCell {
         }
         
         mallNameLabel.font = .systemFont(ofSize: 12)
-        mallNameLabel.textColor = .secondaryLabel
+        mallNameLabel.textColor = .systemGray4
         contentView.addSubview(mallNameLabel)
         mallNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(4)
+            make.top.equalTo(imageView.snp.bottom).offset(6)
             make.horizontalEdges.equalToSuperview().inset(12)
         }
         
@@ -40,7 +40,7 @@ class ShopCollectionViewCell: UICollectionViewCell {
         titleLabel.numberOfLines = 4
         contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(mallNameLabel.snp.bottom).offset(6)
+            make.top.equalTo(mallNameLabel.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview().inset(12)
         }
         
@@ -48,7 +48,7 @@ class ShopCollectionViewCell: UICollectionViewCell {
         lpriceLabel.textColor = .white
         contentView.addSubview(lpriceLabel)
         lpriceLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(6)
+            make.top.equalTo(titleLabel.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview().inset(12)
         }
     }
