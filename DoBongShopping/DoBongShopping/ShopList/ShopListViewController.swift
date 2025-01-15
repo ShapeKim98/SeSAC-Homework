@@ -124,9 +124,14 @@ private extension ShopListViewController {
         layout.scrollDirection = .vertical
         let width = (view.frame.width - (3 * spacing)) / 2
         layout.itemSize = CGSize(width: width, height: 300)
+        layout.sectionInset = UIEdgeInsets(
+            top: 8,
+            left: 12,
+            bottom: 12,
+            right: 12
+        )
         layout.minimumLineSpacing = 16
         layout.minimumInteritemSpacing = spacing
-        layout.sectionInset = UIEdgeInsets(top: 8, left: 12, bottom: 24, right: 12)
         
         let collectionView = UICollectionView(
             frame: .zero,
