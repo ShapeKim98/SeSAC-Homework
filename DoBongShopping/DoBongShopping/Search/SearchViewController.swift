@@ -52,7 +52,10 @@ private extension SearchViewController {
     
     func configureNavigation() {
         navigationItem.title = "도봉러의 쇼핑쇼핑"
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.white]
     }
     
     func configureSearchBar() {

@@ -92,9 +92,16 @@ private extension ShopListViewController {
     
     func configureNavigation() {
         navigationItem.title = query
-        navigationController?.navigationBar.titleTextAttributes = [
-            .foregroundColor: UIColor.white
-        ]
+        navigationController?
+            .navigationBar
+            .titleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        navigationController?
+            .navigationBar
+            .topItem?
+            .title = ""
+        
+        navigationController?.navigationBar.tintColor = .white
     }
     
     func configureTotalLabel() {
