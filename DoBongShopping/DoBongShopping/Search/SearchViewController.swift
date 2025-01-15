@@ -31,6 +31,12 @@ class SearchViewController: UIViewController {
 private extension SearchViewController {
     func configureUI() {
         view.backgroundColor = .black
+        view.gestureRecognizers = [
+            UITapGestureRecognizer(
+                target: self,
+                action: #selector(tagGestureRecognizerAction)
+            )
+        ]
         
         configureNavigation()
         
@@ -88,6 +94,14 @@ private extension SearchViewController {
     }
 }
 
+// MARK: Functions
+private extension SearchViewController {
+    @objc
+    func tagGestureRecognizerAction() {
+        view.endEditing(true)
+    }
+}
+
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
@@ -101,6 +115,7 @@ extension SearchViewController: UISearchBarDelegate {
         
         Task { [weak self] in
             guard let `self` else { return }
+            self.view.endEditing(true)
             self.isLoading = true
             defer { self.isLoading = false }
             let request = ShopRequest(query: query)
