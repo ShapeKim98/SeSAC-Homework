@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ShopRequest {
+public struct ShopRequest: Sendable {
     public let query: String
     public let start: Int
     public let display: Int

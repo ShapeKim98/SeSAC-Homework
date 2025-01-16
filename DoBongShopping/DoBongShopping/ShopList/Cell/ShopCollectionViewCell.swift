@@ -83,7 +83,6 @@ class ShopCollectionViewCell: UICollectionViewCell {
     
     func cancelImageDownload() {
         imageView.kf.cancelDownloadTask()
-        print(#function)
     }
 }
 
