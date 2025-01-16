@@ -16,7 +16,7 @@ public struct ShopRequest: Sendable {
     public init(
         query: String,
         start: Int = 1,
-        display: Int = 100,
+        display: Int = 30,
         sort: String = "sim"
     ) {
         self.query = query

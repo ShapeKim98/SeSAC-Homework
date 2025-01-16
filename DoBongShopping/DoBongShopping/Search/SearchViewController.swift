@@ -107,9 +107,10 @@ private extension SearchViewController {
             self.view.endEditing(true)
             self.isLoading = true
             defer { self.isLoading = false }
-            let request = ShopRequest(query: query, display: 30)
+            let request = ShopRequest(query: query)
             do {
                 let shop = try await ShopClient.shared.fetchShop(request)
+                dump(shop)
                 guard shop.total > 0 else {
                     presentAlert(title: "검색 결과가 없어요.")
                     return
