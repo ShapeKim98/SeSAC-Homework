@@ -100,19 +100,8 @@ private extension SearchViewController {
     func tagGestureRecognizerAction() {
         view.endEditing(true)
     }
-}
-
-extension SearchViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let query = searchBar.text else { return }
-        guard query.count >= 2 else {
-            presentAlert(
-                title: "검색어 오류",
-                message: "두 글자 이상 입력해주세요."
-            )
-            return
-        }
-        
+    
+    func fetchShop(query: String) {
         Task { [weak self] in
             guard let `self` else { return }
             self.view.endEditing(true)
@@ -121,6 +110,10 @@ extension SearchViewController: UISearchBarDelegate {
             let request = ShopRequest(query: query, display: 30)
             do {
                 let shop = try await ShopClient.shared.fetchShop(request)
+                guard shop.total > 0 else {
+                    presentAlert(title: "검색 결과가 없어요.")
+                    return
+                }
                 self.navigationController?.pushViewController(
                     ShopListViewController(query: query, shop: shop),
                     animated: true
@@ -129,6 +122,22 @@ extension SearchViewController: UISearchBarDelegate {
                 print((error as? AFError) ?? error)
             }
         }
+    }
+}
+
+extension SearchViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let query = searchBar.text else { return }
+        guard query.filter(\.isLetter).count >= 2 else {
+            presentAlert(title: "두 글자 이상 입력해주세요.")
+            return
+        }
+        guard !query.filter(\.isLetter).isEmpty else {
+            presentAlert(title: "글자를 포함해주세요.")
+            return
+        }
+        
+        fetchShop(query: query)
     }
     
     func presentAlert(title: String?, message: String? = nil) {
