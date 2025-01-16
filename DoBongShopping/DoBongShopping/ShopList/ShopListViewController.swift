@@ -295,6 +295,11 @@ extension ShopListViewController: UICollectionViewDataSource,
             paginationShop(call: #function)
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let shopCell = cell as? ShopCollectionViewCell
+        shopCell?.cancelImageDownload()
+    }
 }
 
 extension ShopListViewController {

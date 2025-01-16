@@ -80,6 +80,11 @@ class ShopCollectionViewCell: UICollectionViewCell {
         lpriceLabel.text = lprice
         
     }
+    
+    func cancelImageDownload() {
+        imageView.kf.cancelDownloadTask()
+        print(#function)
+    }
 }
 
 extension String {
