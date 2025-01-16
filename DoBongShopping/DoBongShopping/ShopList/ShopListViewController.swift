@@ -231,8 +231,8 @@ private extension ShopListViewController {
             guard let `self` else { return }
             let request = ShopRequest(
                 query: self.query,
-                start: (self.shop?.page.start ?? 0) + 1,
-                display: 10,
+                start: self.shop?.list.count ?? 0,
+                display: 30,
                 sort: self.selectedSort.rawValue
             )
             do {
@@ -259,11 +259,12 @@ extension ShopListViewController: UICollectionViewDataSource,
         ) as? ShopCollectionViewCell
         guard
             let cell,
-            let shopItem = shop?.list[indexPath.item]
+            let shop = self.shop
         else { return UICollectionViewCell() }
         
-        cell.cellForItemAt(shopItem)
-        if indexPath.item + 1 == shop?.list.count {
+        cell.cellForItemAt(shop.list[indexPath.item])
+        if indexPath.item + 1 == shop.list.count &&
+            shop.list.count <= shop.total {
             paginationShop()
         }
         print(indexPath)
