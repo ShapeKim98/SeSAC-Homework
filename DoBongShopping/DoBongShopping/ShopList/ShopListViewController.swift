@@ -229,8 +229,13 @@ private extension ShopListViewController {
         }
     }
     
-    func paginationShop() {
-        guard let shop, shop.items.count < shop.total else { return }
+    func paginationShop(call: Any) {
+        guard
+            !isPaging,
+            let shop,
+            shop.items.count < shop.total
+        else { return }
+        print(call)
         
         Task { [weak self] in
             guard let `self` else { return }
@@ -274,9 +279,8 @@ extension ShopListViewController: UICollectionViewDataSource,
         else { return UICollectionViewCell() }
         
         cell.cellForItemAt(shop.items[indexPath.item])
-        if indexPath.item + 2 == shop.items.count, !isPaging {
-            print(#function)
-            paginationShop()
+        if indexPath.item + 1 == shop.items.count {
+            paginationShop(call: #function)
         }
         
         return cell
@@ -284,12 +288,11 @@ extension ShopListViewController: UICollectionViewDataSource,
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         guard let shopList = shop?.items else { return }
-        for item in indexPaths {
+        for indexPath in indexPaths {
             guard
-                shopList.count - 1 == item.row
+                indexPath.item + 2 == shopList.count
             else { continue }
-            print(#function)
-            paginationShop()
+            paginationShop(call: #function)
         }
     }
 }
