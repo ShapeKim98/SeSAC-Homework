@@ -8,10 +8,10 @@
 import Foundation
 
 public struct ShopResponse: Decodable {
-    public let total: Int
-    public let start: Int
+    public var total: Int
+    public var start: Int
     public let display: Int
-    public let items: [Item]
+    public var items: [Item]
 }
 
 extension ShopResponse {

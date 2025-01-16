@@ -118,9 +118,9 @@ extension SearchViewController: UISearchBarDelegate {
             self.view.endEditing(true)
             self.isLoading = true
             defer { self.isLoading = false }
-            let request = ShopRequest(query: query)
+            let request = ShopRequest(query: query, display: 30)
             do {
-                let shop = try await ShopClient.shared.fetchShop(request).toEntity()
+                let shop = try await ShopClient.shared.fetchShop(request)
                 self.navigationController?.pushViewController(
                     ShopListViewController(query: query, shop: shop),
                     animated: true

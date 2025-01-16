@@ -18,6 +18,7 @@ class ShopCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .clear
         
         imageView.layer.cornerRadius = 16
         imageView.clipsToBounds = true
@@ -57,9 +58,7 @@ class ShopCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func cellForItemAt(_ shopItem: Shop.Item) {
-        backgroundColor = .clear
-        
+    func cellForItemAt(_ shopItem: ShopResponse.Item) {
         let size = imageView.bounds.size
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(
@@ -71,11 +70,14 @@ class ShopCollectionViewCell: UICollectionViewCell {
             ]
         )
         
-        mallNameLabel.text = shopItem.mallName
+        mallNameLabel.text = shopItem.mallName.removeHTMLTags()
         
-        titleLabel.text = shopItem.title
+        titleLabel.text = shopItem.title.removeHTMLTags()
         
-        lpriceLabel.text = shopItem.lprice
+        guard
+            let lprice = Int(shopItem.lprice)?.formatted()
+        else { return }
+        lpriceLabel.text = lprice
         
     }
 }

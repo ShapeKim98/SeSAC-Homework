@@ -21,7 +21,7 @@ class ShopListViewController: UIViewController {
     }()
     
     private let query: String
-    private var shop: Shop? {
+    private var shop: ShopResponse? {
         didSet { didSetShop() }
     }
     private var selectedSort: Sort = .sim {
@@ -31,7 +31,7 @@ class ShopListViewController: UIViewController {
     
     init(
         query: String,
-        shop: Shop = ShopResponse.mock.toEntity()
+        shop: ShopResponse = .mock
     ) {
         self.query = query
         self.shop = shop
@@ -213,10 +213,11 @@ private extension ShopListViewController {
             self.shop = nil
             let request = ShopRequest(
                 query: self.query,
+                display: 30,
                 sort: self.selectedSort.rawValue
             )
             do {
-                self.shop = try await ShopClient.shared.fetchShop(request).toEntity()
+                self.shop = try await ShopClient.shared.fetchShop(request)
                 self.collectionView.scrollToItem(
                     at: IndexPath(item: 0, section: 0),
                     at: .top,
@@ -229,7 +230,7 @@ private extension ShopListViewController {
     }
     
     func paginationShop() {
-        guard let shop, shop.list.count < shop.total else { return }
+        guard let shop, shop.items.count < shop.total else { return }
         
         Task { [weak self] in
             guard let `self` else { return }
@@ -238,14 +239,15 @@ private extension ShopListViewController {
             
             let request = ShopRequest(
                 query: self.query,
-                start: shop.list.count,
+                start: shop.items.count,
                 display: 30,
                 sort: self.selectedSort.rawValue
             )
             do {
-                let shop = try await ShopClient.shared.fetchShop(request).toEntity()
-                self.shop?.list += shop.list
-                self.shop?.page = shop.page
+                let shop = try await ShopClient.shared.fetchShop(request)
+                self.shop?.items += shop.items
+                self.shop?.start = shop.start
+                self.shop?.total = shop.total
             } catch {
                 print((error as? AFError) ?? error)
             }
@@ -258,7 +260,7 @@ extension ShopListViewController: UICollectionViewDataSource,
                                   UICollectionViewDataSourcePrefetching {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return shop?.list.count ?? 0
+        return shop?.items.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -271,8 +273,8 @@ extension ShopListViewController: UICollectionViewDataSource,
             let shop = self.shop
         else { return UICollectionViewCell() }
         
-        cell.cellForItemAt(shop.list[indexPath.item])
-        if indexPath.item + 2 == shop.list.count, !isPaging {
+        cell.cellForItemAt(shop.items[indexPath.item])
+        if indexPath.item + 2 == shop.items.count, !isPaging {
             print(#function)
             paginationShop()
         }
@@ -281,7 +283,7 @@ extension ShopListViewController: UICollectionViewDataSource,
     }
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        guard let shopList = shop?.list else { return }
+        guard let shopList = shop?.items else { return }
         for item in indexPaths {
             guard
                 shopList.count - 1 == item.row
