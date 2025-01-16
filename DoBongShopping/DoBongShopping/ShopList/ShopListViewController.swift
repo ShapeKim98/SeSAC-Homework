@@ -27,6 +27,7 @@ class ShopListViewController: UIViewController {
     private var selectedSort: Sort = .sim {
         didSet { didSetSelectedSort() }
     }
+    private var isPaging: Bool = false
     
     init(
         query: String,
@@ -156,6 +157,7 @@ private extension ShopListViewController {
         )
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.prefetchDataSource = self
         
         collectionView.register(
             ShopCollectionViewCell.self,
@@ -227,11 +229,16 @@ private extension ShopListViewController {
     }
     
     func paginationShop() {
+        guard let shop, shop.list.count < shop.total else { return }
+        
         Task { [weak self] in
             guard let `self` else { return }
+            isPaging = true
+            defer { isPaging = false }
+            
             let request = ShopRequest(
                 query: self.query,
-                start: self.shop?.list.count ?? 0,
+                start: shop.list.count,
                 display: 30,
                 sort: self.selectedSort.rawValue
             )
@@ -247,7 +254,9 @@ private extension ShopListViewController {
 }
 
 extension ShopListViewController: UICollectionViewDataSource,
-                                  UICollectionViewDelegate {
+                                  UICollectionViewDelegate,
+                                  UICollectionViewDataSourcePrefetching {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return shop?.list.count ?? 0
     }
@@ -263,13 +272,23 @@ extension ShopListViewController: UICollectionViewDataSource,
         else { return UICollectionViewCell() }
         
         cell.cellForItemAt(shop.list[indexPath.item])
-        if indexPath.item + 1 == shop.list.count &&
-            shop.list.count <= shop.total {
+        if indexPath.item + 2 == shop.list.count, !isPaging {
+            print(#function)
             paginationShop()
         }
-        print(indexPath)
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        guard let shopList = shop?.list else { return }
+        for item in indexPaths {
+            guard
+                shopList.count - 1 == item.row
+            else { continue }
+            print(#function)
+            paginationShop()
+        }
     }
 }
 
