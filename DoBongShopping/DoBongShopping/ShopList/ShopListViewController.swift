@@ -237,7 +237,6 @@ private extension ShopListViewController {
             do {
                 let shop = try await ShopClient.shared.fetchShop(request)
                 self.shop?.items += shop.items
-                self.shop?.start = shop.start
                 self.shop?.total = shop.total
             } catch {
                 print((error as? AFError) ?? error)

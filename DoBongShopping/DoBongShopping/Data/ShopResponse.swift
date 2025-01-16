@@ -9,7 +9,6 @@ import Foundation
 
 public struct ShopResponse: Decodable, Sendable {
     public var total: Int
-    public var start: Int
     public let display: Int
     public var items: [Item]
 }
@@ -26,7 +25,6 @@ extension ShopResponse {
 public extension ShopResponse {
     static let mock = ShopResponse(
         total: 549489,
-        start: 1,
         display: 10,
         items: [
             ShopResponse.Item(
