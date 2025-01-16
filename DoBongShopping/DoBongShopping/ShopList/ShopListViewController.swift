@@ -116,7 +116,6 @@ private extension ShopListViewController {
         sortButtonHStack.axis = .horizontal
         sortButtonHStack.distribution = .fill
         sortButtonHStack.spacing = 8
-        sortButtonHStack.alignment = .leading
         view.addSubview(sortButtonHStack)
     }
     
@@ -137,24 +136,15 @@ private extension ShopListViewController {
     }
     
     func configureCollectionView() -> UICollectionView {
-        let spacing: CGFloat = 12
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        let width = (view.frame.width - (3 * spacing)) / 2
-        layout.itemSize = CGSize(width: width, height: 300)
-        layout.sectionInset = UIEdgeInsets(
-            top: 8,
-            left: 12,
-            bottom: 12,
-            right: 12
+        let collectionView = VerticalCollectionView(
+            superSize: view.frame,
+            itemHeight: 300,
+            colCount: 2,
+            colSpacing: 12,
+            rowSpacing: 16,
+            inset: UIEdgeInsets(top: 8, left: 12, bottom: 12, right: 12)
         )
-        layout.minimumLineSpacing = 16
-        layout.minimumInteritemSpacing = spacing
         
-        let collectionView = UICollectionView(
-            frame: .zero,
-            collectionViewLayout: layout
-        )
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.prefetchDataSource = self
@@ -163,8 +153,6 @@ private extension ShopListViewController {
             ShopCollectionViewCell.self,
             forCellWithReuseIdentifier: .shopCollectionCell
         )
-        collectionView.backgroundColor = .clear
-        collectionView.collectionViewLayout = layout
         view.addSubview(collectionView)
         
         return collectionView
@@ -213,7 +201,6 @@ private extension ShopListViewController {
             self.shop = nil
             let request = ShopRequest(
                 query: self.query,
-                display: 30,
                 sort: self.selectedSort.rawValue
             )
             do {
@@ -244,8 +231,7 @@ private extension ShopListViewController {
             
             let request = ShopRequest(
                 query: self.query,
-                start: shop.items.count,
-                display: 30,
+                start: shop.items.count + 1,
                 sort: self.selectedSort.rawValue
             )
             do {
@@ -274,8 +260,7 @@ extension ShopListViewController: UICollectionViewDataSource,
             for: indexPath
         ) as? ShopCollectionViewCell
         guard
-            let cell,
-            let shop = self.shop
+            let cell, let shop
         else { return UICollectionViewCell() }
         
         cell.cellForItemAt(shop.items[indexPath.item])
