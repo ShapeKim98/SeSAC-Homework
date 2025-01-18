@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ShopRequest {
+public struct ShopRequest: Sendable {
     public let query: String
     public let start: Int
     public let display: Int
@@ -16,7 +16,7 @@ public struct ShopRequest {
     public init(
         query: String,
         start: Int = 1,
-        display: Int = 100,
+        display: Int = 30,
         sort: String = "sim"
     ) {
         self.query = query

@@ -21,16 +21,17 @@ class ShopListViewController: UIViewController {
     }()
     
     private let query: String
-    private var shop: Shop? {
+    private var shop: ShopResponse? {
         didSet { didSetShop() }
     }
     private var selectedSort: Sort = .sim {
         didSet { didSetSelectedSort() }
     }
+    private var isPaging: Bool = false
     
     init(
         query: String,
-        shop: Shop = ShopResponse.mock.toEntity()
+        shop: ShopResponse = .mock
     ) {
         self.query = query
         self.shop = shop
@@ -115,7 +116,6 @@ private extension ShopListViewController {
         sortButtonHStack.axis = .horizontal
         sortButtonHStack.distribution = .fill
         sortButtonHStack.spacing = 8
-        sortButtonHStack.alignment = .leading
         view.addSubview(sortButtonHStack)
     }
     
@@ -136,33 +136,23 @@ private extension ShopListViewController {
     }
     
     func configureCollectionView() -> UICollectionView {
-        let spacing: CGFloat = 12
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        let width = (view.frame.width - (3 * spacing)) / 2
-        layout.itemSize = CGSize(width: width, height: 300)
-        layout.sectionInset = UIEdgeInsets(
-            top: 8,
-            left: 12,
-            bottom: 12,
-            right: 12
+        let collectionView = VerticalCollectionView(
+            superSize: view.frame,
+            itemHeight: 300,
+            colCount: 2,
+            colSpacing: 12,
+            rowSpacing: 16,
+            inset: UIEdgeInsets(top: 8, left: 12, bottom: 12, right: 12)
         )
-        layout.minimumLineSpacing = 16
-        layout.minimumInteritemSpacing = spacing
         
-        let collectionView = UICollectionView(
-            frame: .zero,
-            collectionViewLayout: layout
-        )
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.prefetchDataSource = self
         
         collectionView.register(
             ShopCollectionViewCell.self,
             forCellWithReuseIdentifier: .shopCollectionCell
         )
-        collectionView.backgroundColor = .clear
-        collectionView.collectionViewLayout = layout
         view.addSubview(collectionView)
         
         return collectionView
@@ -214,7 +204,7 @@ private extension ShopListViewController {
                 sort: self.selectedSort.rawValue
             )
             do {
-                self.shop = try await ShopClient.shared.fetchShop(request).toEntity()
+                self.shop = try await ShopClient.shared.fetchShop(request)
                 self.collectionView.scrollToItem(
                     at: IndexPath(item: 0, section: 0),
                     at: .top,
@@ -226,19 +216,28 @@ private extension ShopListViewController {
         }
     }
     
-    func paginationShop() {
+    func paginationShop(call: Any) {
+        guard
+            !isPaging,
+            let shop,
+            shop.items.count < shop.total
+        else { return }
+        print(call)
+        
         Task { [weak self] in
             guard let `self` else { return }
+            isPaging = true
+            defer { isPaging = false }
+            
             let request = ShopRequest(
                 query: self.query,
-                start: (self.shop?.page.start ?? 0) + 1,
-                display: 10,
+                start: shop.items.count + 1,
                 sort: self.selectedSort.rawValue
             )
             do {
-                let shop = try await ShopClient.shared.fetchShop(request).toEntity()
-                self.shop?.list += shop.list
-                self.shop?.page = shop.page
+                let shop = try await ShopClient.shared.fetchShop(request)
+                self.shop?.items += shop.items
+                self.shop?.total = shop.total
             } catch {
                 print((error as? AFError) ?? error)
             }
@@ -247,9 +246,11 @@ private extension ShopListViewController {
 }
 
 extension ShopListViewController: UICollectionViewDataSource,
-                                  UICollectionViewDelegate {
+                                  UICollectionViewDelegate,
+                                  UICollectionViewDataSourcePrefetching {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return shop?.list.count ?? 0
+        return shop?.items.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -258,17 +259,30 @@ extension ShopListViewController: UICollectionViewDataSource,
             for: indexPath
         ) as? ShopCollectionViewCell
         guard
-            let cell,
-            let shopItem = shop?.list[indexPath.item]
+            let cell, let shop
         else { return UICollectionViewCell() }
         
-        cell.cellForItemAt(shopItem)
-        if indexPath.item + 1 == shop?.list.count {
-            paginationShop()
+        cell.cellForItemAt(shop.items[indexPath.item])
+        if indexPath.item + 1 == shop.items.count {
+            paginationShop(call: #function)
         }
-        print(indexPath)
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        guard let shopList = shop?.items else { return }
+        for indexPath in indexPaths {
+            guard
+                indexPath.item + 2 == shopList.count
+            else { continue }
+            paginationShop(call: #function)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let shopCell = cell as? ShopCollectionViewCell
+        shopCell?.cancelImageDownload()
     }
 }
 
