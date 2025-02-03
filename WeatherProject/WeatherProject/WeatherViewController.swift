@@ -6,11 +6,12 @@
 //
 
 import UIKit
-import SnapKit
 import MapKit
+import CoreLocation
 
-class WeatherViewController: UIViewController {
-     
+import SnapKit
+
+final class WeatherViewController: UIViewController {
     private let mapView: MKMapView = {
         let view = MKMapView()
         return view
@@ -51,12 +52,17 @@ class WeatherViewController: UIViewController {
         return button
     }()
     
+    private let locationManager = LocationManager.shared
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupUI()
         setupConstraints()
         setupActions()
+        
+        fetchLocation()
     }
     
     // MARK: - UI Setup
@@ -100,10 +106,23 @@ class WeatherViewController: UIViewController {
     // MARK: - Actions
     @objc private func currentLocationButtonTapped() {
         // 현재 위치 가져오기 구현
+        
     }
     
     @objc private func refreshButtonTapped() {
         // 날씨 새로고침 구현
+    }
+    
+    private func fetchLocation() {
+        Task {
+            let (location, _) = await locationManager.fetchLocation()
+            let region = MKCoordinateRegion(
+                center: location,
+                latitudinalMeters: 200,
+                longitudinalMeters: 200
+            )
+            self.mapView.setRegion(region, animated: true)
+        }
     }
 }
 
