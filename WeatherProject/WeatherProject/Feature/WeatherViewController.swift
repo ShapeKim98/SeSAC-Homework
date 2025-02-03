@@ -122,6 +122,10 @@ final class WeatherViewController: UIViewController {
     
     @objc private func refreshButtonTapped() {
         // 날씨 새로고침 구현
+        Task {
+            let center = mapView.centerCoordinate
+            await fetchWeather(center)
+        }
     }
     
     private func presentAlert() {
@@ -150,7 +154,6 @@ final class WeatherViewController: UIViewController {
     @discardableResult
     private func fetchLocation() async -> Bool {
         let (location, status) = await locationManager.fetchLocation()
-        print(location)
         Task { await fetchWeather(location) }
         let region = MKCoordinateRegion(
             center: location,
@@ -163,6 +166,7 @@ final class WeatherViewController: UIViewController {
     
     private func fetchWeather(_ location: CLLocationCoordinate2D) async {
         do {
+            weather = nil
             weather = try await WeatherClient.shared.fetchWeather(
                 WeatherRequest(lat: location.latitude, lon: location.longitude)
             )
@@ -173,7 +177,10 @@ final class WeatherViewController: UIViewController {
     
     @MainActor
     private func didSetWeather() {
-        guard let weather else { return }
+        guard let weather else {
+            weatherInfoLabel.text = "날씨 정보를 불러오는 중..."
+            return
+        }
         weatherInfoLabel.text = """
         \(Date(timeIntervalSince1970: weather.dt).toString(format: .yyyy년_M월_d일))
         현재온도: \(weather.main.temp)°C
