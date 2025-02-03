@@ -113,7 +113,9 @@ final class WeatherViewController: UIViewController {
     @objc private func currentLocationButtonTapped() {
         // 현재 위치 가져오기 구현
         Task {
-            guard await fetchLocation() else {
+            let status = await fetchLocation()
+            guard let status else { return }
+            guard status == .authorizedWhenInUse else {
                 presentAlert()
                 return
             }
@@ -152,8 +154,10 @@ final class WeatherViewController: UIViewController {
     }
     
     @discardableResult
-    private func fetchLocation() async -> Bool {
+    private func fetchLocation() async -> CLAuthorizationStatus? {
         let (location, status) = await locationManager.fetchLocation()
+        guard let location else { return nil }
+        
         Task { await fetchWeather(location) }
         let region = MKCoordinateRegion(
             center: location,
@@ -168,7 +172,7 @@ final class WeatherViewController: UIViewController {
         annotation.coordinate = location
         self.mapView.addAnnotation(annotation)
         
-        return status == .authorizedWhenInUse
+        return status
     }
     
     private func fetchWeather(_ location: CLLocationCoordinate2D) async {

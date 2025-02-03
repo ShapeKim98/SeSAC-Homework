@@ -15,14 +15,16 @@ final class LocationManager: NSObject {
         latitude: 37.6545021055909,
         longitude: 127.049672533607
     )
-    private var continuation: CheckedContinuation<(CLLocationCoordinate2D, CLAuthorizationStatus?), Never>?
+    private var continuation: CheckedContinuation<(CLLocationCoordinate2D?, CLAuthorizationStatus?), Never>?
     
     private override init() {
         super.init()
         manager.delegate = self
     }
     
-    func fetchLocation() async -> (CLLocationCoordinate2D, CLAuthorizationStatus?) {
+    func fetchLocation() async -> (CLLocationCoordinate2D?, CLAuthorizationStatus?) {
+        guard continuation == nil else { return (nil, nil) }
+        
         return await withCheckedContinuation { continuation in
             self.continuation = continuation
             Task { await checkLocationServicesEnabled() }
@@ -34,7 +36,7 @@ private extension LocationManager {
     func checkLocationServicesEnabled() async {
         guard CLLocationManager.locationServicesEnabled() else {
             await MainActor.run {
-                resumeContinuation(defaultLocation, .denied)
+                resumeContinuation(defaultLocation, manager.authorizationStatus)
             }
             return
         }
@@ -53,7 +55,7 @@ private extension LocationManager {
         case .denied:
             resumeContinuation(defaultLocation, .denied)
         default:
-            resumeContinuation(defaultLocation, nil)
+            resumeContinuation(defaultLocation, status)
         }
     }
     
@@ -69,7 +71,7 @@ private extension LocationManager {
 extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last?.coordinate else {
-            resumeContinuation(defaultLocation, nil)
+            resumeContinuation(defaultLocation, manager.authorizationStatus)
             return
         }
         resumeContinuation(location, .authorizedWhenInUse)
@@ -77,7 +79,7 @@ extension LocationManager: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
-        resumeContinuation(defaultLocation, nil)
+        resumeContinuation(defaultLocation, manager.authorizationStatus)
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
