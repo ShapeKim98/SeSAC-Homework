@@ -34,8 +34,7 @@ private extension LocationManager {
     func checkLocationServicesEnabled() async {
         guard CLLocationManager.locationServicesEnabled() else {
             await MainActor.run {
-                continuation?.resume(returning: (defaultLocation, .denied))
-                self.continuation = nil
+                resumeContinuation(defaultLocation, .denied)
             }
             return
         }
@@ -52,33 +51,37 @@ private extension LocationManager {
         case .authorizedWhenInUse:
             manager.startUpdatingLocation()
         case .denied:
-            continuation?.resume(returning: (defaultLocation, .denied))
-            self.continuation = nil
+            resumeContinuation(defaultLocation, .denied)
         default:
-            self.continuation?.resume(returning: (defaultLocation, nil))
-            self.continuation = nil
+            resumeContinuation(defaultLocation, nil)
         }
+    }
+    
+    func resumeContinuation(
+        _ location: CLLocationCoordinate2D,
+        _ status: CLAuthorizationStatus?
+    ) {
+        self.continuation?.resume(returning: (location, status))
+        self.continuation = nil
     }
 }
 
 extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last?.coordinate else {
-            continuation?.resume(returning: (defaultLocation, nil))
-            continuation = nil
+            resumeContinuation(defaultLocation, nil)
             return
         }
-        self.continuation?.resume(returning: (location, .authorizedWhenInUse))
-        self.continuation = nil
+        resumeContinuation(location, .authorizedWhenInUse)
         manager.stopUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
-        self.continuation?.resume(returning: (defaultLocation, nil))
-        self.continuation = nil
+        resumeContinuation(defaultLocation, nil)
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        guard continuation != nil else { return }
         Task { await checkLocationServicesEnabled() }
     }
 }
