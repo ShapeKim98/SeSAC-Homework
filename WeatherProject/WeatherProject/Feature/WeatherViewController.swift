@@ -161,6 +161,13 @@ final class WeatherViewController: UIViewController {
             longitudinalMeters: 200
         )
         self.mapView.setRegion(region, animated: true)
+        
+        let oldAnnotations = self.mapView.annotations
+        self.mapView.removeAnnotations(oldAnnotations)
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = location
+        self.mapView.addAnnotation(annotation)
+        
         return status == .authorizedWhenInUse
     }
     
