@@ -10,5 +10,6 @@ import Foundation
 struct WeatherRequest {
     let lat: Double
     let lon: Double
-    let appid: String
+    let appid: String = Bundle.main.apiKey
+    let units: String = "metric"
 }

@@ -54,6 +54,10 @@ final class WeatherViewController: UIViewController {
     
     private let locationManager = LocationManager.shared
     
+    private var weather: Weather? {
+        didSet { didSetWeather() }
+    }
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,7 +66,9 @@ final class WeatherViewController: UIViewController {
         setupConstraints()
         setupActions()
         
-        Task { await fetchLocation() }
+        Task {
+            await fetchLocation()
+        }
     }
     
     // MARK: - UI Setup
@@ -145,6 +151,7 @@ final class WeatherViewController: UIViewController {
     private func fetchLocation() async -> Bool {
         let (location, status) = await locationManager.fetchLocation()
         print(location)
+        Task { await fetchWeather(location) }
         let region = MKCoordinateRegion(
             center: location,
             latitudinalMeters: 200,
@@ -152,6 +159,29 @@ final class WeatherViewController: UIViewController {
         )
         self.mapView.setRegion(region, animated: true)
         return status == .authorizedWhenInUse
+    }
+    
+    private func fetchWeather(_ location: CLLocationCoordinate2D) async {
+        do {
+            weather = try await WeatherClient.shared.fetchWeather(
+                WeatherRequest(lat: location.latitude, lon: location.longitude)
+            )
+        } catch {
+            print(error)
+        }
+    }
+    
+    @MainActor
+    private func didSetWeather() {
+        guard let weather else { return }
+        weatherInfoLabel.text = """
+        \(Date(timeIntervalSince1970: weather.dt).toString(format: .yyyy년_M월_d일))
+        현재온도: \(weather.main.temp)°C
+        최저온도: \(weather.main.tempMin)°C
+        최고온도: \(weather.main.tempMax)°C
+        풍속: \(weather.wind.speed)m/s
+        습도: \(weather.main.humidity)%
+        """
     }
 }
 

@@ -6,3 +6,15 @@
 //
 
 import Foundation
+
+final class WeatherClient {
+    static let shared = WeatherClient()
+    
+    let provider = NetworkProvider<WeatherEndPoint>()
+    
+    private init() {}
+    
+    func fetchWeather(_ model: WeatherRequest) async throws -> Weather {
+        return try await provider.request(.fetchWeather(model))
+    }
+}
