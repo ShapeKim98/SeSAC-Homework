@@ -194,11 +194,11 @@ final class WeatherViewController: UIViewController {
         }
         weatherInfoLabel.text = """
         \(Date(timeIntervalSince1970: weather.dt).toString(format: .yyyy년_M월_d일))
-        현재온도: \(weather.main.temp)°C
-        최저온도: \(weather.main.tempMin)°C
-        최고온도: \(weather.main.tempMax)°C
-        풍속: \(weather.wind.speed)m/s
-        습도: \(weather.main.humidity)%
+        현재온도: \(Int(weather.main.temp))°C
+        최저온도: \(Int(weather.main.tempMin))°C
+        최고온도: \(Int(weather.main.tempMax))°C
+        풍속: \(Int(weather.wind.speed))m/s
+        습도: \(Int(weather.main.humidity))%
         """
     }
 }
