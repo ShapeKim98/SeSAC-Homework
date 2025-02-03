@@ -33,8 +33,10 @@ final class LocationManager: NSObject {
 private extension LocationManager {
     func checkLocationServicesEnabled() async {
         guard CLLocationManager.locationServicesEnabled() else {
-            continuation?.resume(returning: (defaultLocation, .denied))
-            self.continuation = nil
+            await MainActor.run {
+                continuation?.resume(returning: (defaultLocation, .denied))
+                self.continuation = nil
+            }
             return
         }
         await checkAuthorizationStatus()
@@ -42,7 +44,6 @@ private extension LocationManager {
     
     @MainActor
     func checkAuthorizationStatus() {
-        print(#function, Thread.isMainThread)
         let status = manager.authorizationStatus
         switch status {
         case .notDetermined:
