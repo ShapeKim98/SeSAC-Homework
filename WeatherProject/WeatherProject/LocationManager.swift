@@ -37,10 +37,12 @@ private extension LocationManager {
             self.continuation = nil
             return
         }
-        checkAuthorizationStatus()
+        await checkAuthorizationStatus()
     }
     
+    @MainActor
     func checkAuthorizationStatus() {
+        print(#function, Thread.isMainThread)
         let status = manager.authorizationStatus
         switch status {
         case .notDetermined:

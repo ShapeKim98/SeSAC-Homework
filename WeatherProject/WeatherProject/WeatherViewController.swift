@@ -62,7 +62,7 @@ final class WeatherViewController: UIViewController {
         setupConstraints()
         setupActions()
         
-        fetchLocation()
+        Task { await fetchLocation() }
     }
     
     // MARK: - UI Setup
@@ -106,23 +106,52 @@ final class WeatherViewController: UIViewController {
     // MARK: - Actions
     @objc private func currentLocationButtonTapped() {
         // 현재 위치 가져오기 구현
-        
+        Task {
+            guard await fetchLocation() else {
+                presentAlert()
+                return
+            }
+        }
     }
     
     @objc private func refreshButtonTapped() {
         // 날씨 새로고침 구현
     }
     
-    private func fetchLocation() {
-        Task {
-            let (location, _) = await locationManager.fetchLocation()
-            let region = MKCoordinateRegion(
-                center: location,
-                latitudinalMeters: 200,
-                longitudinalMeters: 200
-            )
-            self.mapView.setRegion(region, animated: true)
-        }
+    private func presentAlert() {
+        let alert = UIAlertController(
+            title: "위치 정보 사용 설정",
+            message: "내 위치 확인을 위해 설정에서 위치 정보 사용을 허용해 주세요.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: "설정",
+            style: .default,
+            handler: openSettings
+        ))
+        alert.addAction(UIAlertAction(
+            title: "취소",
+            style: .cancel
+        ))
+        present(alert, animated: true)
+    }
+    
+    private func openSettings(_ action: UIAlertAction) {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
+    }
+    
+    @discardableResult
+    private func fetchLocation() async -> Bool {
+        let (location, status) = await locationManager.fetchLocation()
+        print(location)
+        let region = MKCoordinateRegion(
+            center: location,
+            latitudinalMeters: 200,
+            longitudinalMeters: 200
+        )
+        self.mapView.setRegion(region, animated: true)
+        return status == .authorizedWhenInUse
     }
 }
 
