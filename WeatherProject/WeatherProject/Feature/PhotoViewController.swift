@@ -99,29 +99,21 @@ private extension PhotoViewController {
 
 extension PhotoViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        let stream = AsyncStream<UIImage?> { continuation in
-            Task.detached {
-                for provider in results.map(\.itemProvider) {
-                    let canLoadObject = provider.canLoadObject(ofClass: UIImage.self)
-                    guard canLoadObject else { continue }
-                    
-                    let image: UIImage? = await withCheckedContinuation { continuation in
-                        provider.loadObject(ofClass: UIImage.self) { image, error in
-                            continuation.resume(returning: image as? UIImage)
-                        }
-                    }
-                    continuation.yield(image)
-                }
-                continuation.finish()
-            }
-        }
-        dismiss(animated: true)
         Task {
-            for await image in stream {
-                self.images.append(image)
+            for provider in results.map(\.itemProvider) {
+                let canLoadObject = provider.canLoadObject(ofClass: UIImage.self)
+                guard canLoadObject else { continue }
+                
+                let image: UIImage? = await withCheckedContinuation { continuation in
+                    provider.loadObject(ofClass: UIImage.self) { image, error in
+                        continuation.resume(returning: image as? UIImage)
+                    }
+                }
+                images.append(image)
             }
             collectionView.reloadData()
         }
+        dismiss(animated: true)
     }
 }
 
