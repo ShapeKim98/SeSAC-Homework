@@ -124,8 +124,7 @@ final class WeatherViewController: UIViewController {
     
     @objc private func refreshButtonTapped() {
         // 날씨 새로고침 구현
-        Task { [weak self] in
-            guard let self else { return }
+        Task {
             let center = mapView.centerCoordinate
             await fetchWeather(center)
         }
