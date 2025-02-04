@@ -21,6 +21,7 @@ final class PhotoViewController: UIViewController {
     private lazy var phpPickerController = {
         var configuration = PHPickerConfiguration()
         configuration.selectionLimit = 3
+        configuration.selection = .ordered
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
         return picker
@@ -98,20 +99,27 @@ private extension PhotoViewController {
 
 extension PhotoViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        let group = DispatchGroup()
-        for provider in results.map(\.itemProvider) {
-            let canLoadObject = provider.canLoadObject(ofClass: UIImage.self)
-            guard canLoadObject else { continue }
-            
-            group.enter()
-            provider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
-                self?.images.append(image as? UIImage)
-                group.leave()
+        let stream = AsyncStream<UIImage?> { continuation in
+            Task.detached {
+                for provider in results.map(\.itemProvider) {
+                    let canLoadObject = provider.canLoadObject(ofClass: UIImage.self)
+                    guard canLoadObject else { continue }
+                    
+                    let image: UIImage? = await withCheckedContinuation { continuation in
+                        provider.loadObject(ofClass: UIImage.self) { image, error in
+                            continuation.resume(returning: image as? UIImage)
+                        }
+                    }
+                    continuation.yield(image)
+                }
+                continuation.finish()
             }
         }
         dismiss(animated: true)
-        group.notify(queue: .main) { [weak self] in
-            guard let `self` else { return }
+        Task {
+            for await image in stream {
+                self.images.append(image)
+            }
             collectionView.reloadData()
         }
     }
