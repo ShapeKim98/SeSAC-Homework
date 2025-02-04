@@ -52,6 +52,15 @@ final class WeatherViewController: UIViewController {
         return button
     }()
     
+    private let imageView = UIImageView()
+    
+    private let photoButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("사진 선택하기", for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
+        return button
+    }()
+    
     private let locationManager = LocationManager.shared
     
     private var weather: Weather? {
@@ -75,7 +84,7 @@ final class WeatherViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
-        [mapView, weatherInfoLabel, currentLocationButton, refreshButton].forEach {
+        [mapView, weatherInfoLabel, currentLocationButton, refreshButton, imageView, photoButton].forEach {
             view.addSubview($0)
         }
     }
@@ -102,11 +111,26 @@ final class WeatherViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
             make.width.height.equalTo(50)
         }
+        
+        photoButton.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.centerX.equalToSuperview()
+        }
+        
+        imageView.snp.makeConstraints { make in
+            make.size.equalTo(200)
+            make.bottom.equalTo(photoButton).inset(20)
+            make.centerX.equalToSuperview()
+        }
     }
     
     private func setupActions() {
         currentLocationButton.addTarget(self, action: #selector(currentLocationButtonTapped), for: .touchUpInside)
         refreshButton.addTarget(self, action: #selector(refreshButtonTapped), for: .touchUpInside)
+        photoButton.addAction(
+            UIAction(handler: photoButtonTouchUpInside),
+            for: .touchUpInside
+        )
     }
     
     // MARK: - Actions
@@ -199,6 +223,21 @@ final class WeatherViewController: UIViewController {
         풍속: \(Int(weather.wind.speed))m/s
         습도: \(Int(weather.main.humidity))%
         """
+    }
+    
+    private func photoButtonTouchUpInside(_ action: UIAction) {
+        let viewController = PhotoViewController()
+        viewController.delegate = self
+        navigationController?.pushViewController(
+            viewController,
+            animated: true
+        )
+    }
+}
+
+extension WeatherViewController: PhotoViewControllerDelegate {
+    func collectionViewDidSelectItem(image: UIImage?) {
+        imageView.image = image
     }
 }
 

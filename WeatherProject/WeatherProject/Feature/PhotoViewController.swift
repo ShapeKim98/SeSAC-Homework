@@ -10,6 +10,10 @@ import PhotosUI
 
 import SnapKit
 
+protocol PhotoViewControllerDelegate: AnyObject {
+    func collectionViewDidSelectItem(image: UIImage?)
+}
+
 final class PhotoViewController: UIViewController {
     private lazy var collectionView = {
         return configureCollectionView()
@@ -24,6 +28,8 @@ final class PhotoViewController: UIViewController {
     
     private var images: [UIImage?] = []
     
+    weak var delegate: (any PhotoViewControllerDelegate)?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -36,6 +42,8 @@ final class PhotoViewController: UIViewController {
 // MARK: Configure View
 private extension PhotoViewController {
     func configureUI() {
+        view.backgroundColor = .white
+        
         configureNavigation()
     }
     
@@ -123,6 +131,12 @@ extension PhotoViewController: UICollectionViewDelegate,
         guard let cell else { return UICollectionViewCell() }
         cell.forItemAt(images[indexPath.item])
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        delegate?.collectionViewDidSelectItem(image: images[indexPath.item])
+        collectionView.deselectItem(at: indexPath, animated: true)
+        navigationController?.popViewController(animated: true)
     }
 }
 
