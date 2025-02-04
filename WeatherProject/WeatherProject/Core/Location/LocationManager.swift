@@ -40,10 +40,9 @@ private extension LocationManager {
             }
             return
         }
-        await checkAuthorizationStatus()
+        checkAuthorizationStatus()
     }
     
-    @MainActor
     func checkAuthorizationStatus() {
         let status = manager.authorizationStatus
         switch status {
