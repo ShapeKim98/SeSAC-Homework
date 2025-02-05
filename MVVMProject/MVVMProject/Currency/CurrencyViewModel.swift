@@ -16,7 +16,7 @@ class CurrencyViewModel {
         case amount(oldValue: String, newValue: String)
     }
     
-    struct Model {
+    class Model {
         var amount: String = "" {
             didSet {
                 output?(.amount(oldValue: oldValue, newValue: amount))
@@ -26,7 +26,7 @@ class CurrencyViewModel {
         var output: ((Output) -> Void)?
     }
     
-    private var model = Model()
+    private(set) var model = Model()
     
     func output(_ bind: @escaping (Output) -> Void) {
         self.model.output = bind

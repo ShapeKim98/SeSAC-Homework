@@ -16,7 +16,7 @@ class WordCounterViewModel {
         case countLabelText(oldValue: String, newValue: String)
     }
     
-    struct Model {
+    class Model {
         var countLabelText: String = "" {
             didSet {
                 output?(.countLabelText(oldValue: oldValue, newValue: countLabelText))
@@ -26,7 +26,7 @@ class WordCounterViewModel {
         var output: ((Output) -> Void)?
     }
     
-    private var model = Model()
+    private(set) var model = Model()
     
     func output(_ bind: @escaping (Output) -> Void) {
         self.model.output = bind
