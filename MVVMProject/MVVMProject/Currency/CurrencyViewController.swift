@@ -101,8 +101,8 @@ class CurrencyViewController: UIViewController {
         Task {
             for await output in viewModel.output {
                 switch output {
-                case let .amount(_, newValue):
-                    resultLabel.text = newValue
+                case let .amount(value):
+                    resultLabel.text = value
                 }
             }
         }

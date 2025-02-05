@@ -74,8 +74,8 @@ class WordCounterViewController: UIViewController {
         Task {
             for await output in viewModel.output {
                 switch output {
-                case let .countLabelText(_, newValue):
-                    countLabel.text = newValue
+                case let .countLabelText(value):
+                    countLabel.text = value
                 }
             }
         }

@@ -13,16 +13,14 @@ class CurrencyViewModel {
     }
     
     enum Output {
-        case amount(oldValue: String, newValue: String)
+        case amount(_ value: String)
     }
     
     struct Model {
         var amount: String = "" {
             didSet {
-                continuation?.yield(.amount(
-                    oldValue: oldValue,
-                    newValue: amount
-                ))
+                guard oldValue != amount else { return }
+                continuation?.yield(.amount(amount))
             }
         }
         

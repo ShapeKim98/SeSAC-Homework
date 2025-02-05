@@ -15,13 +15,14 @@ class UserViewModel {
     }
     
     enum Output {
-        case people(_ oldValue: [Person], _ newValue: [Person])
+        case people(_ value: [Person])
     }
     
     struct Model {
         var people: [Person] = [] {
             didSet {
-                continuation?.yield(.people(oldValue, people))
+                guard oldValue != people else { return }
+                continuation?.yield(.people(people))
             }
         }
         

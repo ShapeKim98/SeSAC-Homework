@@ -13,16 +13,14 @@ class WordCounterViewModel {
     }
     
     enum Output {
-        case countLabelText(oldValue: String, newValue: String)
+        case countLabelText(_ value: String)
     }
     
     struct Model {
         var countLabelText: String = "" {
             didSet {
-                continuation?.yield(.countLabelText(
-                    oldValue: oldValue,
-                    newValue: countLabelText
-                ))
+                guard oldValue != countLabelText else { return }
+                continuation?.yield(.countLabelText(countLabelText))
             }
         }
         
