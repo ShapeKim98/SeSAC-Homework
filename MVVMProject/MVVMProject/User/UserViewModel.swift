@@ -18,20 +18,26 @@ class UserViewModel {
         case people(_ oldValue: [Person], _ newValue: [Person])
     }
     
-    class Model {
+    struct Model {
         var people: [Person] = [] {
             didSet {
-                output?(.people(oldValue, people))
+                continuation?.yield(.people(oldValue, people))
             }
         }
         
-        var output: ((Output) -> Void)?
+        var continuation: AsyncStream<Output>.Continuation?
     }
     
     private(set) var model = Model()
     
-    func output(_ bind: @escaping (Output) -> Void) {
-        self.model.output = bind
+    var output: AsyncStream<Output> {
+        return AsyncStream<Output> { continuation in
+            model.continuation = continuation
+        }
+    }
+    
+    deinit {
+        model.continuation?.finish()
     }
     
     func input(_ action: Input) {

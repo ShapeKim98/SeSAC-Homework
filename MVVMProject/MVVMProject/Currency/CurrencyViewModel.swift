@@ -16,20 +16,29 @@ class CurrencyViewModel {
         case amount(oldValue: String, newValue: String)
     }
     
-    class Model {
+    struct Model {
         var amount: String = "" {
             didSet {
-                output?(.amount(oldValue: oldValue, newValue: amount))
+                continuation?.yield(.amount(
+                    oldValue: oldValue,
+                    newValue: amount
+                ))
             }
         }
         
-        var output: ((Output) -> Void)?
+        var continuation: AsyncStream<Output>.Continuation?
     }
     
     private(set) var model = Model()
     
-    func output(_ bind: @escaping (Output) -> Void) {
-        self.model.output = bind
+    var output: AsyncStream<Output> {
+        return AsyncStream<Output> { continuation in
+            model.continuation = continuation
+        }
+    }
+    
+    deinit {
+        model.continuation?.finish()
     }
     
     func input(_ action: Input) {

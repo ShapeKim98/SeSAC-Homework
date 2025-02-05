@@ -64,7 +64,7 @@ class UserViewController: UIViewController {
         setupTableView()
         setupActions()
         
-        viewModel.output(bind)
+        bind()
     }
      
     private func setupUI() {
@@ -113,11 +113,14 @@ class UserViewController: UIViewController {
         viewModel.input(.addButtonTapped)
     }
     
-    private func bind(_ output: UserViewModel.Output) {
-        switch output {
-        case .people:
-            tableView.reloadData()
-            return
+    private func bind() {
+        Task {
+            for await output in viewModel.output {
+                switch output {
+                case .people:
+                    tableView.reloadData()
+                }
+            }
         }
     }
 }

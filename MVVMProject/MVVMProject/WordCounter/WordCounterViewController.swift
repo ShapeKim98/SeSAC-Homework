@@ -37,7 +37,7 @@ class WordCounterViewController: UIViewController {
         setupConstraints()
         setupTextView()
         
-        viewModel.output(bind)
+        bind()
     }
      
     private func setupUI() {
@@ -70,10 +70,14 @@ class WordCounterViewController: UIViewController {
         viewModel.input(.textViewDidChange(textView.text))
     }
     
-    private func bind(_ output: WordCounterViewModel.Output) {
-        switch output {
-        case let .countLabelText(_, newValue):
-            countLabel.text = newValue
+    private func bind() {
+        Task {
+            for await output in viewModel.output {
+                switch output {
+                case let .countLabelText(_, newValue):
+                    countLabel.text = newValue
+                }
+            }
         }
     }
 }

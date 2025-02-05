@@ -16,20 +16,29 @@ class WordCounterViewModel {
         case countLabelText(oldValue: String, newValue: String)
     }
     
-    class Model {
+    struct Model {
         var countLabelText: String = "" {
             didSet {
-                output?(.countLabelText(oldValue: oldValue, newValue: countLabelText))
+                continuation?.yield(.countLabelText(
+                    oldValue: oldValue,
+                    newValue: countLabelText
+                ))
             }
         }
         
-        var output: ((Output) -> Void)?
+        var continuation: AsyncStream<Output>.Continuation?
     }
     
     private(set) var model = Model()
     
-    func output(_ bind: @escaping (Output) -> Void) {
-        self.model.output = bind
+    var output: AsyncStream<Output> {
+        return AsyncStream<Output> { continuation in
+            model.continuation = continuation
+        }
+    }
+    
+    deinit {
+        model.continuation?.finish()
     }
     
     func input(_ action: Input) {

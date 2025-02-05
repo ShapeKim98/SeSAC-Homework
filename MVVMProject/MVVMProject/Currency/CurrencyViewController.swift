@@ -53,6 +53,8 @@ class CurrencyViewController: UIViewController {
         setupUI()
         setupConstraints()
         setupActions()
+        
+        bind()
     }
      
     private func setupUI() {
@@ -61,8 +63,6 @@ class CurrencyViewController: UIViewController {
         [exchangeRateLabel, amountTextField, convertButton, resultLabel].forEach {
             view.addSubview($0)
         }
-        
-        viewModel.output(self.bind)
     }
     
     private func setupConstraints() {
@@ -97,10 +97,14 @@ class CurrencyViewController: UIViewController {
         viewModel.input(.convertButtonTapped(amountTextField.text))
     }
     
-    private func bind(_ output: CurrencyViewModel.Output) {
-        switch output {
-        case let .amount(_, newValue):
-            resultLabel.text = newValue
+    private func bind() {
+        Task {
+            for await output in viewModel.output {
+                switch output {
+                case let .amount(_, newValue):
+                    resultLabel.text = newValue
+                }
+            }
         }
     }
 }
