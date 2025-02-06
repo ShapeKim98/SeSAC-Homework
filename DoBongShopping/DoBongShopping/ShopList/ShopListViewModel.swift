@@ -13,12 +13,12 @@ import Alamofire
 final class SearchListViewModel {
     enum Input {
         case collectionViewPrefetchItemsAt(query: String)
-        case collectionViewCellForItemAt(query: String)
+        case collectionViewWillDisplay(query: String, item: Int)
         case sortButtonTouchUpInside(query: String, sort: Sort)
     }
     
     enum Output {
-        case shopItems(_ value: ShopResponse?)
+        case shopItems(_ value: [ShopResponse.Item])
         case selectedSort(_ value: Sort)
         case isLoading(_ value: Bool)
     }
@@ -27,7 +27,7 @@ final class SearchListViewModel {
         var shop: ShopResponse {
             didSet {
                 if oldValue.items != shop.items {
-                    continuation?.yield(.shopItems(shop))
+                    continuation?.yield(.shopItems(shop.items))
                 }
             }
         }
@@ -66,7 +66,8 @@ final class SearchListViewModel {
         switch action {
         case let .collectionViewPrefetchItemsAt(query):
             Task { await paginationShop(query) }
-        case let .collectionViewCellForItemAt(query):
+        case let .collectionViewWillDisplay(query, item):
+            guard item + 1 == model.shop.items.count else { return }
             Task { await paginationShop(query) }
         case let .sortButtonTouchUpInside(query, sort):
             model.selectedSort = sort

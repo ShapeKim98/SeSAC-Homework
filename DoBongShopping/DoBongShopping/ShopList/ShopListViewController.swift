@@ -171,8 +171,8 @@ private extension ShopListViewController {
             guard let self else { return }
             for await output in viewModel.output {
                 switch output {
-                case let .shopItems(shop):
-                    bindedShop(shop)
+                case .shopItems:
+                    bindedShop()
                 case let .selectedSort(sort):
                     bindedSelectedSort(sort)
                 case let .isLoading(isLoading):
@@ -182,7 +182,7 @@ private extension ShopListViewController {
         }
     }
     
-    func bindedShop(_ shop: ShopResponse?) {
+    func bindedShop() {
         print(#function)
         collectionView.reloadData()
     }
@@ -236,11 +236,12 @@ extension ShopListViewController: UICollectionViewDataSource,
         guard let cell else { return UICollectionViewCell() }
         
         cell.cellForItemAt(viewModel.model.shop.items[indexPath.item])
-        if indexPath.item + 1 == viewModel.model.shop.items.count {
-            viewModel.input(.collectionViewCellForItemAt(query: query))
-        }
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        viewModel.input(.collectionViewWillDisplay(query: query, item: indexPath.item))
     }
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
