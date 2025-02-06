@@ -14,8 +14,15 @@ class SearchViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let indicatorView = UIActivityIndicatorView(style: .large)
     
-    private var isLoading = false {
-        didSet { didSetIsLoading() }
+    private let viewModel: SearchViewModel
+    
+    init(viewModel: SearchViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -24,6 +31,8 @@ class SearchViewController: UIViewController {
         configureUI()
         
         configureLayout()
+        
+        bind()
     }
 }
 
@@ -83,13 +92,21 @@ private extension SearchViewController {
 
 // MARK: Data Bindings
 private extension SearchViewController {
-    func didSetIsLoading() {
-        indicatorView.isHidden = !isLoading
-        
-        if isLoading {
-            indicatorView.startAnimating()
-        } else {
-            indicatorView.stopAnimating()
+    func bind() {
+        Task { [weak self] in
+            guard let self else { return }
+            for await output in viewModel.output {
+                switch output {
+                case let .isLoading(isLoading):
+                    indicatorView.isHidden = !isLoading
+                    
+                    if isLoading {
+                        indicatorView.startAnimating()
+                    } else {
+                        indicatorView.stopAnimating()
+                    }
+                }
+            }
         }
     }
 }
@@ -100,59 +117,14 @@ private extension SearchViewController {
     func tagGestureRecognizerAction() {
         view.endEditing(true)
     }
-    
-    func fetchShop(query: String) {
-        Task { [weak self] in
-            guard let `self` else { return }
-            self.view.endEditing(true)
-            self.isLoading = true
-            defer { self.isLoading = false }
-            let request = ShopRequest(query: query)
-            do {
-                let shop = try await ShopClient.shared.fetchShop(request)
-                dump(shop)
-                guard shop.total > 0 else {
-                    presentAlert(title: "검색 결과가 없어요.")
-                    return
-                }
-                self.navigationController?.pushViewController(
-                    ShopListViewController(query: query, shop: shop),
-                    animated: true
-                )
-            } catch {
-                print((error as? AFError) ?? error)
-            }
-        }
-    }
 }
 
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let query = searchBar.text else { return }
-        guard query.filter(\.isLetter).count >= 2 else {
-            presentAlert(title: "두 글자 이상 입력해주세요.")
-            return
-        }
-        guard !query.filter(\.isLetter).isEmpty else {
-            presentAlert(title: "글자를 포함해주세요.")
-            return
-        }
-        
-        fetchShop(query: query)
-    }
-    
-    func presentAlert(title: String?, message: String? = nil) {
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
-        let confirm = UIAlertAction(title: "확인", style: .default)
-        alert.addAction(confirm)
-        present(alert, animated: true)
+        viewModel.input(.searchBarSearchButtonClicked(searchBar.text))
     }
 }
 
 #Preview {
-    UINavigationController(rootViewController: SearchViewController())
+    UINavigationController(rootViewController: SearchViewController(viewModel: SearchViewModel()))
 }
