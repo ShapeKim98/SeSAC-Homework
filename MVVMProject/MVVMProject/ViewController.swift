@@ -24,11 +24,11 @@ class ViewController: UITabBarController {
         currencyViewController.tabBarItem.image = UIImage(systemName: "dollarsign")
         
         let wordCounterViewController = UINavigationController(rootViewController: WordCounterViewController())
-        wordCounterViewController.tabBarItem.title = "검색"
+        wordCounterViewController.tabBarItem.title = "글자수"
         wordCounterViewController.tabBarItem.image = UIImage(systemName: "pencil")
         
         let userViewController = UINavigationController(rootViewController: UserViewController())
-        userViewController.tabBarItem.title = "검색"
+        userViewController.tabBarItem.title = "유저"
         userViewController.tabBarItem.image = UIImage(systemName: "person")
         
         setViewControllers(
