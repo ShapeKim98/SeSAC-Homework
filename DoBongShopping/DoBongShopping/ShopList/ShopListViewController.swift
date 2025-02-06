@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Alamofire
 
-class ShopListViewController: UIViewController {
+final class ShopListViewController: UIViewController {
     private let totalLabel = UILabel()
     private let sortButtonHStack = UIStackView()
     private var sortButtons = [SortButton]()
@@ -259,7 +259,7 @@ extension ShopListViewController: UICollectionViewDataSource,
 }
 
 extension ShopListViewController {
-    class SortButton: UIButton {
+    final class SortButton: UIButton {
         init(title: String) {
             super.init(frame: .zero)
             

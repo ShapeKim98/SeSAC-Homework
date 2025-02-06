@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Alamofire
 
-class SearchViewController: UIViewController {
+final class SearchViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let indicatorView = UIActivityIndicatorView(style: .large)
     
