@@ -168,7 +168,8 @@ private extension ShopListViewController {
 // MARK: Data Bindings
 private extension ShopListViewController {
     func didSetSelectedSort() {
-        UIView.animate(.easeInOut) {
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let `self` else { return }
             for (index, sort) in Sort.allCases.enumerated() {
                 sortButtons[index].isSelected(sort == selectedSort)
             }
