@@ -27,7 +27,10 @@ final class SearchViewModel {
     
     struct Model {
         var isLoading: Bool = false {
-            didSet { continuation?.yield(.isLoading(isLoading)) }
+            didSet {
+                guard oldValue != isLoading else { return }
+                continuation?.yield(.isLoading(isLoading))
+            }
         }
         
         var continuation: AsyncStream<Output>.Continuation?
@@ -41,7 +44,7 @@ final class SearchViewModel {
     
     var output: AsyncStream<Output> {
         return AsyncStream { continuation in
-            self.model.continuation = continuation
+            model.continuation = continuation
         }
     }
     
@@ -56,7 +59,10 @@ final class SearchViewModel {
                 delegate?.presentAlert(title: "글자를 포함해주세요.", message: nil)
                 return
             }
-            Task { await fetchShop(query: text) }
+            Task { [weak self] in
+                guard let self else { return }
+                await fetchShop(query: text)
+            }
             return
         }
     }
