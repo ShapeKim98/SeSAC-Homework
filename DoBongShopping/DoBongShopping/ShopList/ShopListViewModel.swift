@@ -18,7 +18,7 @@ final class SearchListViewModel {
     }
     
     enum Output {
-        case shop(_ value: ShopResponse?)
+        case shopItems(_ value: ShopResponse?)
         case selectedSort(_ value: Sort)
         case isLoading(_ value: Bool)
     }
@@ -26,11 +26,9 @@ final class SearchListViewModel {
     struct Model {
         var shop: ShopResponse {
             didSet {
-                guard
-                    oldValue != shop,
-                    oldValue.items != shop.items
-                else { return }
-                continuation?.yield(.shop(shop))
+                if oldValue.items != shop.items {
+                    continuation?.yield(.shopItems(shop))
+                }
             }
         }
         var selectedSort: Sort = .sim {

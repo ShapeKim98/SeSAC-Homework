@@ -171,7 +171,7 @@ private extension ShopListViewController {
             guard let self else { return }
             for await output in viewModel.output {
                 switch output {
-                case let .shop(shop):
+                case let .shopItems(shop):
                     bindedShop(shop)
                 case let .selectedSort(sort):
                     bindedSelectedSort(sort)
