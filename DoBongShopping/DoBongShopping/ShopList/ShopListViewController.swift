@@ -20,21 +20,17 @@ class ShopListViewController: UIViewController {
         configureCollectionView()
     }()
     
+    private let viewModel: SearchListViewModel
+    
     private let query: String
-    private var shop: ShopResponse? {
-        didSet { didSetShop() }
-    }
-    private var selectedSort: Sort = .sim {
-        didSet { didSetSelectedSort() }
-    }
-    private var isPaging: Bool = false
     
     init(
         query: String,
-        shop: ShopResponse = .mock
+        shop: ShopResponse = .mock,
+        viewModel: SearchListViewModel
     ) {
         self.query = query
-        self.shop = shop
+        self.viewModel = viewModel
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -49,6 +45,8 @@ class ShopListViewController: UIViewController {
         configureUI()
         
         configureLayout()
+        
+        bind()
     }
 
 }
@@ -106,7 +104,7 @@ private extension ShopListViewController {
     }
     
     func configureTotalLabel() {
-        totalLabel.text = "\(shop?.total.formatted() ?? "")개의 검색 결과"
+        totalLabel.text = "\(viewModel.model.shop.total.formatted())개의 검색 결과"
         totalLabel.textColor = .systemGreen
         totalLabel.font = .systemFont(ofSize: 16, weight: .bold)
         view.addSubview(totalLabel)
@@ -122,7 +120,7 @@ private extension ShopListViewController {
     func configureSortButtons() {
         for sort in Sort.allCases {
             let button = SortButton(title: sort.title)
-            button.isSelected(sort == selectedSort)
+            button.isSelected(sort == viewModel.model.selectedSort)
             button.addAction(
                 UIAction { [weak self] _ in
                     guard let `self` else { return }
@@ -159,7 +157,8 @@ private extension ShopListViewController {
     }
     
     func configureIndicatorView() {
-        indicatorView.isHidden = true
+        indicatorView.stopAnimating()
+        indicatorView.hidesWhenStopped = true
         indicatorView.color = .white
         view.addSubview(indicatorView)
     }
@@ -167,82 +166,57 @@ private extension ShopListViewController {
 
 // MARK: Data Bindings
 private extension ShopListViewController {
-    func didSetSelectedSort() {
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            guard let `self` else { return }
-            for (index, sort) in Sort.allCases.enumerated() {
-                sortButtons[index].isSelected(sort == selectedSort)
+    func bind() {
+        Task { [weak self] in
+            guard let self else { return }
+            for await output in viewModel.output {
+                switch output {
+                case let .shop(shop):
+                    bindedShop(shop)
+                case let .selectedSort(sort):
+                    bindedSelectedSort(sort)
+                case let .isLoading(isLoading):
+                    bindedIsLoading(isLoading)
+                }
             }
         }
     }
     
-    func didSetShop() {
-        guard shop != nil else {
-            indicatorView.isHidden = false
-            indicatorView.startAnimating()
-            return
-        }
+    func bindedShop(_ shop: ShopResponse?) {
+        print(#function)
         collectionView.reloadData()
-        indicatorView.isHidden = true
-        indicatorView.stopAnimating()
+    }
+    
+    func bindedSelectedSort(_ sort: Sort) {
+        print(#function)
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let `self` else { return }
+            for (index, sort) in Sort.allCases.enumerated() {
+                let isSelected = sort == viewModel.model.selectedSort
+                sortButtons[index].isSelected(isSelected)
+            }
+        }
+    }
+    
+    func bindedIsLoading(_ isLoading: Bool) {
+        print(#function)
+        if isLoading {
+            indicatorView.startAnimating()
+        } else {
+            indicatorView.stopAnimating()
+        }
     }
 }
 
 // MARK: Functions
 private extension ShopListViewController {
     func sortButtonTouchUpInside(sort: Sort) {
-        selectedSort = sort
-        
-        fetchShop()
-    }
-    
-    func fetchShop() {
-        Task { [weak self] in
-            guard let `self` else { return }
-            self.shop = nil
-            let request = ShopRequest(
-                query: self.query,
-                sort: self.selectedSort.rawValue
-            )
-            do {
-                self.shop = try await ShopClient.shared.fetchShop(request)
-                self.collectionView.scrollToItem(
-                    at: IndexPath(item: 0, section: 0),
-                    at: .top,
-                    animated: true
-                )
-            } catch {
-                print((error as? AFError) ?? error)
-            }
-        }
-    }
-    
-    func paginationShop(call: Any) {
-        guard
-            !isPaging,
-            let shop,
-            shop.items.count < shop.total
-        else { return }
-        print(call)
-        
-        Task { [weak self] in
-            guard let `self` else { return }
-            isPaging = true
-            defer { isPaging = false }
-            
-            let request = ShopRequest(
-                query: self.query,
-                start: shop.items.count + 1,
-                sort: self.selectedSort.rawValue
-            )
-            do {
-                let shop = try await ShopClient.shared.fetchShop(request)
-                self.shop?.items += shop.items
-                self.shop?.total = shop.total
-            } catch {
-                print((error as? AFError) ?? error)
-            }
-        }
+        collectionView.scrollToItem(
+            at: IndexPath(item: 0, section: 0),
+            at: .top,
+            animated: true
+        )
+        viewModel.input(.sortButtonTouchUpInside(query: query, sort: sort))
     }
 }
 
@@ -251,7 +225,7 @@ extension ShopListViewController: UICollectionViewDataSource,
                                   UICollectionViewDataSourcePrefetching {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return shop?.items.count ?? 0
+        return viewModel.model.shop.items.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -259,25 +233,22 @@ extension ShopListViewController: UICollectionViewDataSource,
             withReuseIdentifier: .shopCollectionCell,
             for: indexPath
         ) as? ShopCollectionViewCell
-        guard
-            let cell, let shop
-        else { return UICollectionViewCell() }
+        guard let cell else { return UICollectionViewCell() }
         
-        cell.cellForItemAt(shop.items[indexPath.item])
-        if indexPath.item + 1 == shop.items.count {
-            paginationShop(call: #function)
+        cell.cellForItemAt(viewModel.model.shop.items[indexPath.item])
+        if indexPath.item + 1 == viewModel.model.shop.items.count {
+            viewModel.input(.collectionViewCellForItemAt(query: query))
         }
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        guard let shopList = shop?.items else { return }
         for indexPath in indexPaths {
             guard
-                indexPath.item + 2 == shopList.count
+                indexPath.item + 2 == viewModel.model.shop.items.count
             else { continue }
-            paginationShop(call: #function)
+            viewModel.input(.collectionViewPrefetchItemsAt(query: query))
         }
     }
     
@@ -316,24 +287,22 @@ extension ShopListViewController {
     }
 }
 
-extension ShopListViewController {
-    enum Sort: String, CaseIterable {
-        case sim = "sim"
-        case date = "date"
-        case dsc = "dsc"
-        case asc = "asc"
-        
-        var title: String {
-            switch self {
-            case .sim: return "정확도"
-            case .date: return "날짜순"
-            case .dsc: return "가격높은순"
-            case .asc: return "가격낮은순"
-            }
+enum Sort: String, CaseIterable {
+    case sim = "sim"
+    case date = "date"
+    case dsc = "dsc"
+    case asc = "asc"
+    
+    var title: String {
+        switch self {
+        case .sim: return "정확도"
+        case .date: return "날짜순"
+        case .dsc: return "가격높은순"
+        case .asc: return "가격낮은순"
         }
     }
 }
 
-//#Preview {
-//    UINavigationController(rootViewController: ShopListViewController(query: "캠핑카"))
-//}
+#Preview {
+    UINavigationController(rootViewController: ShopListViewController(query: "캠핑카", viewModel: SearchListViewModel(shop: .mock)))
+}

@@ -25,7 +25,8 @@ final class AppCoordinator {
     }
     
     private func pushShopListViewController(query: String, shop: ShopResponse) {
-        let viewController = ShopListViewController(query: query, shop: shop)
+        let viewModel = SearchListViewModel(shop: shop)
+        let viewController = ShopListViewController(query: query, viewModel: viewModel)
         navigationController.pushViewController(viewController, animated: true)
     }
     

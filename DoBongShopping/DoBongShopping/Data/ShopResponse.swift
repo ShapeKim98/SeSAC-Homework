@@ -7,14 +7,14 @@
 
 import Foundation
 
-public struct ShopResponse: Decodable, Sendable {
+public struct ShopResponse: Decodable, Sendable, Equatable {
     public var total: Int
     public let display: Int
     public var items: [Item]
 }
 
 extension ShopResponse {
-    public struct Item: Decodable, Sendable {
+    public struct Item: Decodable, Sendable, Equatable {
         public let title: String
         public let image: String
         public let lprice: String
