@@ -65,6 +65,8 @@ final class SimpleValidationViewController: UIViewController {
 // MARK: Configure Views
 private extension SimpleValidationViewController {
     func configureUI() {
+        view.backgroundColor = .systemBackground
+        
         usernameTextField.borderStyle = .roundedRect
         view.addSubview(usernameTextField)
         

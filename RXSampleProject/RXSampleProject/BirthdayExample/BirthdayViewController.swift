@@ -114,19 +114,29 @@ class BirthdayViewController: UIViewController {
     }
 
     private func bind() {
-        birthDayPicker.rx.date
-            .map { date in
-                let year = date.formatted(.dateTime.year()) + "년"
-                let month = date.formatted(.dateTime.month(.defaultDigits)) + "월"
-                let day = date.formatted(.dateTime.day()) + "일"
-                return (year, month, day)
-            }
-            .bind(with: self) { this, value in
-                let (year, month, day) = value
-                this.yearLabel.text = year
-                this.monthLabel.text = month
-                this.dayLabel.text = day
-            }
+        let birthObservable = birthDayPicker.rx.date
+            .debug("birth")
+            .share(replay: 1)
+        
+        birthObservable
+            .map { return $0.formatted(.dateTime.year()) + "년" }
+            .distinctUntilChanged()
+            .debug("year")
+            .bind(to: yearLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        birthObservable
+            .map { return $0.formatted(.dateTime.month(.defaultDigits)) + "월" }
+            .distinctUntilChanged()
+            .debug("month")
+            .bind(to: monthLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        birthObservable
+            .map { return $0.formatted(.dateTime.day()) + "일" }
+            .distinctUntilChanged()
+            .debug("day")
+            .bind(to: dayLabel.rx.text)
             .disposed(by: disposeBag)
     }
 }

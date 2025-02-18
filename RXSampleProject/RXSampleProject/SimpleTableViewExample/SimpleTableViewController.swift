@@ -20,6 +20,8 @@ final class SimpleTableViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .systemBackground
+        
         view.addSubview(simpleTableView)
         simpleTableView.register(
             SimpleTableViewCell.self,
