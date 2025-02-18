@@ -10,7 +10,7 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-class ShopCollectionViewCell: UICollectionViewCell {
+final class ShopCollectionViewCell: UICollectionViewCell {
     private let imageView = UIImageView()
     private let mallNameLabel = UILabel()
     private let titleLabel = UILabel()

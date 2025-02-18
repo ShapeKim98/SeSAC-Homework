@@ -7,7 +7,7 @@
 
 import UIKit
 
-class VerticalCollectionView: UICollectionView {
+final class VerticalCollectionView: UICollectionView {
     init(
         superSize: CGRect,
         itemHeight: CGFloat,
