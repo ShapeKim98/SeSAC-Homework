@@ -6,7 +6,10 @@
 //
 
 import UIKit
+
+import Kingfisher
 import SnapKit
+import RxSwift
 
 final class PersonTableViewCell: UITableViewCell {
     
@@ -37,6 +40,8 @@ final class PersonTableViewCell: UITableViewCell {
         button.layer.cornerRadius = 16
         return button
     }()
+    
+    var disposeBag = DisposeBag()
       
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -48,8 +53,13 @@ final class PersonTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-     
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        disposeBag = DisposeBag()
+    }
+     
     private func configure() {
         contentView.addSubview(usernameLabel)
         contentView.addSubview(profileImageView)
@@ -73,6 +83,12 @@ final class PersonTableViewCell: UITableViewCell {
             $0.height.equalTo(32)
             $0.width.equalTo(72)
         }
+    }
+    
+    func forRowAt(_ person: Person) {
+        usernameLabel.text = person.name
+        let url = URL(string: person.profileImage)
+        profileImageView.kf.setImage(with: url)
     }
 }
 

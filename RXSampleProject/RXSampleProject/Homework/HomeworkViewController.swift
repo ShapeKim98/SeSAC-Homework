@@ -49,9 +49,16 @@ class HomeworkViewController: UIViewController {
                 cellIdentifier: PersonTableViewCell.identifier,
                 cellType: PersonTableViewCell.self
             )) { row, elements, cell in
-                cell.usernameLabel.text = elements.name
-                let url = URL(string: elements.profileImage)
-                cell.profileImageView.kf.setImage(with: url)
+                cell.forRowAt(elements)
+                cell.detailButton.rx.tap
+                    .debug()
+                    .bind(with: self) { this, _ in
+                        this.navigationController?.pushViewController(
+                            DetailViewController(name: elements.name),
+                            animated: true
+                        )
+                    }
+                    .disposed(by: cell.disposeBag)
             }
             .disposed(by: disposeBag)
     }
