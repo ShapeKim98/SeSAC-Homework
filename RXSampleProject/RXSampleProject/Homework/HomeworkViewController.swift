@@ -7,12 +7,11 @@
 
 import UIKit
 
-import Kingfisher
 import SnapKit
 import RxSwift
 import RxCocoa
 
-struct Person: Identifiable {
+struct Person: Identifiable, Equatable {
     let id = UUID()
     let name: String
     let email: String
@@ -43,8 +42,9 @@ class HomeworkViewController: UIViewController {
     }
     
     private func bindSampleUsers() {
-        viewModel.bind
+        viewModel.bindable
             .map(\.sampleUsers)
+            .distinctUntilChanged()
             .bind(to: tableView.rx.items(
                 cellIdentifier: PersonTableViewCell.identifier,
                 cellType: PersonTableViewCell.self
@@ -64,8 +64,9 @@ class HomeworkViewController: UIViewController {
     }
     
     private func bindSelectedUsers() {
-        viewModel.bind
+        viewModel.bindable
             .map(\.selectedUsers)
+            .distinctUntilChanged()
             .bind(to: collectionView.rx.items(
                 cellIdentifier: UserCollectionViewCell.identifier,
                 cellType: UserCollectionViewCell.self

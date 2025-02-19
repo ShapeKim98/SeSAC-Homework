@@ -24,6 +24,11 @@ final class HomeworkViewModel {
     private lazy var state = BehaviorRelay(
         value: State(sampleUsers: sampleUsers)
     )
+    var bindable: Observable<State> {
+        return state.share(replay: 1)
+    }
+    let send = BehaviorRelay<Action>(value: .none)
+    let disposeBag = DisposeBag()
     
     let sampleUsers: [Person] = [
         Person(name: "Steven", email: "steven.brown@example.com", profileImage: "https://randomuser.me/api/portraits/thumb/men/1.jpg"),
@@ -78,14 +83,6 @@ final class HomeworkViewModel {
         Person(name: "Ralph", email: "ralph.cox@example.com", profileImage: "https://randomuser.me/api/portraits/thumb/men/26.jpg"),
         Person(name: "Ann", email: "ann.howard@example.com", profileImage: "https://randomuser.me/api/portraits/thumb/women/25.jpg")
     ]
-    
-    var bind: Observable<State> {
-        return state.share(replay: 1)
-    }
-    
-    let send = BehaviorRelay<Action>(value: .none)
-    
-    let disposeBag = DisposeBag()
     
     init() {
         send.bind(with: self) { this, action in
