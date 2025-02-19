@@ -29,6 +29,10 @@ class HomeworkViewController: UIViewController {
     
     private let disposeBag = DisposeBag()
     
+    deinit {
+        print("deinit")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
@@ -48,10 +52,10 @@ class HomeworkViewController: UIViewController {
             .bind(to: tableView.rx.items(
                 cellIdentifier: PersonTableViewCell.identifier,
                 cellType: PersonTableViewCell.self
-            )) { row, elements, cell in
+            )) { [weak self] row, elements, cell in
+                guard let `self` else { return }
                 cell.forRowAt(elements)
                 cell.detailButton.rx.tap
-                    .debug()
                     .bind(with: self) { this, _ in
                         this.navigationController?.pushViewController(
                             DetailViewController(name: elements.name),
