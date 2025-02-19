@@ -75,6 +75,7 @@ class HomeworkViewController: UIViewController {
         view.addSubview(searchBar)
         
         navigationItem.titleView = searchBar
+        searchBar.enablesReturnKeyAutomatically = false
         searchBar.rx.searchButtonClicked
             .withLatestFrom(searchBar.rx.text.orEmpty)
             .map { Action.searchButtonClicked($0.lowercased()) }
