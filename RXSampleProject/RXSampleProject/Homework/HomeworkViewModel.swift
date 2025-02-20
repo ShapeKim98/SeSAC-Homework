@@ -24,7 +24,7 @@ final class HomeworkViewModel {
     private lazy var state = BehaviorRelay(
         value: State(sampleUsers: sampleUsers)
     )
-    var bindable: Observable<State> {
+    var observableState: Observable<State> {
         return state.share(replay: 1)
     }
     let send = BehaviorRelay<Action>(value: .none)

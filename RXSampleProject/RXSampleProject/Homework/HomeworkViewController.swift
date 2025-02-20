@@ -46,7 +46,7 @@ class HomeworkViewController: UIViewController {
     }
     
     private func bindSampleUsers() {
-        viewModel.bindable
+        viewModel.observableState
             .map(\.sampleUsers)
             .distinctUntilChanged()
             .bind(to: tableView.rx.items(
@@ -68,7 +68,7 @@ class HomeworkViewController: UIViewController {
     }
     
     private func bindSelectedUsers() {
-        viewModel.bindable
+        viewModel.observableState
             .map(\.selectedUsers)
             .distinctUntilChanged()
             .bind(to: collectionView.rx.items(
