@@ -58,8 +58,20 @@ class ViewController: UIViewController {
         )
         return button
     }()
+    private lazy var homeworkButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Simple Homework", for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
+        button.addAction(
+            UIAction { [weak self] _ in
+                self?.pushHomeworkViewController()
+            },
+            for: .touchUpInside
+        )
+        return button
+    }()
     private lazy var vstack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [tableButton, validationButton, numbersButton, birthdayButton])
+        let stack = UIStackView(arrangedSubviews: [tableButton, validationButton, numbersButton, birthdayButton, homeworkButton])
         stack.axis = .vertical
         stack.spacing = 32
         stack.distribution = .fillEqually
@@ -91,6 +103,10 @@ class ViewController: UIViewController {
     
     private func pushBirthdayViewController() {
         navigationController?.pushViewController(BirthdayViewController(), animated: true)
+    }
+    
+    private func pushHomeworkViewController() {
+        navigationController?.pushViewController(HomeworkViewController(), animated: true)
     }
 }
 
