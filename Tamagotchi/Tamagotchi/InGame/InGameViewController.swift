@@ -38,6 +38,8 @@ class InGameViewController: UIViewController {
         bindState()
         
         bindAction()
+        
+        viewModel.send.accept(.viewDidLoad)
     }
     
     override func viewDidAppear(_ animated: Bool) {

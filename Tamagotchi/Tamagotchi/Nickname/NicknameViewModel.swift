@@ -30,22 +30,29 @@ final class NicknameViewModel {
     let disposeBag = DisposeBag()
     
     init() {
-        send.withUnretained(self)
-            .map { this, action in this.reducer(action) }
+        send
+            .observe(on: SerialDispatchQueueScheduler(qos: .default))
+            .withUnretained(self)
+            .map { this, action in
+                var state = this.state.value
+                this.reducer(&state, action)?
+                    .compactMap { $0.action }
+                    .bind(to: this.send)
+                    .disposed(by: this.disposeBag)
+                return state
+            }
             .bind(to: state)
             .disposed(by: disposeBag)
     }
     
-    func reducer(_ action: Action) -> State {
-        var newState = state.value
-        
+    func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>>? {
         switch action {
         case let .captainTextFieldTextOnChanged(text):
-            newState.isValidText = 2 <= text.count && text.count <= 6
-            return newState
+            state.isValidText = 2 <= text.count && text.count <= 6
+            return .none
         case let .saveButtonTapped(text):
-            newState.captain = text
-            return newState
+            state.captain = text
+            return .none
         }
     }
 }

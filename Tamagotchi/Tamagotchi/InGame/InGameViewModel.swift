@@ -16,7 +16,13 @@ final class InGameViewModel {
         case waterDropButtonTapped(String)
         case viewDidAppear
         case alertConfirmButtonTapped
-        case captainSideEffect
+        case sideEffect(SideEffect)
+        case bindSharedCaptain
+        case viewDidLoad
+    }
+    
+    enum SideEffect {
+        case observedSharedCaptain
     }
     
     struct State {
@@ -37,68 +43,72 @@ final class InGameViewModel {
         state.asDriver()
     }
     let send = PublishRelay<Action>()
-    
     let disposeBag = DisposeBag()
     
     init() {
-        send.withUnretained(self)
-            .map { this, action in this.reducer(action) }
+        send
+            .observe(on: SerialDispatchQueueScheduler(qos: .default))
+            .withUnretained(self)
+            .compactMap { this, action in
+                var state = this.state.value
+                this.reducer(&state, action)?
+                    .compactMap(\.action)
+                    .bind(to: this.send)
+                    .disposed(by: this.disposeBag)
+                return state
+            }
             .bind(to: state)
-            .disposed(by: disposeBag)
-        
-        state.value.$captain
-            .map { _ in Action.captainSideEffect }
-            .debug()
-            .bind(to: send)
             .disposed(by: disposeBag)
     }
     
-    private func reducer(_ action: Action) -> State {
-        var newState = state.value
-        
+    private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>>? {
         switch action {
         case let .riceButtonTapped(text):
             guard !text.isEmpty else {
-                newState.rice += 1
-                updateLevel(&newState)
-                return newState
+                state.rice += 1
+                updateLevel(&state)
+                return .none
             }
             guard let riceInt = Int(text) else {
-                newState.alertMessage = "숫자만 입력해주세요"
-                return newState
+                state.alertMessage = "숫자만 입력해주세요"
+                return .none
             }
             guard riceInt < 100 else {
-                newState.alertMessage = "한 번에 최대 99개까지 먹을 수 있어요"
-                return newState
+                state.alertMessage = "한 번에 최대 99개까지 먹을 수 있어요"
+                return .none
             }
-            newState.rice += riceInt
-            updateLevel(&newState)
-            return newState
+            state.rice += riceInt
+            updateLevel(&state)
+            return .none
         case let .waterDropButtonTapped(text):
             guard !text.isEmpty else {
-                newState.waterDrop += 1
-                updateLevel(&newState)
-                return newState
+                state.waterDrop += 1
+                updateLevel(&state)
+                return .none
             }
             guard let waterDropInt = Int(text) else {
-                newState.alertMessage = "숫자만 입력해주세요"
-                return newState
+                state.alertMessage = "숫자만 입력해주세요"
+                return .none
             }
             guard waterDropInt < 50 else {
-                newState.alertMessage = "한 번에 최대 49개까지 먹을 수 있어요"
-                return newState
+                state.alertMessage = "한 번에 최대 49개까지 먹을 수 있어요"
+                return .none
             }
-            newState.waterDrop += waterDropInt
-            updateLevel(&newState)
-            return newState
+            state.waterDrop += waterDropInt
+            updateLevel(&state)
+            return .none
         case .viewDidAppear:
-            newState.message = Message.random()
-            return newState
+            state.message = Message.random()
+            return .none
         case .alertConfirmButtonTapped:
-            newState.alertMessage = nil
-            return newState
-        case .captainSideEffect:
-            return newState
+            state.alertMessage = nil
+            return .none
+        case .bindSharedCaptain:
+            return .none
+        case let .sideEffect(action):
+            return sideEffect(&state, action)
+        case .viewDidLoad:
+            return .send(.sideEffect(.observedSharedCaptain))
         }
     }
 }
@@ -127,6 +137,18 @@ private extension InGameViewModel {
         }
         if state.level ?? 1 > oldLevel {
             state.message = Message.밥과_물을_잘먹었더니_레벨업_했어여_고마워요_대장님
+        }
+    }
+    
+    private func sideEffect(_ state: inout State, _ action: SideEffect) -> Observable<Effect<Action>>? {
+        switch action {
+        case .observedSharedCaptain:
+            state.$captain
+                .map { _ in Action.bindSharedCaptain }
+                .debug()
+                .bind(to: send)
+                .disposed(by: disposeBag)
+            return .none
         }
     }
 }
