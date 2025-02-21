@@ -101,21 +101,39 @@ private extension ViewController {
     }
     
     func bindState() {
+        bindCaptain()
+        
+        bindTamagotchiState()
+        
+        bindLevel()
+        
+        bindMessage()
+        
+        bindAlertMessage()
+    }
+    
+    func bindCaptain() {
         viewModel.observableState
             .map { "\($0.captain ?? "대장")님의 다마고치" }
             .distinctUntilChanged()
             .debug()
             .drive(navigationItem.rx.title)
             .disposed(by: disposeBag)
-        
+
+    }
+    
+    func bindTamagotchiState() {
         viewModel.observableState
             .map {
                 "LV\($0.level ?? 1) ∙ 밥알 \($0.rice ?? 0)개 ∙ 물방울 \($0.waterDrop ?? 0)개"
             }
+            .distinctUntilChanged()
             .debug()
             .drive(tamagotchiInfoLabel.rx.text)
             .disposed(by: disposeBag)
-        
+    }
+    
+    func bindLevel() {
         viewModel.observableState
             .compactMap(\.level)
             .distinctUntilChanged()
@@ -123,14 +141,18 @@ private extension ViewController {
             .map { UIImage(named: "2-\($0 >= 9 ? 9 : $0)") }
             .drive(tamagotchiImageView.rx.image)
             .disposed(by: disposeBag)
-        
+    }
+    
+    func bindMessage() {
         viewModel.observableState
             .map { $0.message.text($0.captain ?? "대장") }
             .distinctUntilChanged()
             .debug()
             .drive(bubbleLabel.rx.text)
             .disposed(by: disposeBag)
-        
+    }
+    
+    func bindAlertMessage() {
         viewModel.observableState
             .compactMap(\.alertMessage)
             .debug()
@@ -138,27 +160,5 @@ private extension ViewController {
                 this.presentAlert(title: "밥먹기 오류", message: message)
             }
             .disposed(by: disposeBag)
-    }
-}
-
-extension ViewController {
-    enum Message: CaseIterable {
-        case 복습_아직_안하셨다구요_지금_잠이_오세여_대장님
-        case 대장님_오늘_깃허브_푸시_하셨어영
-        case 대장님_밥주세여
-        case 밥과_물을_잘먹었더니_레벨업_했어여_고마워요_대장님
-        
-        func text(_ captain: String) -> String {
-            switch self {
-            case .복습_아직_안하셨다구요_지금_잠이_오세여_대장님:
-                return "복습 아직 안하셨다구요? 지금 잠이 오세여? \(captain)님?"
-            case .대장님_오늘_깃허브_푸시_하셨어영:
-                return "\(captain)님 오늘 깃허브 푸시 하셨어영?"
-            case .대장님_밥주세여:
-                return "\(captain)님, 밥주세여"
-            case .밥과_물을_잘먹었더니_레벨업_했어여_고마워요_대장님:
-                return "밥과 물을 잘먹었더니 레벨업 했어여 고마워요 \(captain)님"
-            }
-        }
     }
 }
