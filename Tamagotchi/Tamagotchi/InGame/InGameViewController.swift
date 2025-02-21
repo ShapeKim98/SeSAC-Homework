@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class ViewController: UIViewController {
+class InGameViewController: UIViewController {
     @IBOutlet var settingButton: UIButton!
     @IBOutlet var waterDropButton: UIButton!
     @IBOutlet var riceButton: UIButton!
@@ -81,7 +81,7 @@ class ViewController: UIViewController {
 }
 
 // MARK: Bidings
-private extension ViewController {
+private extension InGameViewController {
     typealias Action = InGameViewModel.Action
     
     func bindAction() {
