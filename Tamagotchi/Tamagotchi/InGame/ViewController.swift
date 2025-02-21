@@ -57,7 +57,13 @@ class ViewController: UIViewController {
             message: message,
             preferredStyle: .alert
         )
-        let confirm = UIAlertAction(title: "확인", style: .default)
+        let confirm = UIAlertAction(
+            title: "확인",
+            style: .default
+        ) { [weak self] action in
+            action.isEnabled = false
+            self?.viewModel.send.accept(.alertConfirmButtonTapped)
+        }
         alert.addAction(confirm)
         present(alert, animated: true)
     }
@@ -114,13 +120,7 @@ private extension ViewController {
             .compactMap(\.level)
             .distinctUntilChanged()
             .debug()
-            .map { level in
-                if level >= 9 {
-                    UIImage(named: "2-9")
-                } else {
-                    UIImage(named: "2-\(level)")
-                }
-            }
+            .map { UIImage(named: "2-\($0 >= 9 ? 9 : $0)") }
             .drive(tamagotchiImageView.rx.image)
             .disposed(by: disposeBag)
         
@@ -129,6 +129,14 @@ private extension ViewController {
             .distinctUntilChanged()
             .debug()
             .drive(bubbleLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.observableState
+            .compactMap(\.alertMessage)
+            .debug()
+            .drive(with: self) { this, message in
+                this.presentAlert(title: "밥먹기 오류", message: message)
+            }
             .disposed(by: disposeBag)
     }
 }

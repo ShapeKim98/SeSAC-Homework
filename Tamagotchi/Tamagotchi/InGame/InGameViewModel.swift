@@ -15,6 +15,7 @@ final class InGameViewModel {
         case riceButtonTapped(String)
         case waterDropButtonTapped(String)
         case viewDidAppear
+        case alertConfirmButtonTapped
     }
     
     struct State {
@@ -85,6 +86,9 @@ final class InGameViewModel {
             return newState
         case .viewDidAppear:
             newState.message = Message.random()
+            return newState
+        case .alertConfirmButtonTapped:
+            newState.alertMessage = nil
             return newState
         }
     }
