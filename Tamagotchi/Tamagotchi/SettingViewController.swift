@@ -11,10 +11,7 @@ class SettingViewController: UIViewController {
     @IBOutlet var captainTextField: UITextField!
     @IBOutlet var saveButton: UIButton!
     
-    @UserDefault(
-        forKey: .userDefault(.captain),
-        defaultValue: "대장"
-    )
+    @Shared(.userDefaults(.captain, defaultValue: "대장"))
     private var captain: String?
     
     override func viewDidLoad() {
