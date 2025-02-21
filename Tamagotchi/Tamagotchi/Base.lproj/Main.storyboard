@@ -214,10 +214,10 @@
             </objects>
             <point key="canvasLocation" x="1041.9847328244275" y="-2.1126760563380285"/>
         </scene>
-        <!--Setting View Controller-->
+        <!--Nickname View Controller-->
         <scene sceneID="ATU-4n-Yxd">
             <objects>
-                <viewController id="NWr-4q-oWn" customClass="SettingViewController" customModule="Tamagotchi" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="NWr-4q-oWn" customClass="NicknameViewController" customModule="Tamagotchi" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bas-ob-98q">
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -230,9 +230,6 @@
                                 <color key="textColor" red="0.32549020649999999" green="0.41176474089999998" blue="0.46274507050000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
-                                <connections>
-                                    <action selector="captainTextFieldEditingChanged:" destination="NWr-4q-oWn" eventType="editingChanged" id="eYI-Ct-O0i"/>
-                                </connections>
                             </textField>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RnP-Wu-xm1">
                                 <rect key="frame" x="24" y="167" width="354" height="1"/>
@@ -264,14 +261,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="saveButtonTouchUpInside:" destination="NWr-4q-oWn" eventType="touchUpInside" id="krx-FB-MGK"/>
-                                </connections>
                             </button>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="captainTextField" destination="9dR-2U-IGY" id="mTV-U5-s1q"/>
+                        <outlet property="captainTextField" destination="9dR-2U-IGY" id="o5a-7O-IAA"/>
                         <outlet property="saveButton" destination="php-kB-Zil" id="mXZ-BR-PvU"/>
                     </connections>
                 </viewController>
