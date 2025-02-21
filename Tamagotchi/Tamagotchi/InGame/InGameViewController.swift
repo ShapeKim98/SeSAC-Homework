@@ -119,7 +119,6 @@ private extension InGameViewController {
             .debug()
             .drive(navigationItem.rx.title)
             .disposed(by: disposeBag)
-
     }
     
     func bindTamagotchiState() {

@@ -37,14 +37,12 @@ struct Shared<T> {
         }
     }
     
-    var projectedValue: Driver<T?> {
+    var projectedValue: Observable<T?> {
         switch type {
         case let .userDefaults(key, _):
             UserDefaults.standard.rx
                 .observe(T.self, key.rawValue, options: [.initial, .new])
-                .asDriver(onErrorJustReturn: nil)
         }
-       
     }
 }
 

@@ -16,6 +16,7 @@ final class InGameViewModel {
         case waterDropButtonTapped(String)
         case viewDidAppear
         case alertConfirmButtonTapped
+        case captainSideEffect
     }
     
     struct State {
@@ -44,9 +45,15 @@ final class InGameViewModel {
             .map { this, action in this.reducer(action) }
             .bind(to: state)
             .disposed(by: disposeBag)
+        
+        state.value.$captain
+            .map { _ in Action.captainSideEffect }
+            .debug()
+            .bind(to: send)
+            .disposed(by: disposeBag)
     }
     
-    func reducer(_ action: Action) -> State {
+    private func reducer(_ action: Action) -> State {
         var newState = state.value
         
         switch action {
@@ -89,6 +96,8 @@ final class InGameViewModel {
             return newState
         case .alertConfirmButtonTapped:
             newState.alertMessage = nil
+            return newState
+        case .captainSideEffect:
             return newState
         }
     }
