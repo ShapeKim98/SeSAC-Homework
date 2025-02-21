@@ -78,9 +78,6 @@
                                             <fontDescription key="titleFontDescription" type="boldSystem" pointSize="13"/>
                                             <color key="baseForegroundColor" red="0.33725491169999999" green="0.42352938649999999" blue="0.47450977560000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         </buttonConfiguration>
-                                        <connections>
-                                            <action selector="riceButtonTouchUpInside:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cdq-Fb-o8d"/>
-                                        </connections>
                                     </button>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xMw-nx-kaM">
                                         <rect key="frame" x="0.0" y="34" width="134" height="1"/>
@@ -127,9 +124,6 @@
                                             <fontDescription key="titleFontDescription" type="boldSystem" pointSize="13"/>
                                             <color key="baseForegroundColor" red="0.33725491169999999" green="0.42352938649999999" blue="0.47450977560000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         </buttonConfiguration>
-                                        <connections>
-                                            <action selector="waterDropButtonTouchUpInside:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ome-OW-ncw"/>
-                                        </connections>
                                     </button>
                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="밥주세용" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="a89-QP-pRy">
                                         <rect key="frame" x="0.0" y="0.0" width="134" height="35"/>
