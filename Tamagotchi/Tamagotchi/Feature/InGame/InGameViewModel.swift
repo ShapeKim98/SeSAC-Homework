@@ -110,10 +110,17 @@ final class InGameViewModel: Composable {
         case .bindSharedTamagotchiId:
             return .none
         case .viewDidLoad:
-            return .merge(
+            let bindSharedCaptain = Observable<Effect<Action>>.run(
                 state.$captain.map { _ in Action.bindSharedCaptain },
+                disposeBag: disposeBag
+            )
+            let bindSharedTamagotchiId = Observable<Effect<Action>>.run(
                 state.$tamagotchiId.map { _ in Action.bindSharedTamagotchiId },
                 disposeBag: disposeBag
+            )
+            return .merge(
+                bindSharedCaptain,
+                bindSharedTamagotchiId
             )
         }
     }
