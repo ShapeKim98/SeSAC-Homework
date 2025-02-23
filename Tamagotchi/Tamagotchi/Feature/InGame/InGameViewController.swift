@@ -86,11 +86,13 @@ class InGameViewController: UIViewController {
         }
         
         tamagotchiInfoLabel.snp.makeConstraints { make in
+            make.top.greaterThanOrEqualTo(tamagotchiNameLabel.snp.bottom)
             make.top.lessThanOrEqualTo(tamagotchiNameLabel.snp.bottom).offset(12)
             make.centerX.equalToSuperview()
         }
         
         vstack.snp.makeConstraints { make in
+            make.top.greaterThanOrEqualTo(tamagotchiInfoLabel.snp.bottom)
             make.top.lessThanOrEqualTo(tamagotchiInfoLabel.snp.bottom).offset(32)
             make.centerX.equalToSuperview()
             make.bottom.lessThanOrEqualTo(view.keyboardLayoutGuide.snp.top)
