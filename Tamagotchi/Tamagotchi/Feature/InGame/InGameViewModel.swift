@@ -18,6 +18,7 @@ final class InGameViewModel: Composable {
         case alertConfirmButtonTapped
         case bindSharedCaptain
         case viewDidLoad
+        case bindSharedTamagotchiId
     }
     
     struct State {
@@ -48,7 +49,7 @@ final class InGameViewModel: Composable {
     init() {
         send
             .observe(on: MainScheduler.asyncInstance)
-            .debug("Received Action")
+            .debug("\(Self.self): Received Action")
             .withUnretained(self)
             .compactMap { this, action in
                 var state = this.state.value
@@ -106,9 +107,12 @@ final class InGameViewModel: Composable {
             return .none
         case .bindSharedCaptain:
             return .none
+        case .bindSharedTamagotchiId:
+            return .none
         case .viewDidLoad:
-            return .run(
+            return .merge(
                 state.$captain.map { _ in Action.bindSharedCaptain },
+                state.$tamagotchiId.map { _ in Action.bindSharedTamagotchiId },
                 disposeBag: disposeBag
             )
         }

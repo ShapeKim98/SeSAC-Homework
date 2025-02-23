@@ -47,4 +47,21 @@ extension Observable where Element: EffectProtocol {
             return Disposables.create()
         }
     }
+    
+    static func merge(
+        _ observables: Observable<Element.Action>...,
+        disposeBag: DisposeBag
+    ) -> Observable<Element> {
+        let creates = observables.map { observable in
+            return Observable.create { observer in
+                observable
+                    .map { Element.send($0) }
+                    .bind(to: observer)
+                    .disposed(by: disposeBag)
+                
+                return Disposables.create()
+            }
+        }
+        return .merge(creates)
+    }
 }
