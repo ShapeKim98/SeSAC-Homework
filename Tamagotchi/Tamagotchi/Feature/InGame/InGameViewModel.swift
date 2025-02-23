@@ -33,7 +33,7 @@ final class InGameViewModel: Composable {
         var message = Message.random()
     }
     
-    private(set) var state = BehaviorRelay(value: State())
+    private let state = BehaviorRelay(value: State())
     var observableState: Driver<State> {
         state.asDriver()
     }
