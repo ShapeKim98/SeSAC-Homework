@@ -10,23 +10,41 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-extension Observable {
-    static func send<Action>(_ action: Action) -> Observable<Effect<Action>> {
-        return .create { observer in
-            observer.onNext(.send(action))
-            observer.onCompleted()
-            return Disposables.create()
-        }
-    }
+protocol EffectProtocol {
+    associatedtype Action
+    static func send(_ action: Action) -> Self
 }
 
-enum Effect<Action> {
+enum Effect<Action>: EffectProtocol {
     case send(Action)
     
     var action: Action {
         switch self {
         case .send(let action):
             return action
+        }
+    }
+}
+
+extension Observable where Element: EffectProtocol {
+    static func send(_ action: Element.Action) -> Observable<Element> {
+        return .create { observer in
+            observer.onNext(.send(action))
+            observer.onCompleted()
+            return Disposables.create()
+        }
+    }
+    
+    static func run(
+        _ observable: Observable<Element.Action>,
+        disposeBag: DisposeBag
+    ) -> Observable<Element> {
+        return .create { observer in
+            observable
+                .map { Element.send($0) }
+                .bind(to: observer)
+                .disposed(by: disposeBag)
+            return Disposables.create()
         }
     }
 }

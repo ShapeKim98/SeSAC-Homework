@@ -10,19 +10,14 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-final class InGameViewModel {
+final class InGameViewModel: Composable {
     enum Action {
         case riceButtonTapped(String)
         case waterDropButtonTapped(String)
         case viewDidAppear
         case alertConfirmButtonTapped
-        case sideEffect(SideEffect)
         case bindSharedCaptain
         case viewDidLoad
-    }
-    
-    enum SideEffect {
-        case observedSharedCaptain
     }
     
     struct State {
@@ -38,16 +33,16 @@ final class InGameViewModel {
         var message = Message.random()
     }
     
-    private var state = BehaviorRelay(value: State())
+    private(set) var state = BehaviorRelay(value: State())
     var observableState: Driver<State> {
         state.asDriver()
     }
     let send = PublishRelay<Action>()
-    let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
     init() {
         send
-            .observe(on: SerialDispatchQueueScheduler(qos: .default))
+            .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .compactMap { this, action in
                 var state = this.state.value
@@ -105,10 +100,11 @@ final class InGameViewModel {
             return .none
         case .bindSharedCaptain:
             return .none
-        case let .sideEffect(action):
-            return sideEffect(&state, action)
         case .viewDidLoad:
-            return .send(.sideEffect(.observedSharedCaptain))
+            return .run(
+                state.$captain.map { _ in Action.bindSharedCaptain },
+                disposeBag: disposeBag
+            )
         }
     }
 }
@@ -137,18 +133,6 @@ private extension InGameViewModel {
         }
         if state.level ?? 1 > oldLevel {
             state.message = Message.밥과_물을_잘먹었더니_레벨업_했어여_고마워요_대장님
-        }
-    }
-    
-    private func sideEffect(_ state: inout State, _ action: SideEffect) -> Observable<Effect<Action>>? {
-        switch action {
-        case .observedSharedCaptain:
-            state.$captain
-                .map { _ in Action.bindSharedCaptain }
-                .debug()
-                .bind(to: send)
-                .disposed(by: disposeBag)
-            return .none
         }
     }
 }
