@@ -81,19 +81,20 @@ private extension SettingTableViewCell {
     
     func configureTitleLabel() {
         titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
+        titleLabel.textColor = .black
         contentView.addSubview(titleLabel)
     }
     
     func configureNameLabel() {
         nameLabel.font = .systemFont(ofSize: 16, weight: .regular)
-        nameLabel.textColor = .secondaryLabel
+        nameLabel.textColor = .systemGray
         contentView.addSubview(nameLabel)
     }
     
     func configureChevronImageView() {
         chevronImageView.contentMode = .scaleAspectFit
         chevronImageView.image = UIImage(systemName: "chevron.right")
-        chevronImageView.tintColor = .secondaryLabel
+        chevronImageView.tintColor = .systemGray
         contentView.addSubview(chevronImageView)
     }
 }

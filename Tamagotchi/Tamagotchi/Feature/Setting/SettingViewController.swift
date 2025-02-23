@@ -37,6 +37,14 @@ private extension SettingViewController {
     func configureUI() {
         view.backgroundColor = .tgBackground
         
+        navigationItem.title = "설정"
+        navigationItem.backBarButtonItem = UIBarButtonItem(
+            title: "",
+            style: .plain,
+            target: self,
+            action: nil
+        )
+        
         configureTableView()
     }
     
@@ -82,6 +90,12 @@ private extension SettingViewController {
             .compactMap { $0.type == .reset ? $0 : nil }
             .bind(with: self) { this, _ in
                 this.presentAlert()
+            }
+            .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .bind(with: self) { this, indexPath in
+                this.tableView.deselectRow(at: indexPath, animated: true)
             }
             .disposed(by: disposeBag)
     }

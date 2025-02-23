@@ -23,16 +23,10 @@ class NicknameViewController: UIViewController {
         bindState()
         
         bindAction()
-
-        setNavigationItem()
         
         setSaveButton()
         
         captainTextField.enablesReturnKeyAutomatically = true
-    }
-
-    private func setNavigationItem() {
-        self.navigationController?.navigationBar.topItem?.title = "설정"
     }
     
     private func setSaveButton() {
@@ -50,10 +44,19 @@ private extension NicknameViewController {
     typealias Action = NicknameViewModel.Action
     
     func bindAction() {
-        saveButton.rx.tap
+        let saveButtonTapped = saveButton.rx.tap
+            .share()
+        
+        saveButtonTapped
             .withLatestFrom(captainTextField.rx.text.orEmpty)
             .map { Action.saveButtonTapped($0) }
             .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+        
+        saveButtonTapped
+            .bind(with: self) { this, _ in
+                this.navigationController?.popViewController(animated: true)
+            }
             .disposed(by: disposeBag)
         
         captainTextField.rx.text.orEmpty

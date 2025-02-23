@@ -91,6 +91,7 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="35" id="Pv8-gz-H5u"/>
                                         </constraints>
+                                        <color key="textColor" red="0.32549020649999999" green="0.41176474089999998" blue="0.46274507050000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
@@ -130,6 +131,7 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="35" id="FNT-ve-PRA"/>
                                         </constraints>
+                                        <color key="textColor" red="0.32549020649999999" green="0.41176474089999998" blue="0.46274507050000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>

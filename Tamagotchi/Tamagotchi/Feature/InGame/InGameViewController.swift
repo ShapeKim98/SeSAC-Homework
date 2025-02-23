@@ -48,6 +48,13 @@ class InGameViewController: UIViewController {
     }
     
     private func setNavigationItem() {
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.accent]
+        navigationItem.backBarButtonItem = UIBarButtonItem(
+            title: "",
+            style: .plain,
+            target: self,
+            action: nil
+        )
         settingButton.setTitle("", for: .normal)
         settingButton.setImage(UIImage(systemName: "person.circle"), for: .normal)
         settingButton.sizeToFit()
