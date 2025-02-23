@@ -13,6 +13,15 @@ enum Tamagotchi: String, CaseIterable {
     case 반짝반짝
     case 준비중
     
+    static func make(_ id: Int?) -> Self {
+        switch id {
+        case 1: return .따끔따끔
+        case 2: return .방실방실
+        case 3: return .반짝반짝
+        default: return .준비중
+        }
+    }
+    
     var name: String? {
         guard self != .준비중 else { return nil }
         return rawValue + " 다마고치"

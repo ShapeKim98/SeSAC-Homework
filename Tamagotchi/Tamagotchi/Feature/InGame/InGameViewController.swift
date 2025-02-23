@@ -90,14 +90,12 @@ private extension InGameViewController {
         riceButton.rx.tap
             .withLatestFrom(riceTextField.rx.text.orEmpty)
             .map { Action.riceButtonTapped($0) }
-            .debug()
             .bind(to: viewModel.send)
             .disposed(by: disposeBag)
         
         waterDropButton.rx.tap
             .withLatestFrom(waterDropTextField.rx.text.orEmpty)
             .map { Action.waterDropButtonTapped($0) }
-            .debug()
             .bind(to: viewModel.send)
             .disposed(by: disposeBag)
     }
@@ -112,13 +110,14 @@ private extension InGameViewController {
         bindMessage()
         
         bindAlertMessage()
+        
+        bindTamagotchiName()
     }
     
     func bindCaptain() {
         viewModel.observableState
             .map { "\($0.captain ?? "대장")님의 다마고치" }
             .distinctUntilChanged()
-            .debug()
             .drive(navigationItem.rx.title)
             .disposed(by: disposeBag)
     }
@@ -129,17 +128,20 @@ private extension InGameViewController {
                 "LV\($0.level ?? 1) ∙ 밥알 \($0.rice ?? 0)개 ∙ 물방울 \($0.waterDrop ?? 0)개"
             }
             .distinctUntilChanged()
-            .debug()
             .drive(tamagotchiInfoLabel.rx.text)
             .disposed(by: disposeBag)
     }
     
     func bindLevel() {
         viewModel.observableState
-            .compactMap(\.level)
+            .compactMap { state in
+                guard
+                    let level = state.level,
+                    let id = state.tamagotchiId
+                else { return nil }
+                return UIImage(named: "\(id)-\(level >= 9 ? 9 : level)")
+            }
             .distinctUntilChanged()
-            .debug()
-            .map { UIImage(named: "2-\($0 >= 9 ? 9 : $0)") }
             .drive(tamagotchiImageView.rx.image)
             .disposed(by: disposeBag)
     }
@@ -148,7 +150,6 @@ private extension InGameViewController {
         viewModel.observableState
             .map { $0.message.text($0.captain ?? "대장") }
             .distinctUntilChanged()
-            .debug()
             .drive(bubbleLabel.rx.text)
             .disposed(by: disposeBag)
     }
@@ -156,10 +157,17 @@ private extension InGameViewController {
     func bindAlertMessage() {
         viewModel.observableState
             .compactMap(\.alertMessage)
-            .debug()
             .drive(with: self) { this, message in
                 this.presentAlert(title: "밥먹기 오류", message: message)
             }
+            .disposed(by: disposeBag)
+    }
+    
+    func bindTamagotchiName() {
+        viewModel.observableState
+            .compactMap(\.tamagotchiName)
+            .distinctUntilChanged()
+            .drive(tamagotchiNameLabel.rx.text)
             .disposed(by: disposeBag)
     }
 }

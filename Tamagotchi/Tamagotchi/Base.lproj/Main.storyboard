@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Nz4-A7-KFA">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_3" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
@@ -12,13 +12,13 @@
         <!--In Game View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="InGameViewController" customModule="Tamagotchi" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="InGameViewController" id="BYZ-38-t0r" customClass="InGameViewController" customModule="Tamagotchi" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5fj-JA-Z6E">
-                                <rect key="frame" x="90" y="130" width="222" height="148"/>
+                                <rect key="frame" x="90" y="86" width="222" height="148"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bubble" translatesAutoresizingMaskIntoConstraints="NO" id="EkX-ZV-dgD">
                                         <rect key="frame" x="0.0" y="0.0" width="222" height="148"/>
@@ -47,25 +47,25 @@
                                 </constraints>
                             </view>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="2-1" translatesAutoresizingMaskIntoConstraints="NO" id="W7Y-jf-DfY">
-                                <rect key="frame" x="104" y="278" width="194" height="194.33333333333337"/>
+                                <rect key="frame" x="104" y="234" width="194" height="194.33333333333337"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="W7Y-jf-DfY" secondAttribute="height" multiplier="1:1" id="c0C-NP-TmF"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="방실방실 다마고치" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0lD-jj-nOl">
-                                <rect key="frame" x="150.66666666666666" y="480.33333333333331" width="101" height="17"/>
+                                <rect key="frame" x="150.66666666666666" y="436.33333333333331" width="101" height="17"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
                                 <color key="textColor" red="0.33725491169999999" green="0.42352938649999999" blue="0.47450977560000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Loo-La-UXJ">
-                                <rect key="frame" x="185" y="509.33333333333326" width="32" height="15"/>
+                                <rect key="frame" x="185" y="465.33333333333331" width="32" height="15"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
                                 <color key="textColor" red="0.33725491169999999" green="0.42352938649999999" blue="0.47450977560000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qbg-iW-xKU">
-                                <rect key="frame" x="89" y="556.33333333333337" width="224" height="35"/>
+                                <rect key="frame" x="89" y="512.33333333333337" width="224" height="35"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mup-DZ-3M1">
                                         <rect key="frame" x="142" y="0.0" width="82" height="35"/>
@@ -111,7 +111,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="peW-Xs-vYM">
-                                <rect key="frame" x="89" y="603.33333333333337" width="224" height="35"/>
+                                <rect key="frame" x="89" y="559.33333333333337" width="224" height="35"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="upw-QF-a78">
                                         <rect key="frame" x="142" y="0.0" width="82" height="35"/>
@@ -186,9 +186,6 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" title="Button"/>
-                                <connections>
-                                    <segue destination="NWr-4q-oWn" kind="show" id="EPO-PY-O1Y"/>
-                                </connections>
                             </button>
                             <color key="tintColor" red="0.32549020649999999" green="0.41176474089999998" blue="0.46274507050000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         </barButtonItem>
@@ -217,13 +214,13 @@
         <!--Nickname View Controller-->
         <scene sceneID="ATU-4n-Yxd">
             <objects>
-                <viewController id="NWr-4q-oWn" customClass="NicknameViewController" customModule="Tamagotchi" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NicknameViewController" id="NWr-4q-oWn" customClass="NicknameViewController" customModule="Tamagotchi" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bas-ob-98q">
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="이름은 2글자 이상 6글자 이하까지 가능합니다." minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9dR-2U-IGY">
-                                <rect key="frame" x="24" y="134" width="354" height="34"/>
+                                <rect key="frame" x="24" y="90" width="354" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="a6u-cM-Ptw"/>
                                 </constraints>
@@ -232,7 +229,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RnP-Wu-xm1">
-                                <rect key="frame" x="24" y="167" width="354" height="1"/>
+                                <rect key="frame" x="24" y="123" width="354" height="1"/>
                                 <color key="backgroundColor" red="0.32549020649999999" green="0.41176474089999998" blue="0.46274507050000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="rIy-xW-9xT"/>
@@ -277,38 +274,6 @@
                 </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1911.9402985074626" y="-2.0594965675057209"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="2Mj-bj-IyF">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Nz4-A7-KFA" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="dQy-yd-3n1">
-                        <rect key="frame" x="0.0" y="62" width="402" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="tintColor" red="0.32549020649999999" green="0.41176474089999998" blue="0.46274507050000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        <color key="barTintColor" red="0.33725491169999999" green="0.42352938649999999" blue="0.47450977560000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        <textAttributes key="titleTextAttributes">
-                            <color key="textColor" red="0.32549020649999999" green="0.41176474089999998" blue="0.46274507050000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        </textAttributes>
-                        <textAttributes key="largeTitleTextAttributes">
-                            <color key="textColor" red="0.32549020649999999" green="0.41176474089999998" blue="0.46274507050000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        </textAttributes>
-                        <navigationBarAppearance key="scrollEdgeAppearance">
-                            <color key="backgroundColor" red="0.96470588450000005" green="0.98823529480000005" blue="0.98823529480000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                            <textAttributes key="titleTextAttributes">
-                                <color key="textColor" red="0.32549020649999999" green="0.41176474089999998" blue="0.46274507050000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                            </textAttributes>
-                        </navigationBarAppearance>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="bs1-Gs-voV"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="63j-an-eLM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="123.88059701492537" y="-2.0594965675057209"/>
         </scene>
     </scenes>
     <resources>

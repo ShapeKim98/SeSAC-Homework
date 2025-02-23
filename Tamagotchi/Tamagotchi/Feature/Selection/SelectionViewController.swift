@@ -11,6 +11,10 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
+protocol SelectionViewControllerDelegate: AnyObject {
+    func tamagotchiAlertStartButtonTapped()
+}
+
 final class SelectionViewController: UIViewController {
     private lazy var collectionView = { configureCollectionView() }()
     private let dimmedView = UIView()
@@ -18,6 +22,8 @@ final class SelectionViewController: UIViewController {
     
     private let viewModel = SelectionViewModel()
     private let disposeBag = DisposeBag()
+    
+    weak var delegate: SelectionViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -133,14 +139,21 @@ private extension SelectionViewController {
         }
         
         let alert = TamagotchiAlert(tamagotchi: tamagotchi)
+        let startButtonObservable = alert.startButton.rx.tap.share()
         Observable.merge(
             alert.cancelButton.rx.tap
                 .map { Action.tamagotchiAlertCancelButtonTapped },
-            alert.startButton.rx.tap
+            startButtonObservable
                 .map { Action.tamagotchiAlertStartButtonTapped }
         )
         .bind(to: viewModel.send)
         .disposed(by: disposeBag)
+        startButtonObservable
+            .bind(with: self) { this, _ in
+                this.delegate?.tamagotchiAlertStartButtonTapped()
+            }
+            .disposed(by: disposeBag)
+        
         tamagotchiAlert = alert
         alert.alpha = 0
         view.insertSubview(alert, aboveSubview: dimmedView)

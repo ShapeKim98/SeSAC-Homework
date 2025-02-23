@@ -42,6 +42,7 @@ struct Shared<T> {
         case let .userDefaults(key, _):
             UserDefaults.standard.rx
                 .observe(T.self, key.rawValue, options: [.initial, .new])
+                .share()
         }
     }
 }
@@ -55,4 +56,5 @@ enum UserDefaultKey: String {
     case rice = "Rice"
     case waterDrop = "WaterDrop"
     case level = "Level"
+    case tamagotchiId = "TamagotchiId"
 }

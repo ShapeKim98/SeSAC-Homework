@@ -53,6 +53,9 @@ final class SelectionViewModel: Composable {
             state.selectedTamagotchi = nil
             return .none
         case .tamagotchiAlertStartButtonTapped:
+            @Shared(.userDefaults(.tamagotchiId))
+            var tamagotchiId: Int?
+            tamagotchiId = state.selectedTamagotchi?.id
             return .none
         }
     }

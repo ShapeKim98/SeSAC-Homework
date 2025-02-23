@@ -29,6 +29,11 @@ final class InGameViewModel: Composable {
         var rice: Int?
         @Shared(.userDefaults(.level))
         var level: Int?
+        @Shared(.userDefaults(.tamagotchiId))
+        var tamagotchiId: Int?
+        var tamagotchiName: String? {
+            Tamagotchi.make(tamagotchiId).name
+        }
         var alertMessage: String?
         var message = Message.random()
     }
@@ -43,6 +48,7 @@ final class InGameViewModel: Composable {
     init() {
         send
             .observe(on: MainScheduler.asyncInstance)
+            .debug("Received Action")
             .withUnretained(self)
             .compactMap { this, action in
                 var state = this.state.value
