@@ -11,8 +11,7 @@ import SnapKit
 
 class TamagotchiCollectionViewCell: UICollectionViewCell {
     private let imageView = UIImageView()
-    private let nameLabelContainer = UIView()
-    private let nameLabel = UILabel()
+    private let nameLabel = NameLabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,9 +33,9 @@ class TamagotchiCollectionViewCell: UICollectionViewCell {
         }
         
         if let name = tamagotchi.name {
-            nameLabel.text = name
+            nameLabel.setName(name)
         } else {
-            nameLabel.text = "준비중이에요"
+            nameLabel.setName("준비중이에요")
         }
     }
 }
@@ -46,7 +45,7 @@ private extension TamagotchiCollectionViewCell {
     func configureUI() {
         configureImageView()
         
-        configureNameLabel()
+        contentView.addSubview(nameLabel)
     }
     
     func configureLayout() {
@@ -55,33 +54,15 @@ private extension TamagotchiCollectionViewCell {
             make.height.equalTo(imageView.snp.width)
         }
         
-        nameLabelContainer.snp.makeConstraints { make in
+        nameLabel.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom).offset(4)
             make.centerX.equalToSuperview()
-        }
-        
-        nameLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(6)
         }
     }
     
     func configureImageView() {
         imageView.contentMode = .scaleAspectFit
         contentView.addSubview(imageView)
-    }
-    
-    func configureNameLabel() {
-        nameLabelContainer.backgroundColor = .tgBackground
-        nameLabelContainer.layer.cornerRadius = 4
-        nameLabelContainer.layer.borderColor = UIColor(resource: .accent).cgColor
-        nameLabelContainer.layer.borderWidth = 1
-        nameLabelContainer.clipsToBounds = true
-        contentView.addSubview(nameLabelContainer)
-        
-        nameLabel.textColor = .accent
-        nameLabel.font = .systemFont(ofSize: 12, weight: .bold)
-        nameLabel.textAlignment = .center
-        nameLabelContainer.addSubview(nameLabel)
     }
 }
 

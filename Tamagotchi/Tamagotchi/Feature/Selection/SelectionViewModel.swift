@@ -13,6 +13,8 @@ import RxCocoa
 final class SelectionViewModel: Composable {
     enum Action {
         case collectionViewModelSelected(Tamagotchi)
+        case tamagotchiAlertCancelButtonTapped
+        case tamagotchiAlertStartButtonTapped
     }
     
     struct State {
@@ -28,7 +30,7 @@ final class SelectionViewModel: Composable {
     init() {
         send
             .observe(on: MainScheduler.asyncInstance)
-            .debug()
+            .debug("Received Action")
             .withUnretained(self)
             .compactMap { this, action in
                 var state = this.state.value
@@ -43,6 +45,15 @@ final class SelectionViewModel: Composable {
     }
     
     private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>>? {
-        return .none
+        switch action {
+        case .collectionViewModelSelected(let tamagotchi):
+            state.selectedTamagotchi = tamagotchi
+            return .none
+        case .tamagotchiAlertCancelButtonTapped:
+            state.selectedTamagotchi = nil
+            return .none
+        case .tamagotchiAlertStartButtonTapped:
+            return .none
+        }
     }
 }
