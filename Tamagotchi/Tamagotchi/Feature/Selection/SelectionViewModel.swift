@@ -30,12 +30,12 @@ final class SelectionViewModel: Composable {
     init() {
         send
             .observe(on: MainScheduler.asyncInstance)
-            .debug("Received Action")
             .withUnretained(self)
             .compactMap { this, action in
                 var state = this.state.value
                 this.reducer(&state, action)?
                     .compactMap(\.action)
+                    .debug("Received Action")
                     .bind(to: this.send)
                     .disposed(by: this.disposeBag)
                 return state

@@ -98,6 +98,12 @@ private extension InGameViewController {
             .map { Action.waterDropButtonTapped($0) }
             .bind(to: viewModel.send)
             .disposed(by: disposeBag)
+        
+        settingButton.rx.tap
+            .bind(with: self) { this, _ in
+                this.settingButtonTapped()
+            }
+            .disposed(by: disposeBag)
     }
     
     func bindState() {
@@ -169,5 +175,15 @@ private extension InGameViewController {
             .distinctUntilChanged()
             .drive(tamagotchiNameLabel.rx.text)
             .disposed(by: disposeBag)
+    }
+}
+
+// MARK: Functions
+private extension InGameViewController {
+    func settingButtonTapped() {
+        navigationController?.pushViewController(
+            SettingViewController(),
+            animated: true
+        )
     }
 }

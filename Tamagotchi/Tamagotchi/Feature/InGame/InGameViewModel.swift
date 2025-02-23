@@ -116,7 +116,7 @@ final class InGameViewModel: Composable {
 }
 
 private extension InGameViewModel {
-    private func updateLevel(_ state: inout State) {
+    func updateLevel(_ state: inout State) {
         guard
             let rice = state.rice,
             let waterDrop = state.waterDrop
