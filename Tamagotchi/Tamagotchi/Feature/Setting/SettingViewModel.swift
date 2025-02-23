@@ -44,7 +44,7 @@ final class SettingViewModel: Composable {
             .withUnretained(self)
             .compactMap { this, action in
                 var state = this.state.value
-                this.reducer(&state, action)?
+                this.reducer(&state, action)
                     .compactMap(\.action)
                     .bind(to: this.send)
                     .disposed(by: this.disposeBag)
@@ -54,7 +54,7 @@ final class SettingViewModel: Composable {
             .disposed(by: disposeBag)
     }
     
-    private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>>? {
+    private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
         case .alertConfirmButtonTapped:
             captain = nil

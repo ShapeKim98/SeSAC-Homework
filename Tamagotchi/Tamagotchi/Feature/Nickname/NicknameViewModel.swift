@@ -35,8 +35,8 @@ final class NicknameViewModel: Composable {
             .withUnretained(self)
             .map { this, action in
                 var state = this.state.value
-                this.reducer(&state, action)?
-                    .compactMap { $0.action }
+                this.reducer(&state, action)
+                    .compactMap(\.action)
                     .bind(to: this.send)
                     .disposed(by: this.disposeBag)
                 return state
@@ -45,7 +45,7 @@ final class NicknameViewModel: Composable {
             .disposed(by: disposeBag)
     }
     
-    func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>>? {
+    func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
         case let .captainTextFieldTextOnChanged(text):
             state.isValidText = 2 <= text.count && text.count <= 6
