@@ -16,9 +16,9 @@ final class InGameViewModel: Composable {
         case waterDropButtonTapped(String)
         case viewDidAppear
         case alertConfirmButtonTapped
-        case bindSharedCaptain
+        case bindSharedCaptain(String?)
         case viewDidLoad
-        case bindSharedTamagotchiId
+        case bindSharedTamagotchiId(Int?)
     }
     
     struct State {
@@ -111,11 +111,11 @@ final class InGameViewModel: Composable {
             return .none
         case .viewDidLoad:
             let bindSharedCaptain = Observable<Effect<Action>>.run(
-                state.$captain.map { _ in Action.bindSharedCaptain },
+                state.$captain.map { Action.bindSharedCaptain($0) },
                 disposeBag: disposeBag
             )
             let bindSharedTamagotchiId = Observable<Effect<Action>>.run(
-                state.$tamagotchiId.map { _ in Action.bindSharedTamagotchiId },
+                state.$tamagotchiId.map { Action.bindSharedTamagotchiId($0) },
                 disposeBag: disposeBag
             )
             return .merge(

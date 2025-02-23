@@ -14,7 +14,7 @@ final class SettingViewModel: Composable {
     enum Action {
         case alertConfirmButtonTapped
         case viewDidLoad
-        case bindSharedCaptain
+        case bindSharedCaptain(String?)
     }
     
     struct State {
@@ -75,7 +75,7 @@ final class SettingViewModel: Composable {
                 )
             }
             return .run(
-                $captain.map { _ in Action.bindSharedCaptain },
+                $captain.map { Action.bindSharedCaptain($0) },
                 disposeBag: disposeBag
             )
         case .bindSharedCaptain:
