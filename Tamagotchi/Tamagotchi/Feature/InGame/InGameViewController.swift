@@ -7,10 +7,17 @@
 
 import UIKit
 
+import SnapKit
 import RxSwift
 import RxCocoa
 
 class InGameViewController: UIViewController {
+    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet var contentView: UIView!
+    @IBOutlet var vstack: UIStackView!
+    @IBOutlet var bubbleContainer: UIView!
+    @IBOutlet var waterDropContainer: UIView!
+    @IBOutlet var riceContainer: UIView!
     @IBOutlet var settingButton: UIButton!
     @IBOutlet var waterDropButton: UIButton!
     @IBOutlet var riceButton: UIButton!
@@ -34,6 +41,9 @@ class InGameViewController: UIViewController {
         
         riceTextField.keyboardType = .numberPad
         waterDropTextField.keyboardType = .numberPad
+        contentView.backgroundColor = .clear
+        
+        configureLayout()
         
         bindState()
         
@@ -45,6 +55,46 @@ class InGameViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         viewModel.send.accept(.viewDidAppear)
+    }
+    
+    private func configureLayout() {
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        contentView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview()
+            make.top.equalToSuperview()
+            make.bottom.equalTo(view.keyboardLayoutGuide.snp.top)
+            make.width.equalTo(view)
+        }
+        
+        bubbleContainer.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(20)
+            make.centerX.equalToSuperview()
+        }
+        
+        tamagotchiImageView.snp.makeConstraints { make in
+            make.top.equalTo(bubbleContainer.snp.bottom)
+            make.centerX.equalToSuperview()
+        }
+        
+        tamagotchiNameLabel.snp.makeConstraints { make in
+            make.top.greaterThanOrEqualTo(tamagotchiImageView.snp.bottom)
+            make.top.lessThanOrEqualTo(tamagotchiImageView.snp.bottom).offset(8)
+            make.centerX.equalToSuperview()
+        }
+        
+        tamagotchiInfoLabel.snp.makeConstraints { make in
+            make.top.lessThanOrEqualTo(tamagotchiNameLabel.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
+        }
+        
+        vstack.snp.makeConstraints { make in
+            make.top.lessThanOrEqualTo(tamagotchiInfoLabel.snp.bottom).offset(32)
+            make.centerX.equalToSuperview()
+            make.bottom.lessThanOrEqualTo(view.keyboardLayoutGuide.snp.top)
+        }
     }
     
     private func setNavigationItem() {
