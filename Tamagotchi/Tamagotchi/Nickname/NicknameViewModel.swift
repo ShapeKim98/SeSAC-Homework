@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-final class NicknameViewModel {
+final class NicknameViewModel: Composable {
     enum Action {
         case captainTextFieldTextOnChanged(String)
         case saveButtonTapped(String)
@@ -27,11 +27,11 @@ final class NicknameViewModel {
         state.asDriver()
     }
     let send = PublishRelay<Action>()
-    let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
     init() {
         send
-            .observe(on: SerialDispatchQueueScheduler(qos: .default))
+            .observe(on: MainScheduler.asyncInstance)
             .withUnretained(self)
             .map { this, action in
                 var state = this.state.value
