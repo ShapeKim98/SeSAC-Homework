@@ -74,10 +74,7 @@ final class SettingViewModel: Composable {
                     name: type == .nameEdit ? captain : nil
                 )
             }
-            return .run(
-                $captain.map { Action.bindSharedCaptain($0) },
-                disposeBag: disposeBag
-            )
+            return .run($captain.map { Action.bindSharedCaptain($0) })
         case .bindSharedCaptain:
             state.settingItems.removeFirst()
             let type = SettingType.nameEdit

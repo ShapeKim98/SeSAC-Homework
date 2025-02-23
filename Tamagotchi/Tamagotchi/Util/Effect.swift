@@ -8,7 +8,6 @@
 import Foundation
 
 import RxSwift
-import RxCocoa
 
 protocol EffectProtocol {
     associatedtype Action
@@ -36,31 +35,17 @@ extension Observable where Element: EffectProtocol {
     }
     
     static func run(
-        _ observable: Observable<Element.Action>,
-        disposeBag: DisposeBag
+        _ observable: Observable<Element.Action>
     ) -> Observable<Element> {
-        return .create { observer in
-            observable
-                .map { Element.send($0) }
-                .bind(to: observer)
-                .disposed(by: disposeBag)
-            return Disposables.create()
-        }
+        return observable.map { Element.send($0) }
     }
     
     static func merge(
-        _ observables: Observable<Element.Action>...,
-        disposeBag: DisposeBag
+        _ observables: Observable<Element.Action>...
     ) -> Observable<Element> {
         let creates = observables.map { observable in
-            return Observable.create { observer in
-                observable
-                    .map { Element.send($0) }
-                    .bind(to: observer)
-                    .disposed(by: disposeBag)
-                
-                return Disposables.create()
-            }
+            observable
+                .map { Element.send($0) }
         }
         return .merge(creates)
     }
