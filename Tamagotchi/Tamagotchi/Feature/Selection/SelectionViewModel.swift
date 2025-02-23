@@ -15,6 +15,7 @@ final class SelectionViewModel: Composable {
         case collectionViewModelSelected(Tamagotchi)
         case tamagotchiAlertCancelButtonTapped
         case tamagotchiAlertStartButtonTapped
+        case dimmedViewTapped
     }
     
     struct State {
@@ -56,6 +57,9 @@ final class SelectionViewModel: Composable {
             @Shared(.userDefaults(.tamagotchiId))
             var tamagotchiId: Int?
             tamagotchiId = state.selectedTamagotchi?.id
+            return .none
+        case .dimmedViewTapped:
+            state.selectedTamagotchi = nil
             return .none
         }
     }

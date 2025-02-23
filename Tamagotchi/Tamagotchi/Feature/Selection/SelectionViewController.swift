@@ -83,6 +83,10 @@ private extension SelectionViewController {
         dimmedView.backgroundColor = .black.withAlphaComponent(0.3)
         dimmedView.isHidden = true
         dimmedView.alpha = 0
+        dimmedView.addGestureRecognizer(UITapGestureRecognizer(
+            target: self,
+            action: #selector(dimmedViewTapped)
+        ))
         view.insertSubview(dimmedView, aboveSubview: collectionView)
     }
 }
@@ -121,6 +125,7 @@ private extension SelectionViewController {
         viewModel.observableState
             .map(\.selectedTamagotchi)
             .distinctUntilChanged()
+            .debug()
             .drive(with: self) { this, tamagotchi in
                 guard tamagotchi != .준비중 else { return }
                 if let tamagotchi {
@@ -192,15 +197,24 @@ private extension SelectionViewController {
             self?.tamagotchiAlert?.alpha = 0
             self?.tamagotchiAlert?.transform = CGAffineTransform(translationX: 0, y: 50)
         } completion: { [weak self] _ in
-            self?.tamagotchiAlert?.removeFromSuperview()
             self?.tamagotchiAlert = nil
+            self?.tamagotchiAlert?.removeFromSuperview()
         }
         
-        UIView.animate(withDuration: 0.3) { [weak self] in
+        UIView.animate(withDuration: 0.7) { [weak self] in
             self?.dimmedView.alpha = 0
         } completion: { [weak self] _ in
             self?.dimmedView.isHidden = true
         }
+        
+    }
+}
+
+// MARK: Functions
+private extension SelectionViewController {
+    @objc
+    func dimmedViewTapped() {
+        viewModel.send.accept(.dimmedViewTapped)
     }
 }
 
