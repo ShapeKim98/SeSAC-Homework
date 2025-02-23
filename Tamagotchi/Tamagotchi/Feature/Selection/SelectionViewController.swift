@@ -150,10 +150,10 @@ private extension SelectionViewController {
         .disposed(by: disposeBag)
         startButtonObservable
             .bind(with: self) { this, _ in
-                if let navigationController = this.navigationController {
-                    navigationController.popToRootViewController(animated: true)
+                if let delegate = this.delegate {
+                    delegate.tamagotchiAlertStartButtonTapped()
                 } else {
-                    this.delegate?.tamagotchiAlertStartButtonTapped()
+                    this.navigationController?.popToRootViewController(animated: true)
                 }
             }
             .disposed(by: disposeBag)

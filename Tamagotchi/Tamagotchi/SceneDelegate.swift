@@ -75,7 +75,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 guard isNone else { return }
                 let viewController = SelectionViewController()
                 viewController.delegate = this
-                this.window?.rootViewController = viewController
+                this.window?.rootViewController = UINavigationController(
+                    rootViewController: viewController
+                )
             }
             .disposed(by: disposeBag)
     }
