@@ -27,6 +27,8 @@ final class SettingViewController: UIViewController {
         bindState()
         
         bindAction()
+        
+        viewModel.send.accept(.viewDidLoad)
     }
 }
 
@@ -65,19 +67,19 @@ private extension SettingViewController {
             SettingViewModel.SettingItem.self
         ).share()
         modelSelected
-            .compactMap { $0 == .nameEdit ? $0 : nil }
+            .compactMap { $0.type == .nameEdit ? $0 : nil }
             .bind(with: self) { this, _ in
                 this.nameEditButtonTapped()
             }
             .disposed(by: disposeBag)
         modelSelected
-            .compactMap { $0 == .tamagotchiEdit ? $0 : nil }
+            .compactMap { $0.type == .tamagotchiEdit ? $0 : nil }
             .bind(with: self) { this, _ in
                 this.tamagotchiEditButtonTapped()
             }
             .disposed(by: disposeBag)
         modelSelected
-            .compactMap { $0 == .reset ? $0 : nil }
+            .compactMap { $0.type == .reset ? $0 : nil }
             .bind(with: self) { this, _ in
                 this.presentAlert()
             }
@@ -86,37 +88,17 @@ private extension SettingViewController {
     
     func bindState() {
         bindSettingItems()
-        
-        bindCaptain()
     }
     
     func bindSettingItems() {
         viewModel.observableState
-            .map(\.settingItems)
+            .map { $0.settingItems }
             .distinctUntilChanged()
             .drive(tableView.rx.items(
                 cellIdentifier: .settingTableCell,
                 cellType: SettingTableViewCell.self
             )) { row, item, cell in
-                if item == .nameEdit {
-                    cell.forRowAt(item)
-                } else {
-                    cell.forRowAt(item)
-                }
-                
-            }
-            .disposed(by: disposeBag)
-    }
-    
-    func bindCaptain() {
-        viewModel.observableState
-            .map(\.captain)
-            .distinctUntilChanged()
-            .drive(with: self) { this, name in
-                let cell = this.tableView.cellForRow(
-                    at: IndexPath(row: 0, section: 0)
-                ) as? SettingTableViewCell
-                cell?.forRowAt(.nameEdit, name: name)
+                cell.forRowAt(item)
             }
             .disposed(by: disposeBag)
     }

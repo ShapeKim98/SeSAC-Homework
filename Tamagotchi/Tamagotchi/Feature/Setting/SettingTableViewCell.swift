@@ -27,10 +27,10 @@ final class SettingTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func forRowAt(_ item: SettingViewModel.SettingItem, name: String? = nil) {
-        iconImageView.image = UIImage(named: item.imageName)
+    func forRowAt(_ item: SettingViewModel.SettingItem) {
+        iconImageView.image = UIImage(systemName: item.imageName)
         titleLabel.text = item.title
-        nameLabel.text = name
+        nameLabel.text = item.name
     }
 }
 
@@ -51,9 +51,9 @@ private extension SettingTableViewCell {
     
     func configureLayout() {
         iconImageView.snp.makeConstraints { make in
+            make.size.equalTo(24).priority(.high)
             make.leading.equalToSuperview().inset(16)
             make.verticalEdges.equalToSuperview().inset(16)
-            make.size.equalTo(24)
         }
         
         titleLabel.snp.makeConstraints { make in
@@ -68,7 +68,7 @@ private extension SettingTableViewCell {
         }
         
         nameLabel.snp.makeConstraints { make in
-            make.trailing.equalTo(chevronImageView.snp.leading).inset(8)
+            make.trailing.equalTo(chevronImageView.snp.leading).offset(-8)
             make.centerY.equalTo(chevronImageView)
         }
     }

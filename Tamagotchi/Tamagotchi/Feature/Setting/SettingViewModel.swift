@@ -13,18 +13,29 @@ import RxCocoa
 final class SettingViewModel: Composable {
     enum Action {
         case alertConfirmButtonTapped
+        case viewDidLoad
+        case bindSharedCaptain
     }
     
     struct State {
-        @Shared(.userDefaults(.captain))
-        var captain: String?
-        var settingItems = SettingItem.allCases
+        var settingItems: [SettingItem] = []
     }
     
     private let state = BehaviorRelay(value: State())
     var observableState: Driver<State> { state.asDriver() }
     let send = PublishRelay<Action>()
     private let disposeBag = DisposeBag()
+    
+    @Shared(.userDefaults(.captain))
+    var captain: String?
+    @Shared(.userDefaults(.rice))
+    var rice: Int?
+    @Shared(.userDefaults(.waterDrop))
+    var waterDrop: Int?
+    @Shared(.userDefaults(.level))
+    var level: Int?
+    @Shared(.userDefaults(.tamagotchiId))
+    var tamagotchiId: Int?
     
     init() {
         send
@@ -46,28 +57,44 @@ final class SettingViewModel: Composable {
     private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>>? {
         switch action {
         case .alertConfirmButtonTapped:
-            @Shared(.userDefaults(.rice))
-            var rice: Int?
-            @Shared(.userDefaults(.waterDrop))
-            var waterDrop: Int?
-            @Shared(.userDefaults(.level))
-            var level: Int?
-            @Shared(.userDefaults(.tamagotchiId))
-            var tamagotchiId: Int?
-            
-            state.captain = nil
+            captain = nil
             rice = nil
             waterDrop = nil
             level = nil
             
             tamagotchiId = nil
             return .none
+        case .viewDidLoad:
+            @Shared(.userDefaults(.captain))
+            var captain: String?
+            
+            state.settingItems = SettingType.allCases.map { type in
+                SettingItem(
+                    type: type,
+                    name: type == .nameEdit ? captain : nil
+                )
+            }
+            return .run(
+                $captain.map { _ in Action.bindSharedCaptain },
+                disposeBag: disposeBag
+            )
+        case .bindSharedCaptain:
+            state.settingItems.removeFirst()
+            let type = SettingType.nameEdit
+            state.settingItems.insert(
+                SettingItem(
+                    type: type,
+                    name: captain
+                ),
+                at: 0
+            )
+            return .none
         }
     }
 }
 
 extension SettingViewModel {
-    enum SettingItem: CaseIterable {
+    enum SettingType: CaseIterable {
         case nameEdit
         case tamagotchiEdit
         case reset
@@ -84,8 +111,15 @@ extension SettingViewModel {
             switch self {
             case .nameEdit: return "pencil"
             case .tamagotchiEdit: return "leaf.fill"
-            case .reset: return "arrow.trianglehead.clockwise"
+            case .reset: return "arrow.clockwise"
             }
         }
+    }
+    
+    struct SettingItem: Equatable {
+        let type: SettingType
+        var title: String { type.title }
+        var imageName: String { type.imageName }
+        var name: String?
     }
 }
