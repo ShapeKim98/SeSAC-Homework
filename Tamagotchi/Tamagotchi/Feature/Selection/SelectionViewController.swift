@@ -127,8 +127,11 @@ private extension SelectionViewController {
     }
     
     func presentTamagotchiAlert(_ tamagotchi: Tamagotchi) {
-        dimmedView.isHidden = false
-        dimmedView.alpha = 1
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.dimmedView.alpha = 1
+            self?.dimmedView.isHidden = false
+        }
+        
         let alert = TamagotchiAlert(tamagotchi: tamagotchi)
         Observable.merge(
             alert.cancelButton.rx.tap
@@ -139,18 +142,48 @@ private extension SelectionViewController {
         .bind(to: viewModel.send)
         .disposed(by: disposeBag)
         tamagotchiAlert = alert
-        
+        alert.alpha = 0
         view.insertSubview(alert, aboveSubview: dimmedView)
+        
         tamagotchiAlert?.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.horizontalEdges.equalToSuperview().inset(24)
         }
+        
+        alert.transform = CGAffineTransform(translationX: 0, y: 50)
+        
+        UIView.animate(
+            withDuration: 0.7,
+            delay: 0,
+            usingSpringWithDamping: 0.7,
+            initialSpringVelocity: 1,
+            options: [.curveEaseOut]
+        ) {
+            alert.alpha = 1
+            alert.transform = CGAffineTransform(translationX: 0, y: 0)
+        }
     }
     
     func dismissTamagotchiAlert() {
-        tamagotchiAlert?.removeFromSuperview()
-        dimmedView.isHidden = true
-        dimmedView.alpha = 0
+        UIView.animate(
+            withDuration: 0.7,
+            delay: 0,
+            usingSpringWithDamping: 0.7,
+            initialSpringVelocity: 1,
+            options: [.curveEaseOut]
+        ) { [weak self] in
+            self?.tamagotchiAlert?.alpha = 0
+            self?.tamagotchiAlert?.transform = CGAffineTransform(translationX: 0, y: 50)
+        } completion: { [weak self] _ in
+            self?.tamagotchiAlert?.removeFromSuperview()
+            self?.tamagotchiAlert = nil
+        }
+        
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.dimmedView.alpha = 0
+        } completion: { [weak self] _ in
+            self?.dimmedView.isHidden = true
+        }
     }
 }
 
