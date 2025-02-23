@@ -111,8 +111,8 @@ final class InGameViewModel: Composable {
             return .none
         case .viewDidLoad:
             return .merge(
-                .run(state.$captain.map { Action.bindSharedCaptain($0) }),
-                .run(state.$tamagotchiId.map { Action.bindSharedTamagotchiId($0) })
+                .run(state.$captain.map { .bindSharedCaptain($0) }),
+                .run(state.$tamagotchiId.map { .bindSharedTamagotchiId($0) })
             )
         }
     }
