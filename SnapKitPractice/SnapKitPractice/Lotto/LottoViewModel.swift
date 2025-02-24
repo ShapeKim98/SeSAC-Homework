@@ -15,6 +15,8 @@ final class LottoViewModel: Composable {
         case viewDidLoad
         case bindLotto(Lotto)
         case drwNoPickImteSelected(Int)
+        case observableButtonTapped
+        case singleButtonTapped
     }
     
     struct State {
@@ -22,7 +24,7 @@ final class LottoViewModel: Composable {
         var drwNos: [String] = []
         var lotteryDay: Int?
         var lotteryRange = [String]()
-        var selectedDate: String?
+        var currentDrwNo: String?
     }
     
     private let state = BehaviorRelay(value: State())
@@ -37,7 +39,7 @@ final class LottoViewModel: Composable {
             .observe(on: MainScheduler.asyncInstance)
             .debug("\(Self.self): Received Action")
             .withUnretained(self)
-            .compactMap { this, action in
+            .map { this, action in
                 var state = this.state.value
                 this.reducer(&state, action)
                     .compactMap(\.action)
@@ -73,12 +75,11 @@ final class LottoViewModel: Composable {
                 .map { String($0) }
             let request = LottoRequest(drwNo: "\(lotteryDay)")
             let fetchLottoSingle = lottoClient.fetchLottoSingle(request)
-            return .run(fetchLottoSingle.asObservable().map { .bindLotto($0) }) { error in
+            return .run(fetchLottoSingle.map { .bindLotto($0) }) { error in
                 return .none
             }
         case let .bindLotto(lotto):
             state.lotto = lotto
-            state.selectedDate = lotto.drwNoDate
             state.drwNos = [
                 "\(lotto.drwtNo1)",
                 "\(lotto.drwtNo2)",
@@ -89,10 +90,29 @@ final class LottoViewModel: Composable {
                 "+",
                 "\(lotto.bnusNo)"
             ]
+            state.currentDrwNo = "\(lotto.drwNo)"
             return .none
         case let .drwNoPickImteSelected(row):
-            state.selectedDate = state.lotteryRange[row]
+            state.currentDrwNo = state.lotteryRange[row]
             return .none
+        case .observableButtonTapped:
+            guard let currentDrwNo = state.currentDrwNo else {
+                return .none
+            }
+            let request = LottoRequest(drwNo: currentDrwNo)
+            let fetchLottoObservable = lottoClient.fetchLottoObservable(request)
+            return .run(fetchLottoObservable.map { .bindLotto($0) }) { error in
+                return .none
+            }
+        case .singleButtonTapped:
+            guard let currentDrwNo = state.currentDrwNo else {
+                return .none
+            }
+            let request = LottoRequest(drwNo: currentDrwNo)
+            let fetchLottoSingle = lottoClient.fetchLottoSingle(request)
+            return .run(fetchLottoSingle.map { .bindLotto($0) }) { error in
+                return .none
+            }
         }
     }
 }

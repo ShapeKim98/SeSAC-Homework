@@ -54,6 +54,16 @@ extension Observable where Element: EffectProtocol {
             .catch { onError?($0) ?? .none }
     }
     
+    static func run(
+        _ observable: Single<Element.Action>,
+        catch onError: ((Error) -> Observable<Element>)? = nil
+    ) -> Observable<Element> {
+        return observable
+            .map { Element.send($0) }
+            .asObservable()
+            .catch { onError?($0) ?? .none }
+    }
+    
     static func merge(
         _ observables: Observable<Element.Action>...
     ) -> Observable<Element> {

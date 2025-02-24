@@ -23,6 +23,8 @@ class LottoViewController: UIViewController {
     private let drwNoHStack = UIStackView()
     private var drwNoList = [DRWNoCell]()
     private let bonusLabel = UILabel()
+    private let observableButton = UIButton()
+    private let singleButton = UIButton()
     
     private let viewModel = LottoViewModel()
     
@@ -82,6 +84,14 @@ private extension LottoViewController {
         bonusLabel.text = "보너스"
         bonusLabel.textColor = .systemGray
         bonusLabel.font = .systemFont(ofSize: 14, weight: .semibold)
+        
+        observableButton.setTitle("Observable", for: .normal)
+        observableButton.setTitleColor(.systemBlue, for: .normal)
+        view.addSubview(observableButton)
+        
+        singleButton.setTitle("Single", for: .normal)
+        singleButton.setTitleColor(.systemBlue, for: .normal)
+        view.addSubview(singleButton)
     }
     
     func configureLayout() {
@@ -121,6 +131,16 @@ private extension LottoViewController {
             make.top.equalTo(drwNoLabel.snp.bottom).offset(32)
             make.horizontalEdges.equalToSuperview().inset(16)
         }
+        
+        observableButton.snp.makeConstraints { make in
+            make.top.equalTo(drwNoHStack.snp.bottom).offset(40)
+            make.trailing.equalTo(view.snp.centerX).offset(-40)
+        }
+        
+        singleButton.snp.makeConstraints { make in
+            make.top.equalTo(drwNoHStack.snp.bottom).offset(40)
+            make.leading.equalTo(view.snp.centerX).offset(40)
+        }
     }
 }
 
@@ -131,6 +151,16 @@ private extension LottoViewController {
     func bindAction() {
         drwNoPicker.rx.itemSelected
             .map { Action.drwNoPickImteSelected($0.row) }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+        
+        observableButton.rx.tap
+            .map { Action.observableButtonTapped }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+        
+        singleButton.rx.tap
+            .map { Action.singleButtonTapped }
             .bind(to: viewModel.send)
             .disposed(by: disposeBag)
     }
@@ -216,7 +246,7 @@ private extension LottoViewController {
     
     func bindSelectedDate() {
         viewModel.observableState
-            .map(\.selectedDate)
+            .map(\.currentDrwNo)
             .drive(drwNoTextField.rx.text)
             .disposed(by: disposeBag)
     }
