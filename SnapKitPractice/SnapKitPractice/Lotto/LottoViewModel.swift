@@ -17,6 +17,8 @@ final class LottoViewModel: Composable {
         case drwNoPickImteSelected(Int)
         case observableButtonTapped
         case singleButtonTapped
+        case bindError(LottoError)
+        case alertConfirmTapped
     }
     
     struct State {
@@ -25,6 +27,7 @@ final class LottoViewModel: Composable {
         var lotteryDay: Int?
         var lotteryRange = [String]()
         var currentDrwNo: String?
+        var errorMessage: String?
     }
     
     private let state = BehaviorRelay(value: State())
@@ -102,7 +105,10 @@ final class LottoViewModel: Composable {
             let request = LottoRequest(drwNo: currentDrwNo)
             let fetchLottoObservable = lottoClient.fetchLottoObservable(request)
             return .run(fetchLottoObservable.map { .bindLotto($0) }) { error in
-                return .none
+                guard let error = error as? LottoError else {
+                    return .none
+                }
+                return .send(.bindError(error))
             }
         case .singleButtonTapped:
             guard let currentDrwNo = state.currentDrwNo else {
@@ -111,8 +117,17 @@ final class LottoViewModel: Composable {
             let request = LottoRequest(drwNo: currentDrwNo)
             let fetchLottoSingle = lottoClient.fetchLottoSingle(request)
             return .run(fetchLottoSingle.map { .bindLotto($0) }) { error in
-                return .none
+                guard let error = error as? LottoError else {
+                    return .none
+                }
+                return .send(.bindError(error))
             }
+        case let .bindError(error):
+            state.errorMessage = error.returnValue
+            return .none
+        case .alertConfirmTapped:
+            state.errorMessage = nil
+            return .none
         }
     }
 }

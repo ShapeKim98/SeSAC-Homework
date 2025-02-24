@@ -27,7 +27,9 @@ struct NetworkProvider<E: URLRequestConvertible & EndPoint>: Sendable {
         case .success(let value):
             return value
         case .failure(let error):
-            throw error
+            guard let body = response.data else { throw error }
+            let lottoError = try JSONDecoder().decode(LottoError.self, from: body)
+            throw lottoError
         }
     }
 }

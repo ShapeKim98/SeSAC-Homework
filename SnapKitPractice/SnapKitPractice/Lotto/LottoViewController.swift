@@ -175,6 +175,8 @@ private extension LottoViewController {
         bindLotteryRange()
         
         bindSelectedDate()
+        
+        bindErrorMessage()
     }
     
     func bindLotto() {
@@ -248,6 +250,27 @@ private extension LottoViewController {
         viewModel.observableState
             .map(\.currentDrwNo)
             .drive(drwNoTextField.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindErrorMessage() {
+        viewModel.observableState
+            .compactMap(\.errorMessage)
+            .drive(with: self) { this, message in
+                let alert = UIAlertController(
+                    title: "오류",
+                    message: message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: "확인",
+                    style: .default,
+                    handler: { _ in
+                        this.viewModel.send.accept(.alertConfirmTapped)
+                    }
+                ))
+                this.present(alert, animated: true)
+            }
             .disposed(by: disposeBag)
     }
 }
