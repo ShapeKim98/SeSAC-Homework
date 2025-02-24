@@ -7,16 +7,37 @@
 
 import UIKit
 
+import RxSwift
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
+    @Shared(.userDefaults(.tamagotchiId))
+    var tamagotchiId: Int?
+    let disposeBag = DisposeBag()
+    
     var window: UIWindow?
-
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        window?.windowScene = windowScene
+        
+        bindTamagotchiId()
+        
+        if tamagotchiId != nil {
+            let viewController = UIStoryboard(
+                name: "Main",
+                bundle: nil
+            ).instantiateViewController(withIdentifier: "InGameViewController")
+            
+            window?.rootViewController = UINavigationController(
+                rootViewController: viewController
+            )
+        }
+        
+        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -46,7 +67,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-
-
+    
+    func bindTamagotchiId() {
+        $tamagotchiId
+            .map { $0 == nil }
+            .bind(with: self) { this, isNone in
+                guard isNone else { return }
+                let viewController = SelectionViewController()
+                viewController.delegate = this
+                this.window?.rootViewController = UINavigationController(
+                    rootViewController: viewController
+                )
+            }
+            .disposed(by: disposeBag)
+    }
 }
 
+extension SceneDelegate: SelectionViewControllerDelegate {
+    func tamagotchiAlertStartButtonTapped() {
+        let viewController = UIStoryboard(
+            name: "Main",
+            bundle: nil
+        ).instantiateViewController(withIdentifier: "InGameViewController")
+        
+        window?.rootViewController = UINavigationController(
+            rootViewController: viewController
+        )
+    }
+}

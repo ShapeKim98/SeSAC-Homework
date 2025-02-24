@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C96389B92D6ADDF100F62B47 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C96389B82D6ADDF100F62B47 /* SnapKit */; };
+		C9CC80202D672AF400BE5B14 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = C9CC801F2D672AF400BE5B14 /* RxCocoa */; };
+		C9CC80222D672AF400BE5B14 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C9CC80212D672AF400BE5B14 /* RxSwift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		C9D937432D23F4E900A61376 /* Tamagotchi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tamagotchi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C96389B92D6ADDF100F62B47 /* SnapKit in Frameworks */,
+				C9CC80222D672AF400BE5B14 /* RxSwift in Frameworks */,
+				C9CC80202D672AF400BE5B14 /* RxCocoa in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +87,9 @@
 			);
 			name = Tamagotchi;
 			packageProductDependencies = (
+				C9CC801F2D672AF400BE5B14 /* RxCocoa */,
+				C9CC80212D672AF400BE5B14 /* RxSwift */,
+				C96389B82D6ADDF100F62B47 /* SnapKit */,
 			);
 			productName = Tamagotchi;
 			productReference = C9D937432D23F4E900A61376 /* Tamagotchi.app */;
@@ -107,6 +119,10 @@
 			);
 			mainGroup = C9D9373A2D23F4E900A61376;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C9CC801E2D672AF400BE5B14 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				C96389B72D6ADDF100F62B47 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C9D937442D23F4E900A61376 /* Products */;
 			projectDirPath = "";
@@ -153,6 +169,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -181,6 +198,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -335,6 +353,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C96389B72D6ADDF100F62B47 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		C9CC801E2D672AF400BE5B14 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C96389B82D6ADDF100F62B47 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C96389B72D6ADDF100F62B47 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		C9CC801F2D672AF400BE5B14 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C9CC801E2D672AF400BE5B14 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		C9CC80212D672AF400BE5B14 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C9CC801E2D672AF400BE5B14 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C9D9373B2D23F4E900A61376 /* Project object */;
 }
