@@ -44,7 +44,7 @@ final class LottoViewModel: Composable {
             .withUnretained(self)
             .map { this, action in
                 var state = this.state.value
-                this.reducer(&state, action).observable
+                this.reducer(&state, action)
                     .compactMap(\.action)
                     .bind(to: this.send)
                     .disposed(by: this.disposeBag)
@@ -54,7 +54,7 @@ final class LottoViewModel: Composable {
             .disposed(by: disposeBag)
     }
     
-    private func reducer(_ state: inout State, _ action: Action) -> Effect<Action> {
+    private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
         case .viewDidLoad:
             let firstLottery = "2002-12-07"
@@ -79,10 +79,7 @@ final class LottoViewModel: Composable {
             let request = LottoRequest(drwNo: "\(lotteryDay)")
             let fetchLottoSingle = lottoClient.fetchLottoSingle(request)
             return .run(fetchLottoSingle.map { .bindLotto($0) }) { error in
-                guard let error = error as? LottoError else {
-                    return .none
-                }
-                return .send(.bindError(error))
+                return .none
             }
         case let .bindLotto(lotto):
             state.lotto = lotto

@@ -9,61 +9,67 @@ import Foundation
 
 import RxSwift
 
-enum Effect<Action> {
+protocol EffectProtocol {
+    associatedtype Action
+    static func send(_ action: Action) -> Self
+    static var none: Self { get }
+}
+
+enum Effect<Action>: EffectProtocol {
     case send(Action)
-    case run(Observable<Action>, `catch`: ((Error) -> Self)? = nil)
-    case merge([Self])
-    case concatenate([Self])
     case none
-    
-    static func run(
-        _ single: Single<Action>,
-        catch: ((Error) -> Self)? = nil
-    ) -> Effect {
-        return .run(single.asObservable(), catch: `catch`)
-    }
-    
-    static func merge(_ effects: Self...) -> Effect {
-        return .merge(effects)
-    }
-    
-    static func concatenate(_ effects: Self...) -> Effect {
-        return .concatenate(effects)
-    }
-    
-    var observable: Observable<Self> {
-        switch self {
-        case let .send(action):
-            return .create { observer in
-                observer.onNext(.send(action))
-                observer.onCompleted()
-                return Disposables.create()
-            }
-        case let .run(observable, `catch`):
-            return observable
-                .map { Effect.send($0) }
-                .catch { .just(`catch`?($0) ?? .none) }
-        case let .merge(effects):
-            return .merge(effects.map(\.observable))
-        case let .concatenate(effects):
-            return .concat(effects.map(\.observable))
-        case .none:
-            return .create { observer in
-                observer.onNext(.none)
-                observer.onCompleted()
-                return Disposables.create()
-            }
-        }
-    }
     
     var action: Action? {
         switch self {
         case .send(let action):
             return action
-        case .merge: return nil
-        case .concatenate: return nil
-        case .run: return nil
         case .none: return nil
         }
+    }
+}
+
+extension Observable where Element: EffectProtocol {
+    static func send(_ action: Element.Action) -> Observable<Element> {
+        return .create { observer in
+            observer.onNext(.send(action))
+            observer.onCompleted()
+            return Disposables.create()
+        }
+    }
+    
+    static var none: Observable<Element> {
+        return .create { observer in
+            observer.onNext(.none)
+            observer.onCompleted()
+            return Disposables.create()
+        }
+    }
+    
+    static func run(
+        _ observable: Observable<Element.Action>,
+        catch onError: ((Error) -> Observable<Element>)? = nil
+    ) -> Observable<Element> {
+        return observable
+            .map { Element.send($0) }
+            .catch { onError?($0) ?? .none }
+    }
+    
+    static func run(
+        _ observable: Single<Element.Action>,
+        catch onError: ((Error) -> Observable<Element>)? = nil
+    ) -> Observable<Element> {
+        return observable
+            .map { Element.send($0) }
+            .asObservable()
+            .catch { onError?($0) ?? .none }
+    }
+    
+    static func merge(
+        _ observables: Observable<Element.Action>...
+    ) -> Observable<Element> {
+        let creates = observables.map { observable in
+            observable.map { Element.send($0) }
+        }
+        return .merge(creates)
     }
 }
