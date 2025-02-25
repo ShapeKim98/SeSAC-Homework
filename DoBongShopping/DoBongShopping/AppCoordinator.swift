@@ -30,13 +30,21 @@ final class AppCoordinator {
         navigationController.pushViewController(viewController, animated: true)
     }
     
-    private func presentNavigationAlert(title: String?, message: String? = nil) {
+    private func presentNavigationAlert(
+        title: String?,
+        message: String? = nil,
+        action: ((UIAlertAction) -> Void)? = nil
+    ) {
         let alert = UIAlertController(
             title: title,
             message: message,
             preferredStyle: .alert
         )
-        let confirm = UIAlertAction(title: "확인", style: .default)
+        let confirm = UIAlertAction(
+            title: "확인",
+            style: .default,
+            handler: { action?($0) }
+        )
         alert.addAction(confirm)
         navigationController.present(alert, animated: true)
     }
@@ -47,8 +55,12 @@ extension AppCoordinator: SearchViewModelDelegate {
         pushShopListViewController(query: query, shop: shop)
     }
     
-    func presentAlert(title: String?, message: String?) {
-        presentNavigationAlert(title: title)
+    func presentAlert(title: String?, message: String?, action: (() -> Void)?) {
+        presentNavigationAlert(
+            title: title,
+            message: message,
+            action: { _ in action?() }
+        )
     }
 }
 

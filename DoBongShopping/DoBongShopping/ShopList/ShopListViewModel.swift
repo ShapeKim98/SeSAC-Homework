@@ -12,6 +12,11 @@ import RxCocoa
 import Alamofire
 
 @MainActor
+protocol ShopListViewModelDelegate: AnyObject {
+    func presentAlert(title: String?, message: String?, action: (() -> Void)?)
+}
+
+@MainActor
 final class ShopListViewModel {
     enum Action {
         case collectionViewPrefetchItemsAt(items: [Int])
@@ -20,7 +25,6 @@ final class ShopListViewModel {
         case bindShop(ShopResponse)
         case bindPaginationShop(ShopResponse)
         case bindErrorMessage(String)
-        case errorAlertTapped
     }
     
     struct State {
@@ -28,14 +32,16 @@ final class ShopListViewModel {
         var selectedSort: Sort = .sim
         var isLoading: Bool = false
         var query: String
-        var errorMessage: String?
     }
     private var isPaging = false
+    private var errorMessage: String?
     
     private let state: BehaviorRelay<State>
     var observableState: Driver<State> { state.asDriver() }
     let send = PublishRelay<Action>()
     private let disposeBag = DisposeBag()
+    
+    weak var delegate: (any SearchViewModelDelegate)?
     
     init(query: String, shop: ShopResponse) {
         self.state = BehaviorRelay(value: State(shop: shop, query: query))
@@ -81,11 +87,14 @@ final class ShopListViewModel {
             isPaging = false
             return .none
         case let .bindErrorMessage(message):
-            state.errorMessage = message
+            delegate?.presentAlert(
+                title: "오류",
+                message: message,
+                action: { [weak self] in
+                    self?.errorMessage = nil
+                }
+            )
             state.isLoading = false
-            return .none
-        case .errorAlertTapped:
-            state.errorMessage = nil
             return .none
         }
     }

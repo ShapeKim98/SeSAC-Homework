@@ -14,7 +14,7 @@ import RxCocoa
 @MainActor
 protocol SearchViewModelDelegate: AnyObject {
     func pushShopList(query: String, shop: ShopResponse)
-    func presentAlert(title: String?, message: String?)
+    func presentAlert(title: String?, message: String?, action: (() -> Void)?)
 }
 
 @MainActor
@@ -23,13 +23,13 @@ final class SearchViewModel {
         case searchBarSearchButtonClicked(_ text: String)
         case bindShop(String, ShopResponse)
         case bindErrorMessage(String)
-        case errorAlertTapped
     }
     
     struct State {
         var isLoading: Bool = false
-        var errorMessage: String?
     }
+    
+    private var errorMessage: String?
     
     private let state = BehaviorRelay(value: State())
     var observableState: Driver<State> { state.asDriver() }
@@ -60,11 +60,19 @@ final class SearchViewModel {
         switch action {
         case let .searchBarSearchButtonClicked(query):
             guard query.filter(\.isLetter).count >= 2 else {
-                delegate?.presentAlert(title: "두 글자 이상 입력해주세요.", message: nil)
+                delegate?.presentAlert(
+                    title: "두 글자 이상 입력해주세요.",
+                    message: nil,
+                    action: nil
+                )
                 return .none
             }
             guard !query.filter(\.isLetter).isEmpty else {
-                delegate?.presentAlert(title: "글자를 포함해주세요.", message: nil)
+                delegate?.presentAlert(
+                    title: "글자를 포함해주세요.",
+                    message: nil,
+                    action: nil
+                )
                 return .none
             }
             state.isLoading = true
@@ -81,17 +89,24 @@ final class SearchViewModel {
         case let .bindShop(query, shop):
             defer { state.isLoading = false }
             guard shop.total > 0 else {
-                delegate?.presentAlert(title: "검색 결과가 없어요.", message: nil)
+                delegate?.presentAlert(
+                    title: "검색 결과가 없어요.",
+                    message: nil,
+                    action: nil
+                )
                 return .none
             }
             delegate?.pushShopList(query: query, shop: shop)
             return .none
         case let .bindErrorMessage(message):
-            state.errorMessage = message
+            delegate?.presentAlert(
+                title: "오류",
+                message: message,
+                action: { [weak self] in
+                    self?.errorMessage = nil
+                }
+            )
             state.isLoading = false
-            return .none
-        case .errorAlertTapped:
-            state.errorMessage = nil
             return .none
         }
     }
