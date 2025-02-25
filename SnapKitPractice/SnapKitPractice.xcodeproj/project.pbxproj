@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C96392B12D6C524A00F62B47 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = C96392B02D6C524A00F62B47 /* RxCocoa */; };
+		C96392B32D6C524A00F62B47 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C96392B22D6C524A00F62B47 /* RxSwift */; };
 		C97610CB2D36ADED004939C8 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C97610CA2D36ADED004939C8 /* Alamofire */; };
 		C9A4D8192D34F92200966911 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C9A4D8182D34F92200966911 /* SnapKit */; };
 /* End PBXBuildFile section */
@@ -41,7 +43,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C96392B12D6C524A00F62B47 /* RxCocoa in Frameworks */,
 				C9A4D8192D34F92200966911 /* SnapKit in Frameworks */,
+				C96392B32D6C524A00F62B47 /* RxSwift in Frameworks */,
 				C97610CB2D36ADED004939C8 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +91,8 @@
 			packageProductDependencies = (
 				C9A4D8182D34F92200966911 /* SnapKit */,
 				C97610CA2D36ADED004939C8 /* Alamofire */,
+				C96392B02D6C524A00F62B47 /* RxCocoa */,
+				C96392B22D6C524A00F62B47 /* RxSwift */,
 			);
 			productName = SnapKitPractice;
 			productReference = C9A4D7EF2D34F88F00966911 /* SnapKitPractice.app */;
@@ -119,6 +125,7 @@
 			packageReferences = (
 				C9A4D8172D34F92200966911 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				C97610C92D36ADED004939C8 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				C96392AF2D6C524A00F62B47 /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C9A4D7F02D34F88F00966911 /* Products */;
@@ -168,6 +175,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -198,6 +206,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -354,6 +363,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		C96392AF2D6C524A00F62B47 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.9.0;
+			};
+		};
 		C97610C92D36ADED004939C8 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire";
@@ -373,6 +390,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C96392B02D6C524A00F62B47 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C96392AF2D6C524A00F62B47 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		C96392B22D6C524A00F62B47 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C96392AF2D6C524A00F62B47 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
 		C97610CA2D36ADED004939C8 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C97610C92D36ADED004939C8 /* XCRemoteSwiftPackageReference "Alamofire" */;

@@ -9,6 +9,8 @@ import UIKit
 
 import SnapKit
 import Alamofire
+import RxSwift
+import RxCocoa
 
 class LottoViewController: UIViewController {
     private let drwNoTextField = UITextField()
@@ -21,64 +23,25 @@ class LottoViewController: UIViewController {
     private let drwNoHStack = UIStackView()
     private var drwNoList = [DRWNoCell]()
     private let bonusLabel = UILabel()
+    private let observableButton = UIButton()
+    private let singleButton = UIButton()
     
-    private var lotto: Lotto? {
-        didSet { didSetLotto() }
-    }
-    private var drwNos: [String] {
-        return [
-            "\(lotto?.drwtNo1 ?? 0)",
-            "\(lotto?.drwtNo2 ?? 0)",
-            "\(lotto?.drwtNo3 ?? 0)",
-            "\(lotto?.drwtNo4 ?? 0)",
-            "\(lotto?.drwtNo5 ?? 0)",
-            "\(lotto?.drwtNo6 ?? 0)",
-            "+",
-            "\(lotto?.bnusNo ?? 0)"
-        ]
-    }
-    private var lotteryDay: Int? {
-        let firstLottery = "2002-12-07"
-        guard
-            let date = firstLottery.date(format: .yyyy_MM_dd)
-        else { return nil }
-        
-        let count = Calendar
-            .current
-            .dateComponents(
-                [.weekdayOrdinal],
-                from: date,
-                to: .now
-            )
-            .weekdayOrdinal
-        return count
-    }
-    private var lotteryRange = [String]()
+    private let viewModel = LottoViewModel()
+    
+    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        guard let lotteryDay else { return }
-        
-        lotteryRange = Array(1...lotteryDay).reversed().map { String($0) }
         
         configureUI()
         
         configureLayout()
         
-        fetchLotto(no: "\(lotteryDay)")
-    }
-    
-    override func viewDidLayoutSubviews() {
-        DispatchQueue.main.async { [weak self] in
-            guard let `self` else { return }
-            
-            for cell in drwNoList {
-                let height = cell.frame.height
-                cell.layer.cornerRadius = height / 2
-                cell.clipsToBounds = true
-            }
-        }
+        bindState()
+        
+        bindAction()
+         
+        viewModel.send.accept(.viewDidLoad)
     }
 }
 
@@ -93,21 +56,16 @@ private extension LottoViewController {
         drwNoTextFieldContainer.border(radius: 4, color: .separator, width: 1)
         drwNoTextFieldContainer.addSubview(drwNoTextField)
         
-        drwNoTextField.text = "\(lotteryDay ?? 0)"
         drwNoTextField.borderStyle = .none
         drwNoTextField.textAlignment = .center
         drwNoTextField.font = .systemFont(ofSize: 24)
         drwNoTextField.inputView = drwNoPicker
-        
-        drwNoPicker.delegate = self
-        drwNoPicker.dataSource = self
         
         view.addSubview(drwNoInfoLabel)
         drwNoInfoLabel.text = "당첨번호 안내"
         drwNoInfoLabel.font = .systemFont(ofSize: 16)
         
         view.addSubview(drwNoDateLabel)
-        drwNoDateLabel.text = "\(lotto?.drwNoDate ?? "") 추첨"
         drwNoDateLabel.font = .systemFont(ofSize: 12)
         drwNoDateLabel.textColor = .secondaryLabel
         
@@ -116,7 +74,6 @@ private extension LottoViewController {
         
         view.addSubview(drwNoLabel)
         drwNoLabel.font = .systemFont(ofSize: 28)
-        updateDRWNoLabelAttributedText()
         
         view.addSubview(drwNoHStack)
         drwNoHStack.axis = .horizontal
@@ -128,12 +85,13 @@ private extension LottoViewController {
         bonusLabel.textColor = .systemGray
         bonusLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         
-        for no in drwNos {
-            let drwNoCell = DRWNoCell()
-            drwNoHStack.addArrangedSubview(drwNoCell)
-            drwNoList.append(drwNoCell)
-            drwNoCell.configureUI(no)
-        }
+        observableButton.setTitle("Observable", for: .normal)
+        observableButton.setTitleColor(.systemBlue, for: .normal)
+        view.addSubview(observableButton)
+        
+        singleButton.setTitle("Single", for: .normal)
+        singleButton.setTitleColor(.systemBlue, for: .normal)
+        view.addSubview(singleButton)
     }
     
     func configureLayout() {
@@ -174,80 +132,146 @@ private extension LottoViewController {
             make.horizontalEdges.equalToSuperview().inset(16)
         }
         
-        for cell in drwNoList {
-            cell.configureLayout()
-            if drwNoList.last == cell {
-                bonusLabel.snp.makeConstraints { make in
-                    make.top.equalTo(cell.snp.bottom).offset(4)
-                    make.centerX.equalTo(cell)
-                }
-            }
+        observableButton.snp.makeConstraints { make in
+            make.top.equalTo(drwNoHStack.snp.bottom).offset(40)
+            make.trailing.equalTo(view.snp.centerX).offset(-40)
         }
-    }
-    
-    func updateDRWNoLabelAttributedText() {
-        let attributedString = NSMutableAttributedString(
-            string: "\(lotto?.drwNo ?? 0)회 당첨결과"
-        )
-        let range = attributedString.mutableString.range(
-            of: "\(lotto?.drwNo ?? 0)회"
-        )
-        attributedString.addAttributes(
-            [.foregroundColor: UIColor.systemYellow,
-             .font: UIFont.systemFont(ofSize: 28, weight: .bold)],
-            range: range
-        )
-        drwNoLabel.attributedText = attributedString
+        
+        singleButton.snp.makeConstraints { make in
+            make.top.equalTo(drwNoHStack.snp.bottom).offset(40)
+            make.leading.equalTo(view.snp.centerX).offset(40)
+        }
     }
 }
 
 // MARK: Data Bindings
 private extension LottoViewController {
-    func didSetLotto() {
-        updateDRWNoLabelAttributedText()
+    typealias Action = LottoViewModel.Action
+    
+    func bindAction() {
+        drwNoPicker.rx.itemSelected
+            .map { Action.drwNoPickImteSelected($0.row) }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
         
-        drwNoDateLabel.text = "\(lotto?.drwNoDate ?? "") 추첨"
+        observableButton.rx.tap
+            .map { Action.observableButtonTapped }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
         
-        for cell in drwNoList {
-            drwNoHStack.removeArrangedSubview(cell)
-        }
-        drwNoList.removeAll()
-        
-        for no in drwNos {
-            let drwNoCell = DRWNoCell()
-            drwNoHStack.addArrangedSubview(drwNoCell)
-            drwNoList.append(drwNoCell)
-            drwNoCell.configureUI(no)
-        }
-        
-        for cell in drwNoList {
-            cell.configureLayout()
-            if drwNoList.last == cell {
-                bonusLabel.snp.makeConstraints { make in
-                    make.top.equalTo(cell.snp.bottom).offset(4)
-                    make.centerX.equalTo(cell)
-                }
-            }
-        }
+        singleButton.rx.tap
+            .map { Action.singleButtonTapped }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
     }
-}
-
-// MARK: Functions
-private extension LottoViewController {
-    func fetchLotto(no: String) {
-        let url = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=\(no)"
-        AF
-            .request(url)
-            .responseDecodable(of: Lotto.self) { [weak self] response in
-                guard let `self` else { return }
+    
+    func bindState() {
+        bindLotto()
+        
+        bindLotteryDay()
+        
+        bindDrwNos()
+        
+        bindLotteryRange()
+        
+        bindSelectedDate()
+        
+        bindErrorMessage()
+    }
+    
+    func bindLotto() {
+        let lotto = viewModel.observableState
+            .compactMap(\.lotto)
+        
+        lotto.map(\.drwNoDate)
+            .map { "\($0) 추첨" }
+            .drive(drwNoDateLabel.rx.text)
+            .disposed(by: disposeBag)
+        lotto.map(\.drwNo)
+            .map { drwNo in
+                let attributedString = NSMutableAttributedString(
+                    string: "\(drwNo)회 당첨결과"
+                ).addAttributes([
+                    .foregroundColor: UIColor.systemYellow,
+                    .font: UIFont.systemFont(ofSize: 28, weight: .bold)
+                ], at: "\(drwNo)회")
+                return attributedString
+            }
+            .drive(drwNoLabel.rx.attributedText)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindLotteryDay() {
+        viewModel.observableState
+            .compactMap(\.lotteryDay)
+            .map { String($0) }
+            .drive(drwNoTextField.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindDrwNos() {
+        viewModel.observableState
+            .map(\.drwNos)
+            .drive(with: self) { this, drwNos in
+                for cell in this.drwNoList {
+                    this.drwNoHStack.removeArrangedSubview(cell)
+                }
+                this.drwNoList.removeAll()
                 
-                switch response.result {
-                case .success(let data):
-                    self.lotto = data
-                case .failure(let error):
-                    print(error)
+                for no in drwNos {
+                    let drwNoCell = DRWNoCell()
+                    this.drwNoHStack.addArrangedSubview(drwNoCell)
+                    this.drwNoList.append(drwNoCell)
+                    drwNoCell.configureUI(no)
+                }
+                
+                for cell in this.drwNoList {
+                    cell.configureLayout()
+                    if this.drwNoList.last == cell {
+                        this.bonusLabel.snp.makeConstraints { make in
+                            make.top.equalTo(cell.snp.bottom).offset(4)
+                            make.centerX.equalTo(cell)
+                        }
+                    }
+                    cell.layoutIfNeeded()
                 }
             }
+            .disposed(by: disposeBag)
+    }
+    
+    func bindLotteryRange() {
+        viewModel.observableState
+            .map(\.lotteryRange)
+            .drive(drwNoPicker.rx.itemTitles) { _, item in item }
+            .disposed(by: disposeBag)
+    }
+    
+    func bindSelectedDate() {
+        viewModel.observableState
+            .map(\.currentDrwNo)
+            .drive(drwNoTextField.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindErrorMessage() {
+        viewModel.observableState
+            .compactMap(\.errorMessage)
+            .drive(with: self) { this, message in
+                let alert = UIAlertController(
+                    title: "오류",
+                    message: message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: "확인",
+                    style: .default,
+                    handler: { _ in
+                        this.viewModel.send.accept(.alertConfirmTapped)
+                    }
+                ))
+                this.present(alert, animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -258,6 +282,14 @@ extension LottoViewController {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
+        }
+        
+        override func layoutIfNeeded() {
+            super.layoutIfNeeded()
+            
+            let height = frame.height
+            layer.cornerRadius = height / 2
+            clipsToBounds = true
         }
         
         required init?(coder: NSCoder) {
@@ -299,25 +331,6 @@ extension LottoViewController {
                 make.edges.equalTo(self).inset(8)
             }
         }
-    }
-}
-
-extension LottoViewController: UIPickerViewDataSource, UIPickerViewDelegate {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return lotteryRange.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        drwNoTextField.text = lotteryRange[row]
-        fetchLotto(no: lotteryRange[row])
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return lotteryRange[row]
     }
 }
 
