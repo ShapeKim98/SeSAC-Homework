@@ -7,111 +7,119 @@
 
 import Foundation
 
+import RxSwift
+import RxCocoa
 import Alamofire
 
-@MainActor
-final class SearchListViewModel {
-    enum Input {
-        case collectionViewPrefetchItemsAt(query: String)
-        case collectionViewWillDisplay(query: String, item: Int)
-        case sortButtonTouchUpInside(query: String, sort: Sort)
+final class ShopListViewModel: Composable {
+    enum Action {
+        case collectionViewPrefetchItemsAt(items: [Int])
+        case collectionViewWillDisplay(item: Int)
+        case sortButtonTouchUpInside(sort: Sort)
+        case bindShop(ShopResponse)
+        case bindPaginationShop(ShopResponse)
     }
     
-    enum Output {
-        case shopItems(_ value: [ShopResponse.Item])
-        case selectedSort(_ value: Sort)
-        case isLoading(_ value: Bool)
+    struct State {
+        var shop: ShopResponse
+        var selectedSort: Sort = .sim
+        var isLoading: Bool = false
+        var query: String
     }
+    private var isPaging = false
     
-    struct Model {
-        var shop: ShopResponse {
-            didSet {
-                if oldValue.items != shop.items {
-                    continuation?.yield(.shopItems(shop.items))
-                }
-            }
-        }
-        var selectedSort: Sort = .sim {
-            didSet {
-                guard oldValue != selectedSort else { return }
-                continuation?.yield(.selectedSort(selectedSort))
-            }
-        }
-        var isLoading: Bool = false {
-            didSet {
-                guard oldValue != isLoading else { return }
-                continuation?.yield(.isLoading(isLoading))
-            }
-        }
+    private let state: BehaviorRelay<State>
+    var observableState: Driver<State> { state.asDriver() }
+    let send = PublishRelay<Action>()
+    private let disposeBag = DisposeBag()
+    
+    @MainActor
+    init(query: String, shop: ShopResponse) {
+        self.state = BehaviorRelay(value: State(shop: shop, query: query))
         
-        var continuation: AsyncStream<Output>.Continuation?
+        send
+            .observe(on: MainScheduler.asyncInstance)
+            .debug("\(Self.self): Received Action")
+            .withUnretained(self)
+            .compactMap { this, action in
+                var state = this.state.value
+                this.reducer(&state, action)
+                    .observe(on: MainScheduler.asyncInstance)
+                    .compactMap(\.action)
+                    .bind(to: this.send)
+                    .disposed(by: this.disposeBag)
+                return state
+            }
+            .bind(to: state)
+            .disposed(by: disposeBag)
     }
     
-    deinit { model.continuation?.finish() }
-    
-    private(set) var model: Model
-    private var isPaging: Bool = false
-    
-    init(shop: ShopResponse) {
-        self.model = Model(shop: shop)
-    }
-    
-    var output: AsyncStream<Output> {
-        return AsyncStream { continuation in
-            model.continuation = continuation
-        }
-    }
-    
-    func input(_ action: Input) {
+    @MainActor
+    private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
-        case let .collectionViewPrefetchItemsAt(query):
-            Task { await paginationShop(query) }
-        case let .collectionViewWillDisplay(query, item):
-            guard item + 1 == model.shop.items.count else { return }
-            Task { await paginationShop(query) }
-        case let .sortButtonTouchUpInside(query, sort):
-            model.selectedSort = sort
-            Task { await fetchShop(query) }
+        case let .collectionViewPrefetchItemsAt(items):
+            for item in items {
+                guard item + 1 == state.shop.items.count else { continue }
+                return paginationShop(&state, query: state.query)
+            }
+            return .none
+        case let .collectionViewWillDisplay(item):
+            guard item + 1 == state.shop.items.count else { return .none }
+            return paginationShop(&state, query: state.query)
+        case let .sortButtonTouchUpInside(sort):
+            state.selectedSort = sort
+            state.isLoading = true
+            return fetchShop(&state, query: state.query)
+        case let .bindShop(shop):
+            state.shop = shop
+            state.isLoading = false
+            return .none
+        case let .bindPaginationShop(shop):
+            state.shop.items += shop.items
+            isPaging = false
+            return .none
         }
     }
 }
 
-private extension SearchListViewModel {
-    func fetchShop(_ query: String) async {
-        model.isLoading = true
-        defer { model.isLoading = false }
-        
-        let request = ShopRequest(
-            query: query,
-            sort: model.selectedSort.rawValue
-        )
-        do {
-            model.shop = try await ShopClient.shared.fetchShop(request)
-        } catch {
+@MainActor
+private extension ShopListViewModel {
+    func fetchShop(_ state: inout State, query: String) -> Observable<Effect<Action>> {
+        state.isLoading = true
+        return .run { [ sort = state.selectedSort.rawValue ] effect in
+            let request = ShopRequest(
+                query: query,
+                sort: sort
+            )
+            let response = try await ShopClient.shared.fetchShop(request)
+            effect.onNext(.send(.bindShop(response)))
+        } catch: { error in
             print((error as? AFError) ?? error)
+            return .none
         }
     }
     
-    func paginationShop(_ query: String) async {
+    func paginationShop(_ state: inout State, query: String) -> Observable<Effect<Action>> {
         guard
             !isPaging,
-            model.shop.items.count < model.shop.total
-        else { return }
-        
+            state.shop.items.count < state.shop.total
+        else { return .none }
         isPaging = true
-        defer { isPaging = false }
         
-        let request = ShopRequest(
-            query: query,
-            start: model.shop.items.count + 1,
-            sort: model.selectedSort.rawValue
-        )
-        do {
-            let shop = try await ShopClient.shared.fetchShop(request)
-            model.shop.items += shop.items
-            model.shop.total = shop.total
-        } catch {
+        return .run { [
+            count = state.shop.items.count + 1,
+            sort = state.selectedSort.rawValue
+        ] effect in
+            let request = ShopRequest(
+                query: query,
+                start: count,
+                sort: sort
+            )
+            let response = try await ShopClient.shared.fetchShop(request)
+            effect.onNext(.send(.bindPaginationShop(response)))
+        } catch: { error in
             print((error as? AFError) ?? error)
+            return .none
         }
     }
 }
