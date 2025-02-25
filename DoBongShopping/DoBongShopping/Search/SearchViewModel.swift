@@ -82,6 +82,7 @@ final class SearchViewModel {
                 effect.onNext(.send(.bindShop(query, shop)))
             } catch: { error in
                 guard let error = error as? BaseError else {
+                    print(error)
                     return .none
                 }
                 return .send(.bindErrorMessage(error.errorMessage))

@@ -118,6 +118,7 @@ private extension ShopListViewModel {
             effect.onNext(.send(.bindShop(response)))
         } catch: { error in
             guard let error = error as? BaseError else {
+                print(error)
                 return .none
             }
             return .send(.bindErrorMessage(error.errorMessage))
@@ -144,6 +145,7 @@ private extension ShopListViewModel {
             effect.onNext(.send(.bindPaginationShop(response)))
         } catch: { error in
             guard let error = error as? BaseError else {
+                print(error)
                 return .none
             }
             return .send(.bindErrorMessage(error.errorMessage))
