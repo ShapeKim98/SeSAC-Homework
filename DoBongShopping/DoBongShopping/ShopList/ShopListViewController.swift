@@ -192,6 +192,8 @@ private extension ShopListViewController {
         bindIsLoading()
         
         bindQuery()
+        
+        bindErrorMessage()
     }
     
     func bindShop() {
@@ -253,6 +255,20 @@ private extension ShopListViewController {
             .map(\.query)
             .distinctUntilChanged()
             .drive(navigationItem.rx.title)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindErrorMessage() {
+        viewModel.observableState
+            .compactMap(\.errorMessage)
+            .distinctUntilChanged()
+            .drive(with: self) { this, errorMessage in
+                this.presentAlert(
+                    title: "오류",
+                    message: errorMessage,
+                    action: { _ in this.viewModel.send.accept(.errorAlertTapped) }
+                )
+            }
             .disposed(by: disposeBag)
     }
 }

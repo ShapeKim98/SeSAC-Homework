@@ -19,6 +19,8 @@ final class ShopListViewModel {
         case sortButtonTouchUpInside(sort: Sort)
         case bindShop(ShopResponse)
         case bindPaginationShop(ShopResponse)
+        case bindErrorMessage(String)
+        case errorAlertTapped
     }
     
     struct State {
@@ -26,6 +28,7 @@ final class ShopListViewModel {
         var selectedSort: Sort = .sim
         var isLoading: Bool = false
         var query: String
+        var errorMessage: String?
     }
     private var isPaging = false
     
@@ -77,6 +80,13 @@ final class ShopListViewModel {
             state.shop.items += shop.items
             isPaging = false
             return .none
+        case let .bindErrorMessage(message):
+            state.errorMessage = message
+            state.isLoading = false
+            return .none
+        case .errorAlertTapped:
+            state.errorMessage = nil
+            return .none
         }
     }
 }
@@ -92,8 +102,10 @@ private extension ShopListViewModel {
             let response = try await ShopClient.shared.fetchShop(request)
             effect.onNext(.send(.bindShop(response)))
         } catch: { error in
-            print((error as? AFError) ?? error)
-            return .none
+            guard let error = error as? BaseError else {
+                return .none
+            }
+            return .send(.bindErrorMessage(error.errorMessage))
         }
     }
     
@@ -116,8 +128,10 @@ private extension ShopListViewModel {
             let response = try await ShopClient.shared.fetchShop(request)
             effect.onNext(.send(.bindPaginationShop(response)))
         } catch: { error in
-            print((error as? AFError) ?? error)
-            return .none
+            guard let error = error as? BaseError else {
+                return .none
+            }
+            return .send(.bindErrorMessage(error.errorMessage))
         }
     }
 }

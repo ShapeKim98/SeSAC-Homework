@@ -22,10 +22,13 @@ final class SearchViewModel {
     enum Action {
         case searchBarSearchButtonClicked(_ text: String)
         case bindShop(String, ShopResponse)
+        case bindErrorMessage(String)
+        case errorAlertTapped
     }
     
     struct State {
         var isLoading: Bool = false
+        var errorMessage: String?
     }
     
     private let state = BehaviorRelay(value: State())
@@ -70,16 +73,25 @@ final class SearchViewModel {
                 let shop = try await ShopClient.shared.fetchShop(request)
                 effect.onNext(.send(.bindShop(query, shop)))
             } catch: { error in
-                print((error as? AFError) ?? error)
-                return .none
+                guard let error = error as? BaseError else {
+                    return .none
+                }
+                return .send(.bindErrorMessage(error.errorMessage))
             }
         case let .bindShop(query, shop):
+            defer { state.isLoading = false }
             guard shop.total > 0 else {
                 delegate?.presentAlert(title: "검색 결과가 없어요.", message: nil)
                 return .none
             }
-            state.isLoading = false
             delegate?.pushShopList(query: query, shop: shop)
+            return .none
+        case let .bindErrorMessage(message):
+            state.errorMessage = message
+            state.isLoading = false
+            return .none
+        case .errorAlertTapped:
+            state.errorMessage = nil
             return .none
         }
     }

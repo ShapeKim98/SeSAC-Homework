@@ -107,6 +107,12 @@ private extension SearchViewController {
     }
     
     func bindState() {
+        bindIsLoading()
+        
+        bindErrorMessage()
+    }
+    
+    func bindIsLoading() {
         viewModel.observableState
             .map(\.isLoading)
             .distinctUntilChanged()
@@ -118,6 +124,20 @@ private extension SearchViewController {
                 } else {
                     this.indicatorView.stopAnimating()
                 }
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    func bindErrorMessage() {
+        viewModel.observableState
+            .compactMap(\.errorMessage)
+            .distinctUntilChanged()
+            .drive(with: self) { this, errorMessage in
+                this.presentAlert(
+                    title: "오류",
+                    message: errorMessage,
+                    action: { _ in this.viewModel.send.accept(.errorAlertTapped) }
+                )
             }
             .disposed(by: disposeBag)
     }
