@@ -27,7 +27,9 @@ struct NetworkManager<E: EndPoint>: Sendable {
         
         return try await withCheckedThrowingContinuation { continuation in
             AF
-                .request(url, method: .get, headers: header)
+                .request(url, method: .get, headers: header) { request in
+                    request.cachePolicy = .returnCacheDataElseLoad
+                }
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: T.self) { response in
                     switch response.result {
