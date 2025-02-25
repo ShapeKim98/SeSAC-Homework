@@ -11,7 +11,8 @@ import RxSwift
 import RxCocoa
 import Alamofire
 
-final class ShopListViewModel: Composable {
+@MainActor
+final class ShopListViewModel {
     enum Action {
         case collectionViewPrefetchItemsAt(items: [Int])
         case collectionViewWillDisplay(item: Int)
@@ -33,7 +34,6 @@ final class ShopListViewModel: Composable {
     let send = PublishRelay<Action>()
     private let disposeBag = DisposeBag()
     
-    @MainActor
     init(query: String, shop: ShopResponse) {
         self.state = BehaviorRelay(value: State(shop: shop, query: query))
         
@@ -54,7 +54,6 @@ final class ShopListViewModel: Composable {
             .disposed(by: disposeBag)
     }
     
-    @MainActor
     private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
         case let .collectionViewPrefetchItemsAt(items):
@@ -82,7 +81,6 @@ final class ShopListViewModel: Composable {
     }
 }
 
-@MainActor
 private extension ShopListViewModel {
     func fetchShop(_ state: inout State, query: String) -> Observable<Effect<Action>> {
         state.isLoading = true

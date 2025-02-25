@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol Composable {
+protocol Composable: Sendable {
     associatedtype Action
     associatedtype State
     

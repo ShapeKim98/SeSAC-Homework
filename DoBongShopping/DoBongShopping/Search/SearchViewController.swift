@@ -9,12 +9,15 @@ import UIKit
 
 import SnapKit
 import Alamofire
+import RxSwift
+import RxCocoa
 
 final class SearchViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let indicatorView = UIActivityIndicatorView(style: .large)
     
     private let viewModel: SearchViewModel
+    private let disposeBag = DisposeBag()
     
     init(viewModel: SearchViewModel) {
         self.viewModel = viewModel
@@ -32,7 +35,9 @@ final class SearchViewController: UIViewController {
         
         configureLayout()
         
-        bind()
+        bindState()
+        
+        bindAction()
     }
 }
 
@@ -74,7 +79,6 @@ private extension SearchViewController {
     }
     
     func configureSearchBar() {
-        searchBar.delegate = self
         searchBar.placeholder = "브랜드, 상품, 프로필, 태그 등"
         searchBar.barTintColor = .black
         searchBar.barStyle = .black
@@ -92,22 +96,30 @@ private extension SearchViewController {
 
 // MARK: Data Bindings
 private extension SearchViewController {
-    func bind() {
-        Task { [weak self] in
-            guard let self else { return }
-            for await output in viewModel.output {
-                switch output {
-                case let .isLoading(isLoading):
-                    indicatorView.isHidden = !isLoading
-                    
-                    if isLoading {
-                        indicatorView.startAnimating()
-                    } else {
-                        indicatorView.stopAnimating()
-                    }
+    typealias Action = SearchViewModel.Action
+    
+    func bindAction() {
+        searchBar.rx.searchButtonClicked
+            .withLatestFrom(searchBar.rx.text.orEmpty)
+            .map { Action.searchBarSearchButtonClicked($0) }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindState() {
+        viewModel.observableState
+            .map(\.isLoading)
+            .distinctUntilChanged()
+            .drive(with: self) { this, isLoading in
+                this.indicatorView.isHidden = !isLoading
+                
+                if isLoading {
+                    this.indicatorView.startAnimating()
+                } else {
+                    this.indicatorView.stopAnimating()
                 }
             }
-        }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -116,12 +128,6 @@ private extension SearchViewController {
     @objc
     func tagGestureRecognizerAction() {
         view.endEditing(true)
-    }
-}
-
-extension SearchViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        viewModel.input(.searchBarSearchButtonClicked(searchBar.text))
     }
 }
 

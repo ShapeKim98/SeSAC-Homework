@@ -8,6 +8,8 @@
 import Foundation
 
 import Alamofire
+import RxSwift
+import RxCocoa
 
 @MainActor
 protocol SearchViewModelDelegate: AnyObject {
@@ -17,72 +19,68 @@ protocol SearchViewModelDelegate: AnyObject {
 
 @MainActor
 final class SearchViewModel {
-    enum Input {
-        case searchBarSearchButtonClicked(_ text: String?)
+    enum Action {
+        case searchBarSearchButtonClicked(_ text: String)
+        case bindShop(String, ShopResponse)
     }
     
-    enum Output {
-        case isLoading(_ value: Bool)
+    struct State {
+        var isLoading: Bool = false
     }
     
-    struct Model {
-        var isLoading: Bool = false {
-            didSet {
-                guard oldValue != isLoading else { return }
-                continuation?.yield(.isLoading(isLoading))
+    private let state = BehaviorRelay(value: State())
+    var observableState: Driver<State> { state.asDriver() }
+    let send = PublishRelay<Action>()
+    private let disposeBag = DisposeBag()
+    
+    init() {
+        send
+            .observe(on: MainScheduler.asyncInstance)
+            .debug("\(Self.self): Received Action")
+            .withUnretained(self)
+            .compactMap { this, action in
+                var state = this.state.value
+                this.reducer(&state, action)
+                    .observe(on: MainScheduler.asyncInstance)
+                    .compactMap(\.action)
+                    .bind(to: this.send)
+                    .disposed(by: this.disposeBag)
+                return state
             }
-        }
-        
-        var continuation: AsyncStream<Output>.Continuation?
+            .bind(to: state)
+            .disposed(by: disposeBag)
     }
-    
-    deinit { model.continuation?.finish() }
-    
-    private(set) var model = Model()
     
     weak var delegate: (any SearchViewModelDelegate)?
     
-    var output: AsyncStream<Output> {
-        return AsyncStream { continuation in
-            model.continuation = continuation
-        }
-    }
-    
-    func input(_ action: Input) {
+    private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
-        case let .searchBarSearchButtonClicked(text):
-            guard let text, text.filter(\.isLetter).count >= 2 else {
+        case let .searchBarSearchButtonClicked(query):
+            guard query.filter(\.isLetter).count >= 2 else {
                 delegate?.presentAlert(title: "두 글자 이상 입력해주세요.", message: nil)
-                return
+                return .none
             }
-            guard !text.filter(\.isLetter).isEmpty else {
+            guard !query.filter(\.isLetter).isEmpty else {
                 delegate?.presentAlert(title: "글자를 포함해주세요.", message: nil)
-                return
+                return .none
             }
-            Task { [weak self] in
-                guard let self else { return }
-                await fetchShop(query: text)
+            state.isLoading = true
+            return .run { effect in
+                let request = ShopRequest(query: query)
+                let shop = try await ShopClient.shared.fetchShop(request)
+                effect.onNext(.send(.bindShop(query, shop)))
+            } catch: { error in
+                print((error as? AFError) ?? error)
+                return .none
             }
-            return
-        }
-    }
-}
-
-private extension SearchViewModel {
-    func fetchShop(query: String) async {
-        model.isLoading = true
-        defer { model.isLoading = false }
-        let request = ShopRequest(query: query)
-        do {
-            let shop = try await ShopClient.shared.fetchShop(request)
-//            dump(shop)
+        case let .bindShop(query, shop):
             guard shop.total > 0 else {
                 delegate?.presentAlert(title: "검색 결과가 없어요.", message: nil)
-                return
+                return .none
             }
+            state.isLoading = false
             delegate?.pushShopList(query: query, shop: shop)
-        } catch {
-            print((error as? AFError) ?? error)
+            return .none
         }
     }
 }
