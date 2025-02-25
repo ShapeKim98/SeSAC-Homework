@@ -182,6 +182,11 @@ private extension ShopListViewController {
             .compactMap { cell, _ in cell as? ShopCollectionViewCell }
             .bind { $0.cancelImageDownload() }
             .disposed(by: disposeBag)
+        
+        collectionView.rx.modelSelected(ShopResponse.Item.self)
+            .map { Action.collectionViewModelSelected($0) }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
     }
     
     func bindState() {
