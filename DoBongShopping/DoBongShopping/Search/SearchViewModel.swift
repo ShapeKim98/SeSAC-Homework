@@ -18,7 +18,7 @@ protocol SearchViewModelDelegate: AnyObject {
 }
 
 @MainActor
-final class SearchViewModel {
+final class SearchViewModel: Composable {
     enum Action {
         case searchBarSearchButtonClicked(_ text: String)
         case bindShop(String, ShopResponse)

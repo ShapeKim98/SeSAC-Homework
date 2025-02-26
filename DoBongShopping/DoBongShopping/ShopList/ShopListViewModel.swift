@@ -18,7 +18,7 @@ protocol ShopListViewModelDelegate: AnyObject {
 }
 
 @MainActor
-final class ShopListViewModel {
+final class ShopListViewModel: Composable {
     enum Action {
         case collectionViewPrefetchItemsAt(items: [Int])
         case collectionViewWillDisplay(item: Int)
