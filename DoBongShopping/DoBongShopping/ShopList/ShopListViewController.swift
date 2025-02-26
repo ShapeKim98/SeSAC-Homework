@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 import SnapKit
 import Alamofire
@@ -92,11 +93,6 @@ private extension ShopListViewController {
         navigationController?
             .navigationBar
             .titleTextAttributes = [.foregroundColor: UIColor.white]
-        
-        navigationController?
-            .navigationBar
-            .topItem?
-            .title = ""
         
         navigationController?.navigationBar.tintColor = .white
     }
@@ -197,6 +193,8 @@ private extension ShopListViewController {
         bindIsLoading()
         
         bindQuery()
+        
+        bindURL()
     }
     
     func bindShop() {
@@ -259,6 +257,42 @@ private extension ShopListViewController {
             .distinctUntilChanged()
             .drive(navigationItem.rx.title)
             .disposed(by: disposeBag)
+    }
+    
+    func bindURL() {
+        viewModel.observableState
+            .compactMap(\.url)
+            .map { [weak self] url in
+                let safariViewController = SFSafariViewController(url: url)
+                safariViewController.overrideUserInterfaceStyle = .dark
+                safariViewController.delegate = self
+                return safariViewController
+            }
+            .drive(rx.pushSFSafariViewController(animated: true))
+            .disposed(by: disposeBag)
+    }
+    
+    func bindErrorMessage() {
+        let action =  UIAlertAction(
+            title: "확인",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.viewModel.send.accept(.errorAlertTapped)
+            }
+        )
+        
+        viewModel.observableState
+            .compactMap(\.errorMessage)
+            .drive(rx.presentAlert(title: "오류", actions: action))
+            .disposed(by: disposeBag)
+    }
+}
+
+extension ShopListViewController: @preconcurrency SFSafariViewControllerDelegate {
+    func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.dismiss(animated: true)
+        viewModel.send.accept(.safariViewControllerDidFinish)
     }
 }
 

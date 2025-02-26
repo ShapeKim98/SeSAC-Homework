@@ -12,12 +12,6 @@ import RxCocoa
 import Alamofire
 
 @MainActor
-protocol ShopListViewModelDelegate: AnyObject {
-    func presentAlertFromShopList(title: String?, message: String?, action: (() -> Void)?)
-    func pushSafariViewController(url: URL)
-}
-
-@MainActor
 final class ShopListViewModel: Composable {
     enum Action {
         case collectionViewPrefetchItemsAt(items: [Int])
@@ -27,6 +21,8 @@ final class ShopListViewModel: Composable {
         case bindPaginationShop(ShopResponse)
         case bindErrorMessage(String)
         case collectionViewModelSelected(ShopResponse.Item)
+        case errorAlertTapped
+        case safariViewControllerDidFinish
     }
     
     struct State {
@@ -34,16 +30,16 @@ final class ShopListViewModel: Composable {
         var selectedSort: Sort = .sim
         var isLoading: Bool = false
         var query: String
+        var url: URL?
+        var errorMessage: String?
     }
     private var isPaging = false
     private var errorMessage: String?
     
     private let state: BehaviorRelay<State>
-    var observableState: Driver<State> { state.asDriver() }
+    var observableState: Driver<State> { state.asDriver().debug() }
     let send = PublishRelay<Action>()
     private let disposeBag = DisposeBag()
-    
-    weak var delegate: (any ShopListViewModelDelegate)?
     
     init(query: String, shop: ShopResponse) {
         self.state = BehaviorRelay(value: State(shop: shop, query: query))
@@ -89,18 +85,17 @@ final class ShopListViewModel: Composable {
             isPaging = false
             return .none
         case let .bindErrorMessage(message):
-            delegate?.presentAlertFromShopList(
-                title: "오류",
-                message: message,
-                action: { [weak self] in
-                    self?.errorMessage = nil
-                }
-            )
+            state.errorMessage = message
             state.isLoading = false
             return .none
         case let .collectionViewModelSelected(item):
-            guard let url = URL(string: item.link) else { return .none }
-            delegate?.pushSafariViewController(url: url)
+            state.url = URL(string: item.link)
+            return .none
+        case .errorAlertTapped:
+            state.errorMessage = nil
+            return .none
+        case .safariViewControllerDidFinish:
+            state.url = nil
             return .none
         }
     }

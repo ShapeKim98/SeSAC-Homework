@@ -88,7 +88,7 @@ private extension SearchViewController {
     }
     
     func configureIndicatorView() {
-        indicatorView.isHidden = true
+        indicatorView.hidesWhenStopped = true
         indicatorView.color = .white
         view.addSubview(indicatorView)
     }
@@ -108,21 +108,62 @@ private extension SearchViewController {
     
     func bindState() {
         bindIsLoading()
+        
+        bindShop()
+        
+        bindErrorMessage()
+        
+        bindAlertMessage()
     }
     
     func bindIsLoading() {
         viewModel.observableState
             .map(\.isLoading)
             .distinctUntilChanged()
-            .drive(with: self) { this, isLoading in
-                this.indicatorView.isHidden = !isLoading
-                
-                if isLoading {
-                    this.indicatorView.startAnimating()
-                } else {
-                    this.indicatorView.stopAnimating()
-                }
+            .drive(indicatorView.rx.isAnimating)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindShop() {
+        viewModel.observableState
+            .compactMap(\.shop)
+            .map { [weak self] shop in
+                let viewModel = ShopListViewModel(
+                    query: self?.searchBar.text ?? "",
+                    shop: shop
+                )
+                return ShopListViewController(viewModel: viewModel)
             }
+            .drive(rx.pushViewController(animated: true))
+            .disposed(by: disposeBag)
+    }
+    
+    func bindErrorMessage() {
+        let action =  UIAlertAction(
+            title: "확인",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.viewModel.send.accept(.errorAlertTapped)
+            }
+        )
+        viewModel.observableState
+            .compactMap(\.errorMessage)
+            .drive(rx.presentAlert(title: "오류", actions: action))
+            .disposed(by: disposeBag)
+    }
+    
+    func bindAlertMessage() {
+        let action = UIAlertAction(
+            title: "확인",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.viewModel.send.accept(.alertTapped)
+            }
+        )
+        
+        viewModel.observableState
+            .compactMap(\.alertMessage)
+            .drive(rx.presentAlert(title: "알림", actions: action))
             .disposed(by: disposeBag)
     }
 }
