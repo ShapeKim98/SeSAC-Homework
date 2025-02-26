@@ -155,8 +155,8 @@ private extension ShopListViewController {
     }
     
     func configureIndicatorView() {
-        indicatorView.stopAnimating()
         indicatorView.hidesWhenStopped = true
+        indicatorView.stopAnimating()
         indicatorView.color = .white
         view.addSubview(indicatorView)
     }
@@ -254,13 +254,7 @@ private extension ShopListViewController {
         viewModel.observableState
             .map(\.isLoading)
             .distinctUntilChanged()
-            .drive(with: self) { this, isLoading in
-                if isLoading {
-                    this.indicatorView.startAnimating()
-                } else {
-                    this.indicatorView.stopAnimating()
-                }
-            }
+            .drive(indicatorView.rx.isAnimating)
             .disposed(by: disposeBag)
     }
     
