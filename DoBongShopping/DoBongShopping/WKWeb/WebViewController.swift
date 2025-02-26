@@ -29,12 +29,12 @@ class WebViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func loadView() {
-        view = webView
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        webView.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide)
+        }
         
         configureNavigation()
         
@@ -47,6 +47,7 @@ class WebViewController: UIViewController {
         let configuration = WKWebViewConfiguration()
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = self
+        view.addSubview(webView)
         return webView
     }
     

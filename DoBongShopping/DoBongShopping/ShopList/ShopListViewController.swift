@@ -48,6 +48,12 @@ final class ShopListViewController: UIViewController {
         
         bindAction()
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        viewModel.send.accept(.safariViewControllerDidFinish)
+    }
 
 }
 
@@ -100,7 +106,6 @@ private extension ShopListViewController {
             target: self,
             action: nil
         )
-        navigationItem.backBarButtonItem?.tintColor = .label
         
         navigationController?.navigationBar.tintColor = .white
     }
