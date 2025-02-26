@@ -9,12 +9,20 @@ import UIKit
 
 import Kingfisher
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ShopCollectionViewCell: UICollectionViewCell {
     private let imageView = UIImageView()
     private let mallNameLabel = UILabel()
     private let titleLabel = UILabel()
     private let lpriceLabel = UILabel()
+    private let favoriteButton = UIButton()
+    
+    @Shared(.userDefaults(.favoriteItems, defaultValue: [String: Bool]()))
+    private var favoriteItems: [String: Bool]?
+    
+    private var disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,6 +35,12 @@ final class ShopCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        disposeBag = DisposeBag()
     }
     
     func cellForItemAt(_ shopItem: ShopResponse.Item) {
@@ -50,6 +64,21 @@ final class ShopCollectionViewCell: UICollectionViewCell {
         else { return }
         lpriceLabel.text = lprice
         
+        favoriteButton.rx.tap
+            .bind(with: self) { this, _ in
+                let productId = shopItem.productId
+                if this.favoriteItems?[productId] ?? false {
+                    this.favoriteItems?.removeValue(forKey: productId)
+                } else {
+                    this.favoriteItems?.updateValue(true, forKey: productId)
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        $favoriteItems
+            .map { $0?[shopItem.productId] ?? false }
+            .bind(to: favoriteButton.rx.isSelected)
+            .disposed(by: disposeBag)
     }
     
     func cancelImageDownload() {
@@ -66,6 +95,8 @@ private extension ShopCollectionViewCell {
         configureTitleLabel()
         
         configureLPriceLabel()
+        
+        configureFavoriteButton()
     }
     
     func configureLayout() {
@@ -87,6 +118,10 @@ private extension ShopCollectionViewCell {
         lpriceLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview().inset(12)
+        }
+        
+        favoriteButton.snp.makeConstraints { make in
+            make.bottom.trailing.equalTo(imageView).inset(8)
         }
     }
     
@@ -113,6 +148,26 @@ private extension ShopCollectionViewCell {
         lpriceLabel.font = .systemFont(ofSize: 18, weight: .bold)
         lpriceLabel.textColor = .white
         contentView.addSubview(lpriceLabel)
+    }
+    
+    func configureFavoriteButton() {
+        var configuration = UIButton.Configuration.plain()
+        configuration.background.backgroundColor = .clear
+        configuration.image = UIImage(systemName: "heart")
+        configuration.image?.withTintColor(.systemBlue)
+        favoriteButton.configuration = configuration
+        favoriteButton.tintColor = .systemBlue
+        favoriteButton.imageView?.contentMode = .scaleAspectFit
+        favoriteButton.configurationUpdateHandler = { button in
+            switch button.state {
+            case .selected:
+                button.configuration?.image = UIImage(systemName: "heart.fill")
+            default:
+                button.configuration?.image = UIImage(systemName: "heart")
+            }
+        }
+        
+        contentView.addSubview(favoriteButton)
     }
 }
 
