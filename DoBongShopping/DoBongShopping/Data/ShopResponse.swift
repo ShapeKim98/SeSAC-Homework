@@ -7,23 +7,23 @@
 
 import Foundation
 
-public struct ShopResponse: Decodable, Sendable, Equatable {
-    public var total: Int
-    public let display: Int
-    public var items: [Item]
+struct ShopResponse: Decodable, Sendable, Equatable {
+    var total: Int
+    let display: Int
+    var items: [Item]
 }
 
 extension ShopResponse {
-    public struct Item: Decodable, Sendable, Equatable {
-        public let title: String
-        public let image: String
-        public let lprice: String
-        public let mallName: String
-        public let link: String
+    struct Item: Decodable, Sendable, Equatable {
+        let title: String
+        let image: String
+        let lprice: String
+        let mallName: String
+        let link: String
     }
 }
 
-public extension ShopResponse {
+extension ShopResponse {
     static let mock = ShopResponse(
         total: 549489,
         display: 10,

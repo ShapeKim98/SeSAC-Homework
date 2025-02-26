@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension Bundle {
+extension Bundle {
     var naverClientId: String {
         return infoDictionary?["NAVER_CLIENT_ID"] as? String ?? ""
     }
