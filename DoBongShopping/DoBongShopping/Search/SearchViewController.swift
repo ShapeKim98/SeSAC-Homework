@@ -78,6 +78,13 @@ private extension SearchViewController {
             .navigationBar
             .titleTextAttributes = [.foregroundColor: UIColor.white]
         
+        navigationItem.backBarButtonItem = UIBarButtonItem(
+            title: "",
+            style: .plain,
+            target: self,
+            action: nil
+        )
+        
         wishListButton.image = UIImage(systemName: "cart.fill")
         navigationItem.rightBarButtonItem = wishListButton
     }

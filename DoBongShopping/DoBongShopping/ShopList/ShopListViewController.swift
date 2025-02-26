@@ -94,6 +94,14 @@ private extension ShopListViewController {
             .navigationBar
             .titleTextAttributes = [.foregroundColor: UIColor.white]
         
+        navigationItem.backBarButtonItem = UIBarButtonItem(
+            title: "",
+            style: .plain,
+            target: self,
+            action: nil
+        )
+        navigationItem.backBarButtonItem?.tintColor = .label
+        
         navigationController?.navigationBar.tintColor = .white
     }
     
@@ -261,14 +269,9 @@ private extension ShopListViewController {
     
     func bindURL() {
         viewModel.observableState
-            .compactMap(\.url)
-            .map { [weak self] url in
-                let safariViewController = SFSafariViewController(url: url)
-                safariViewController.overrideUserInterfaceStyle = .dark
-                safariViewController.delegate = self
-                return safariViewController
-            }
-            .drive(rx.pushSFSafariViewController(animated: true))
+            .compactMap(\.selectedItem)
+            .map { WebViewController(viewModel: WebViewModel(item: $0)) }
+            .drive(rx.pushViewController(animated: true))
             .disposed(by: disposeBag)
     }
     
@@ -285,14 +288,6 @@ private extension ShopListViewController {
             .compactMap(\.errorMessage)
             .drive(rx.presentAlert(title: "오류", actions: action))
             .disposed(by: disposeBag)
-    }
-}
-
-extension ShopListViewController: @preconcurrency SFSafariViewControllerDelegate {
-    func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-        navigationController?.setNavigationBarHidden(false, animated: false)
-        navigationController?.dismiss(animated: true)
-        viewModel.send.accept(.safariViewControllerDidFinish)
     }
 }
 

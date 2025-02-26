@@ -15,6 +15,7 @@ struct ShopResponse: Decodable, Sendable, Equatable {
 
 extension ShopResponse {
     struct Item: Decodable, Sendable, Equatable {
+        let productId: String
         let title: String
         let image: String
         let lprice: String

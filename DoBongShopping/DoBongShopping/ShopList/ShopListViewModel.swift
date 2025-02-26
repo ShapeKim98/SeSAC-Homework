@@ -30,14 +30,14 @@ final class ShopListViewModel: Composable {
         var selectedSort: Sort = .sim
         var isLoading: Bool = false
         var query: String
-        var url: URL?
+        var selectedItem: ShopResponse.Item?
         var errorMessage: String?
     }
     private var isPaging = false
     private var errorMessage: String?
     
     private let state: BehaviorRelay<State>
-    var observableState: Driver<State> { state.asDriver().debug() }
+    var observableState: Driver<State> { state.asDriver() }
     let send = PublishRelay<Action>()
     private let disposeBag = DisposeBag()
     
@@ -89,13 +89,13 @@ final class ShopListViewModel: Composable {
             state.isLoading = false
             return .none
         case let .collectionViewModelSelected(item):
-            state.url = URL(string: item.link)
+            state.selectedItem = item
             return .none
         case .errorAlertTapped:
             state.errorMessage = nil
             return .none
         case .safariViewControllerDidFinish:
-            state.url = nil
+            state.selectedItem = nil
             return .none
         }
     }
