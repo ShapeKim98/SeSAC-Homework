@@ -93,6 +93,7 @@ private extension WishListViewController {
         searchController.searchBar.placeholder = "관심 상품을 입력해주세요"
         searchController.searchBar.overrideUserInterfaceStyle = .dark
         
+        navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.searchController = searchController
     }
 }

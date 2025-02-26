@@ -15,6 +15,7 @@ import RxCocoa
 final class SearchViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let indicatorView = UIActivityIndicatorView(style: .large)
+    private let wishListButton = UIBarButtonItem()
     
     private let viewModel: SearchViewModel
     private let disposeBag = DisposeBag()
@@ -76,6 +77,9 @@ private extension SearchViewController {
         navigationController?
             .navigationBar
             .titleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        wishListButton.image = UIImage(systemName: "cart.fill")
+        navigationItem.rightBarButtonItem = wishListButton
     }
     
     func configureSearchBar() {
@@ -103,6 +107,11 @@ private extension SearchViewController {
             .withLatestFrom(searchBar.rx.text.orEmpty)
             .map { Action.searchBarSearchButtonClicked($0) }
             .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+        
+        wishListButton.rx.tap
+            .map { _ in WishListViewController() }
+            .bind(to: rx.pushViewController(animated: true))
             .disposed(by: disposeBag)
     }
     
