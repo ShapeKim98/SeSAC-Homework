@@ -23,7 +23,7 @@ final class SearchViewModel: Composable {
     }
     
     struct State {
-        @ComposableState
+        @PresentState
         var shop: ShopResponse?
         var isLoading: Bool = false
         var errorMessage: String?
@@ -65,6 +65,7 @@ final class SearchViewModel: Composable {
                 state.alertMessage = "검색 결과가 없어요."
                 return .none
             }
+            state.shop = shop
             state.shop = shop
             return .none
         case let .bindErrorMessage(message):

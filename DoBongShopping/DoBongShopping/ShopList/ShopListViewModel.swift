@@ -30,7 +30,7 @@ final class ShopListViewModel: Composable {
         var selectedSort: Sort = .sim
         var isLoading: Bool = false
         var query: String
-        @ComposableState
+        @PresentState
         var selectedItem: ShopResponse.Item?
         var errorMessage: String?
     }

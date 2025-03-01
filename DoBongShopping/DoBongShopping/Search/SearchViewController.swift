@@ -133,7 +133,7 @@ private extension SearchViewController {
     }
     
     func bindIsLoading() {
-        viewModel.$state
+        viewModel.$state.driver
             .map(\.isLoading)
             .distinctUntilChanged()
             .drive(indicatorView.rx.isAnimating)
@@ -141,7 +141,7 @@ private extension SearchViewController {
     }
     
     func bindShop() {
-        viewModel.state.$shop
+        viewModel.$state.present(\.$shop)
             .compactMap(\.self)
             .map { [weak self] shop in
                 let viewModel = ShopListViewModel(
@@ -162,7 +162,7 @@ private extension SearchViewController {
                 self?.viewModel.send.accept(.errorAlertTapped)
             }
         )
-        viewModel.$state
+        viewModel.$state.driver
             .compactMap(\.errorMessage)
             .drive(rx.presentAlert(title: "오류", actions: action))
             .disposed(by: disposeBag)
@@ -177,7 +177,7 @@ private extension SearchViewController {
             }
         )
         
-        viewModel.$state
+        viewModel.$state.driver
             .compactMap(\.alertMessage)
             .drive(rx.presentAlert(title: "알림", actions: action))
             .disposed(by: disposeBag)

@@ -203,7 +203,7 @@ private extension ShopListViewController {
     }
     
     func bindShop() {
-        viewModel.$state
+        viewModel.$state.driver
             .map(\.shop.items)
             .distinctUntilChanged()
             .drive(collectionView.rx.items(
@@ -214,7 +214,7 @@ private extension ShopListViewController {
             }
             .disposed(by: disposeBag)
         
-        viewModel.$state
+        viewModel.$state.driver
             .map(\.shop.total)
             .distinctUntilChanged()
             .map { "\($0.formatted())개의 검색 결과" }
@@ -223,7 +223,7 @@ private extension ShopListViewController {
     }
     
     func bindSelectedSort() {
-        viewModel.$state
+        viewModel.$state.driver
             .map(\.selectedSort)
             .distinctUntilChanged()
             .drive(with: self) { this, selectedSort in
@@ -243,7 +243,7 @@ private extension ShopListViewController {
     }
     
     func bindIsLoading() {
-        viewModel.$state
+        viewModel.$state.driver
             .map(\.isLoading)
             .distinctUntilChanged()
             .drive(indicatorView.rx.isAnimating)
@@ -251,7 +251,7 @@ private extension ShopListViewController {
     }
     
     func bindQuery() {
-        viewModel.$state
+        viewModel.$state.driver
             .map(\.query)
             .distinctUntilChanged()
             .drive(navigationItem.rx.title)
@@ -259,7 +259,7 @@ private extension ShopListViewController {
     }
     
     func bindSelectedItem() {
-        viewModel.state.$selectedItem
+        viewModel.$state.present(\.$selectedItem)
             .compactMap(\.self)
             .map { WebViewController(viewModel: WebViewModel(item: $0)) }
             .drive(rx.pushViewController(animated: true))
@@ -275,7 +275,7 @@ private extension ShopListViewController {
             }
         )
         
-        viewModel.$state
+        viewModel.$state.driver
             .compactMap(\.errorMessage)
             .drive(rx.presentAlert(title: "오류", actions: action))
             .disposed(by: disposeBag)
