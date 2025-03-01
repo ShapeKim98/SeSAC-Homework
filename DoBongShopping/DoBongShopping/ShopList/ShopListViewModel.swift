@@ -13,6 +13,7 @@ import Alamofire
 
 @MainActor
 final class ShopListViewModel: Composable {
+    
     enum Action {
         case collectionViewPrefetchItemsAt(items: [Int])
         case collectionViewWillDisplay(item: Int)
@@ -36,13 +37,13 @@ final class ShopListViewModel: Composable {
     private var isPaging = false
     private var errorMessage: String?
     
-    let state: BehaviorRelay<State>
-    var observableState: Driver<State> { state.asDriver() }
+    @ComposableState var state: State
+    
     let send = PublishRelay<Action>()
     let disposeBag = DisposeBag()
     
     init(query: String, shop: ShopResponse) {
-        self.state = BehaviorRelay(value: State(shop: shop, query: query))
+        self.state = State(shop: shop, query: query)
         
         bindSend()
     }

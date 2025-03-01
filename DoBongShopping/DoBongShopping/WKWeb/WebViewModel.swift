@@ -25,13 +25,12 @@ final class WebViewModel: Composable {
         }
     }
     
-    let state: BehaviorRelay<State>
-    var observableState: Driver<State> { state.asDriver() }
+    @ComposableState var state: State
     let send = PublishRelay<Action>()
     let disposeBag = DisposeBag()
     
     init(item: ShopResponse.Item) {
-        state = BehaviorRelay(value: State(item: item))
+        state = State(item: item)
         
         bindSend()
     }

@@ -133,7 +133,7 @@ private extension SearchViewController {
     }
     
     func bindIsLoading() {
-        viewModel.observableState
+        viewModel.$state
             .map(\.isLoading)
             .distinctUntilChanged()
             .drive(indicatorView.rx.isAnimating)
@@ -141,8 +141,8 @@ private extension SearchViewController {
     }
     
     func bindShop() {
-        viewModel.observableState
-            .compactMap(\.shop)
+        viewModel.state.$shop
+            .compactMap(\.self)
             .map { [weak self] shop in
                 let viewModel = ShopListViewModel(
                     query: self?.searchBar.text ?? "",
@@ -162,7 +162,7 @@ private extension SearchViewController {
                 self?.viewModel.send.accept(.errorAlertTapped)
             }
         )
-        viewModel.observableState
+        viewModel.$state
             .compactMap(\.errorMessage)
             .drive(rx.presentAlert(title: "오류", actions: action))
             .disposed(by: disposeBag)
@@ -177,7 +177,7 @@ private extension SearchViewController {
             }
         )
         
-        viewModel.observableState
+        viewModel.$state
             .compactMap(\.alertMessage)
             .drive(rx.presentAlert(title: "알림", actions: action))
             .disposed(by: disposeBag)

@@ -210,7 +210,7 @@ private extension ShopListViewController {
     }
     
     func bindShop() {
-        viewModel.observableState
+        viewModel.$state
             .map(\.shop.items)
             .distinctUntilChanged()
             .drive(collectionView.rx.items(
@@ -221,7 +221,7 @@ private extension ShopListViewController {
             }
             .disposed(by: disposeBag)
         
-        viewModel.observableState
+        viewModel.$state
             .map(\.shop.total)
             .distinctUntilChanged()
             .map { "\($0.formatted())개의 검색 결과" }
@@ -230,7 +230,7 @@ private extension ShopListViewController {
     }
     
     func bindSelectedSort() {
-        viewModel.observableState
+        viewModel.$state
             .map(\.selectedSort)
             .distinctUntilChanged()
             .drive(with: self) { this, selectedSort in
@@ -250,7 +250,7 @@ private extension ShopListViewController {
     }
     
     func bindIsLoading() {
-        viewModel.observableState
+        viewModel.$state
             .map(\.isLoading)
             .distinctUntilChanged()
             .drive(indicatorView.rx.isAnimating)
@@ -258,7 +258,7 @@ private extension ShopListViewController {
     }
     
     func bindQuery() {
-        viewModel.observableState
+        viewModel.$state
             .map(\.query)
             .distinctUntilChanged()
             .drive(navigationItem.rx.title)
@@ -266,7 +266,7 @@ private extension ShopListViewController {
     }
     
     func bindURL() {
-        viewModel.observableState
+        viewModel.$state
             .compactMap(\.selectedItem)
             .map { WebViewController(viewModel: WebViewModel(item: $0)) }
             .drive(rx.pushViewController(animated: true))
@@ -282,7 +282,7 @@ private extension ShopListViewController {
             }
         )
         
-        viewModel.observableState
+        viewModel.$state
             .compactMap(\.errorMessage)
             .drive(rx.presentAlert(title: "오류", actions: action))
             .disposed(by: disposeBag)

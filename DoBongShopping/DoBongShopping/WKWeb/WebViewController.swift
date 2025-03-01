@@ -68,14 +68,14 @@ private extension WebViewController {
     }
     
     func bindState() {
-        viewModel.observableState
+        viewModel.$state
             .compactMap { URL(string: $0.item.link) }
             .drive(with: self) { this, url in
                 this.webView.load(URLRequest(url: url))
             }
             .disposed(by: disposeBag)
         
-        viewModel.observableState
+        viewModel.$state
             .map { $0.isFavorite ? "heart.fill" : "heart" }
             .map { UIImage(systemName: $0) }
             .drive(favoriteButton.rx.image)

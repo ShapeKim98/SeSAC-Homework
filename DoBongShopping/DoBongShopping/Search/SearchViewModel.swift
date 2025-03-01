@@ -23,16 +23,14 @@ final class SearchViewModel: Composable {
     }
     
     struct State {
+        @ComposableState
         var shop: ShopResponse?
         var isLoading: Bool = false
         var errorMessage: String?
         var alertMessage: String?
     }
     
-    private var errorMessage: String?
-    
-    let state = BehaviorRelay(value: State())
-    var observableState: Driver<State> { state.asDriver() }
+    @ComposableState var state = State()
     let send = PublishRelay<Action>()
     let disposeBag = DisposeBag()
     
@@ -49,7 +47,6 @@ final class SearchViewModel: Composable {
                 state.alertMessage = "글자를 포함해주세요."
                 return .none
             }
-            state.shop = nil
             state.isLoading = true
             return .run { effect in
                 let request = ShopRequest(query: query)

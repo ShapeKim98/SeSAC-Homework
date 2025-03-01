@@ -121,7 +121,7 @@ private extension WishListViewController {
     }
     
     func bindWishList() {
-        viewModel.observableState
+        viewModel.$state
             .map(\.wishList)
             .distinctUntilChanged()
             .drive(with: self) { this, wishList in

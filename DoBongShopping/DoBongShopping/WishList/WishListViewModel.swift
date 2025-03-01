@@ -21,8 +21,7 @@ final class WishListViewModel: Composable {
         var wishList: [Wish] = []
     }
     
-    let state = BehaviorRelay(value: State())
-    var observableState: Driver<State> { state.asDriver() }
+    @ComposableState var state = State()
     let send = PublishRelay<Action>()
     let disposeBag = DisposeBag()
     

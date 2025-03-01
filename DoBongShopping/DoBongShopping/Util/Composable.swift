@@ -11,27 +11,26 @@ import RxSwift
 import RxCocoa
 
 @MainActor
-protocol Composable {
+protocol Composable: AnyObject {
     associatedtype Action
     associatedtype State
     
-    var observableState: Driver<State> { get }
+    var state: State { get set }
     var send: PublishRelay<Action> { get }
-    var state: BehaviorRelay<State> { get }
     var disposeBag: DisposeBag { get }
     
     func bindSend()
     func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>>
 }
 
-extension Composable where Self: AnyObject {
+extension Composable {
     func bindSend() {
         send
             .observe(on: MainScheduler.asyncInstance)
             .debug("\(Self.self): Received Action")
             .withUnretained(self)
             .compactMap { this, action in
-                var state = this.state.value
+                var state = this.state
                 this.reducer(&state, action)
                     .observe(on: MainScheduler.asyncInstance)
                     .compactMap(\.action)
@@ -39,7 +38,9 @@ extension Composable where Self: AnyObject {
                     .disposed(by: this.disposeBag)
                 return state
             }
-            .bind(to: state)
+            .bind(with: self) { this, state in
+                this.state = state
+            }
             .disposed(by: disposeBag)
     }
 }
