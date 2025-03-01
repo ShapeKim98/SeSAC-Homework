@@ -8,81 +8,79 @@
 import Foundation
 
 import Alamofire
+import RxSwift
+import RxCocoa
 
 @MainActor
-protocol SearchViewModelDelegate: AnyObject {
-    func pushShopList(query: String, shop: ShopResponse)
-    func presentAlert(title: String?, message: String?)
-}
-
-@MainActor
-final class SearchViewModel {
-    enum Input {
-        case searchBarSearchButtonClicked(_ text: String?)
+final class SearchViewModel: Composable {
+    enum Action {
+        case searchBarSearchButtonClicked(_ text: String)
+        case bindShop(ShopResponse)
+        case bindErrorMessage(String)
+        case errorAlertTapped
+        case alertTapped
+        case navigationDidPop
     }
     
-    enum Output {
-        case isLoading(_ value: Bool)
+    struct State {
+        @PresentState
+        var shop: ShopResponse?
+        var isLoading: Bool = false
+        var errorMessage: String?
+        var alertMessage: String?
     }
     
-    struct Model {
-        var isLoading: Bool = false {
-            didSet {
-                guard oldValue != isLoading else { return }
-                continuation?.yield(.isLoading(isLoading))
-            }
-        }
-        
-        var continuation: AsyncStream<Output>.Continuation?
-    }
+    @ComposableState var state = State()
+    let send = PublishRelay<Action>()
+    let disposeBag = DisposeBag()
     
-    deinit { model.continuation?.finish() }
+    init() { bindSend() }
     
-    private(set) var model = Model()
-    
-    weak var delegate: (any SearchViewModelDelegate)?
-    
-    var output: AsyncStream<Output> {
-        return AsyncStream { continuation in
-            model.continuation = continuation
-        }
-    }
-    
-    func input(_ action: Input) {
+    func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
-        case let .searchBarSearchButtonClicked(text):
-            guard let text, text.filter(\.isLetter).count >= 2 else {
-                delegate?.presentAlert(title: "두 글자 이상 입력해주세요.", message: nil)
-                return
+        case let .searchBarSearchButtonClicked(query):
+            guard query.filter(\.isLetter).count >= 2 else {
+                state.alertMessage = "두 글자 이상 입력해주세요."
+                return .none
             }
-            guard !text.filter(\.isLetter).isEmpty else {
-                delegate?.presentAlert(title: "글자를 포함해주세요.", message: nil)
-                return
+            guard !query.filter(\.isLetter).isEmpty else {
+                state.alertMessage = "글자를 포함해주세요."
+                return .none
             }
-            Task { [weak self] in
-                guard let self else { return }
-                await fetchShop(query: text)
+            state.isLoading = true
+            return .run { effect in
+                let request = ShopRequest(query: query)
+                let shop = try await ShopClient.shared.fetchShop(request)
+                effect.onNext(.send(.bindShop(shop)))
+            } catch: { error in
+                guard let error = error as? BaseError else {
+                    print(error)
+                    return .none
+                }
+                return .send(.bindErrorMessage(error.errorMessage))
             }
-            return
-        }
-    }
-}
-
-private extension SearchViewModel {
-    func fetchShop(query: String) async {
-        model.isLoading = true
-        defer { model.isLoading = false }
-        let request = ShopRequest(query: query)
-        do {
-            let shop = try await ShopClient.shared.fetchShop(request)
-//            dump(shop)
+        case let .bindShop(shop):
+            defer { state.isLoading = false }
             guard shop.total > 0 else {
-                delegate?.presentAlert(title: "검색 결과가 없어요.", message: nil)
-                return
+                state.alertMessage = "검색 결과가 없어요."
+                return .none
             }
-            delegate?.pushShopList(query: query, shop: shop)
-        } catch {
-            print((error as? AFError) ?? error)
+            state.shop = shop
+            state.shop = shop
+            return .none
+        case let .bindErrorMessage(message):
+            state.errorMessage = message
+            state.isLoading = false
+            return .none
+        case .errorAlertTapped:
+            state.errorMessage = nil
+            return .none
+        case .alertTapped:
+            state.alertMessage = nil
+            return .none
+        case .navigationDidPop:
+            state.shop = nil
+            return .none
         }
     }
 }

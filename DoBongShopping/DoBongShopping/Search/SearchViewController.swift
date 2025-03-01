@@ -9,12 +9,16 @@ import UIKit
 
 import SnapKit
 import Alamofire
+import RxSwift
+import RxCocoa
 
 final class SearchViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let indicatorView = UIActivityIndicatorView(style: .large)
+    private let wishListButton = UIBarButtonItem()
     
     private let viewModel: SearchViewModel
+    private let disposeBag = DisposeBag()
     
     init(viewModel: SearchViewModel) {
         self.viewModel = viewModel
@@ -32,7 +36,9 @@ final class SearchViewController: UIViewController {
         
         configureLayout()
         
-        bind()
+        bindState()
+        
+        bindAction()
     }
 }
 
@@ -71,10 +77,19 @@ private extension SearchViewController {
         navigationController?
             .navigationBar
             .titleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        navigationItem.backBarButtonItem = UIBarButtonItem(
+            title: "",
+            style: .plain,
+            target: self,
+            action: nil
+        )
+        
+        wishListButton.image = UIImage(systemName: "cart.fill")
+        navigationItem.rightBarButtonItem = wishListButton
     }
     
     func configureSearchBar() {
-        searchBar.delegate = self
         searchBar.placeholder = "브랜드, 상품, 프로필, 태그 등"
         searchBar.barTintColor = .black
         searchBar.barStyle = .black
@@ -84,7 +99,7 @@ private extension SearchViewController {
     }
     
     func configureIndicatorView() {
-        indicatorView.isHidden = true
+        indicatorView.hidesWhenStopped = true
         indicatorView.color = .white
         view.addSubview(indicatorView)
     }
@@ -92,22 +107,80 @@ private extension SearchViewController {
 
 // MARK: Data Bindings
 private extension SearchViewController {
-    func bind() {
-        Task { [weak self] in
-            guard let self else { return }
-            for await output in viewModel.output {
-                switch output {
-                case let .isLoading(isLoading):
-                    indicatorView.isHidden = !isLoading
-                    
-                    if isLoading {
-                        indicatorView.startAnimating()
-                    } else {
-                        indicatorView.stopAnimating()
-                    }
-                }
+    typealias Action = SearchViewModel.Action
+    
+    func bindAction() {
+        searchBar.rx.searchButtonClicked
+            .withLatestFrom(searchBar.rx.text.orEmpty)
+            .map { Action.searchBarSearchButtonClicked($0) }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+        
+        wishListButton.rx.tap
+            .map { _ in WishListViewController() }
+            .bind(to: rx.pushViewController(animated: true))
+            .disposed(by: disposeBag)
+    }
+    
+    func bindState() {
+        bindIsLoading()
+        
+        bindShop()
+        
+        bindErrorMessage()
+        
+        bindAlertMessage()
+    }
+    
+    func bindIsLoading() {
+        viewModel.$state.driver
+            .map(\.isLoading)
+            .distinctUntilChanged()
+            .drive(indicatorView.rx.isAnimating)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindShop() {
+        viewModel.$state.present(\.$shop)
+            .compactMap(\.self)
+            .map { [weak self] shop in
+                let viewModel = ShopListViewModel(
+                    query: self?.searchBar.text ?? "",
+                    shop: shop
+                )
+                return ShopListViewController(viewModel: viewModel)
             }
-        }
+            .drive(rx.pushViewController(animated: true))
+            .disposed(by: disposeBag)
+    }
+    
+    func bindErrorMessage() {
+        let action =  UIAlertAction(
+            title: "확인",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.viewModel.send.accept(.errorAlertTapped)
+            }
+        )
+        viewModel.$state.driver
+            .compactMap(\.errorMessage)
+            .drive(rx.presentAlert(title: "오류", actions: action))
+            .disposed(by: disposeBag)
+    }
+    
+    func bindAlertMessage() {
+        let action = UIAlertAction(
+            title: "확인",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.viewModel.send.accept(.alertTapped)
+            }
+        )
+        
+        viewModel.$state.driver
+            .compactMap(\.alertMessage)
+            .drive(rx.presentAlert(title: "알림", actions: action))
+            .disposed(by: disposeBag)
     }
 }
 
@@ -116,12 +189,6 @@ private extension SearchViewController {
     @objc
     func tagGestureRecognizerAction() {
         view.endEditing(true)
-    }
-}
-
-extension SearchViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        viewModel.input(.searchBarSearchButtonClicked(searchBar.text))
     }
 }
 

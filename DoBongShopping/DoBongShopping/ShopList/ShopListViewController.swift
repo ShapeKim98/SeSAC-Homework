@@ -6,9 +6,12 @@
 //
 
 import UIKit
+import SafariServices
 
 import SnapKit
 import Alamofire
+import RxSwift
+import RxCocoa
 
 final class ShopListViewController: UIViewController {
     private let totalLabel = UILabel()
@@ -20,16 +23,11 @@ final class ShopListViewController: UIViewController {
         configureCollectionView()
     }()
     
-    private let viewModel: SearchListViewModel
+    private let viewModel: ShopListViewModel
     
-    private let query: String
+    private let disposeBag = DisposeBag()
     
-    init(
-        query: String,
-        shop: ShopResponse = .mock,
-        viewModel: SearchListViewModel
-    ) {
-        self.query = query
+    init(viewModel: ShopListViewModel) {
         self.viewModel = viewModel
         
         super.init(nibName: nil, bundle: nil)
@@ -46,9 +44,10 @@ final class ShopListViewController: UIViewController {
         
         configureLayout()
         
-        bind()
+        bindState()
+        
+        bindAction()
     }
-
 }
 
 // MARK: Configure Views
@@ -90,21 +89,21 @@ private extension ShopListViewController {
     }
     
     func configureNavigation() {
-        navigationItem.title = query
         navigationController?
             .navigationBar
             .titleTextAttributes = [.foregroundColor: UIColor.white]
         
-        navigationController?
-            .navigationBar
-            .topItem?
-            .title = ""
+        navigationItem.backBarButtonItem = UIBarButtonItem(
+            title: "",
+            style: .plain,
+            target: self,
+            action: nil
+        )
         
         navigationController?.navigationBar.tintColor = .white
     }
     
     func configureTotalLabel() {
-        totalLabel.text = "\(viewModel.model.shop.total.formatted())개의 검색 결과"
         totalLabel.textColor = .systemGreen
         totalLabel.font = .systemFont(ofSize: 16, weight: .bold)
         view.addSubview(totalLabel)
@@ -120,45 +119,37 @@ private extension ShopListViewController {
     func configureSortButtons() {
         for sort in Sort.allCases {
             let button = SortButton(title: sort.title)
-            button.isSelected(sort == viewModel.model.selectedSort)
-            button.addAction(
-                UIAction { [weak self] _ in
-                    guard let `self` else { return }
-                    self.sortButtonTouchUpInside(sort: sort)
-                },
-                for: .touchUpInside
-            )
             sortButtons.append(button)
             sortButtonHStack.addArrangedSubview(button)
         }
     }
     
     func configureCollectionView() -> UICollectionView {
-        let collectionView = VerticalCollectionView(
-            superSize: view.frame,
-            itemHeight: 300,
-            colCount: 2,
-            colSpacing: 12,
-            rowSpacing: 16,
-            inset: UIEdgeInsets(top: 8, left: 12, bottom: 12, right: 12)
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 12, bottom: 12, right: 12)
+        layout.minimumLineSpacing = 16
+        layout.minimumInteritemSpacing = 12
+        let width = (view.frame.width - (2 + 1) * 12) / 2
+        layout.itemSize = CGSize(width: width, height: 300)
+        
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: layout
         )
-        
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.prefetchDataSource = self
-        
         collectionView.register(
             ShopCollectionViewCell.self,
             forCellWithReuseIdentifier: .shopCollectionCell
         )
+        collectionView.backgroundColor = .clear
         view.addSubview(collectionView)
         
         return collectionView
     }
     
     func configureIndicatorView() {
-        indicatorView.stopAnimating()
         indicatorView.hidesWhenStopped = true
+        indicatorView.stopAnimating()
         indicatorView.color = .white
         view.addSubview(indicatorView)
     }
@@ -166,96 +157,128 @@ private extension ShopListViewController {
 
 // MARK: Data Bindings
 private extension ShopListViewController {
-    func bind() {
-        Task { [weak self] in
-            guard let self else { return }
-            for await output in viewModel.output {
-                switch output {
-                case .shopItems:
-                    bindedShop()
-                case let .selectedSort(sort):
-                    bindedSelectedSort(sort)
-                case let .isLoading(isLoading):
-                    bindedIsLoading(isLoading)
+    typealias Action = ShopListViewModel.Action
+    
+    func bindAction() {
+        for (index, sort) in Sort.allCases.enumerated() {
+            let button = sortButtons[index]
+            button.rx.tap
+                .map { Action.sortButtonTouchUpInside(sort: sort) }
+                .bind(to: viewModel.send)
+                .disposed(by: disposeBag)
+        }
+        
+        collectionView.rx.willDisplayCell
+            .map(\.at.item)
+            .map { Action.collectionViewWillDisplay(item: $0) }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+        
+        collectionView.rx.prefetchItems
+            .map { Action.collectionViewPrefetchItemsAt(items: $0.map(\.item)) }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+        
+        collectionView.rx.didEndDisplayingCell
+            .compactMap { cell, _ in cell as? ShopCollectionViewCell }
+            .bind { $0.cancelImageDownload() }
+            .disposed(by: disposeBag)
+        
+        collectionView.rx.modelSelected(ShopResponse.Item.self)
+            .map { Action.collectionViewModelSelected($0) }
+            .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindState() {
+        bindShop()
+        
+        bindSelectedSort()
+        
+        bindIsLoading()
+        
+        bindQuery()
+        
+        bindSelectedItem()
+    }
+    
+    func bindShop() {
+        viewModel.$state.driver
+            .map(\.shop.items)
+            .distinctUntilChanged()
+            .drive(collectionView.rx.items(
+                cellIdentifier: .shopCollectionCell,
+                cellType: ShopCollectionViewCell.self
+            )) { indexPath, item, cell in
+                cell.cellForItemAt(item)
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.$state.driver
+            .map(\.shop.total)
+            .distinctUntilChanged()
+            .map { "\($0.formatted())개의 검색 결과" }
+            .drive(totalLabel.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindSelectedSort() {
+        viewModel.$state.driver
+            .map(\.selectedSort)
+            .distinctUntilChanged()
+            .drive(with: self) { this, selectedSort in
+                this.collectionView.scrollToItem(
+                    at: IndexPath(item: 0, section: 0),
+                    at: .top,
+                    animated: true
+                )
+                UIView.animate(withDuration: 0.3) {
+                    for (index, sort) in Sort.allCases.enumerated() {
+                        let isSelected = sort == selectedSort
+                        this.sortButtons[index].isSelected(isSelected)
+                    }
                 }
             }
-        }
+            .disposed(by: disposeBag)
     }
     
-    func bindedShop() {
-        print(#function)
-        collectionView.reloadData()
+    func bindIsLoading() {
+        viewModel.$state.driver
+            .map(\.isLoading)
+            .distinctUntilChanged()
+            .drive(indicatorView.rx.isAnimating)
+            .disposed(by: disposeBag)
     }
     
-    func bindedSelectedSort(_ sort: Sort) {
-        print(#function)
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            guard let `self` else { return }
-            for (index, sort) in Sort.allCases.enumerated() {
-                let isSelected = sort == viewModel.model.selectedSort
-                sortButtons[index].isSelected(isSelected)
+    func bindQuery() {
+        viewModel.$state.driver
+            .map(\.query)
+            .distinctUntilChanged()
+            .drive(navigationItem.rx.title)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindSelectedItem() {
+        viewModel.$state.present(\.$selectedItem)
+            .compactMap(\.self)
+            .map { WebViewController(viewModel: WebViewModel(item: $0)) }
+            .drive(rx.pushViewController(animated: true))
+            .disposed(by: disposeBag)
+    }
+    
+    func bindErrorMessage() {
+        let action =  UIAlertAction(
+            title: "확인",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.viewModel.send.accept(.errorAlertTapped)
             }
-        }
-    }
-    
-    func bindedIsLoading(_ isLoading: Bool) {
-        print(#function)
-        if isLoading {
-            indicatorView.startAnimating()
-        } else {
-            indicatorView.stopAnimating()
-        }
-    }
-}
-
-// MARK: Functions
-private extension ShopListViewController {
-    func sortButtonTouchUpInside(sort: Sort) {
-        collectionView.scrollToItem(
-            at: IndexPath(item: 0, section: 0),
-            at: .top,
-            animated: true
         )
-        viewModel.input(.sortButtonTouchUpInside(query: query, sort: sort))
-    }
-}
-
-extension ShopListViewController: UICollectionViewDataSource,
-                                  UICollectionViewDelegate,
-                                  UICollectionViewDataSourcePrefetching {
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.model.shop.items.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: .shopCollectionCell,
-            for: indexPath
-        ) as? ShopCollectionViewCell
-        guard let cell else { return UICollectionViewCell() }
         
-        cell.cellForItemAt(viewModel.model.shop.items[indexPath.item])
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        viewModel.input(.collectionViewWillDisplay(query: query, item: indexPath.item))
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        for indexPath in indexPaths {
-            guard
-                indexPath.item + 2 == viewModel.model.shop.items.count
-            else { continue }
-            viewModel.input(.collectionViewPrefetchItemsAt(query: query))
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let shopCell = cell as? ShopCollectionViewCell
-        shopCell?.cancelImageDownload()
+        viewModel.$state.driver
+            .compactMap(\.errorMessage)
+            .drive(rx.presentAlert(title: "오류", actions: action))
+            .disposed(by: disposeBag)
     }
 }
 
@@ -305,5 +328,5 @@ enum Sort: String, CaseIterable {
 }
 
 #Preview {
-    UINavigationController(rootViewController: ShopListViewController(query: "캠핑카", viewModel: SearchListViewModel(shop: .mock)))
+    UINavigationController(rootViewController: ShopListViewController(viewModel: ShopListViewModel(query: "캠핑카", shop: .mock)))
 }

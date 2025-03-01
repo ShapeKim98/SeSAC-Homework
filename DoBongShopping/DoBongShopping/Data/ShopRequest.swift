@@ -7,13 +7,13 @@
 
 import Foundation
 
-public struct ShopRequest: Sendable {
-    public let query: String
-    public let start: Int
-    public let display: Int
-    public let sort: String
+struct ShopRequest: Sendable {
+    let query: String
+    let start: Int
+    let display: Int
+    let sort: String
     
-    public init(
+    init(
         query: String,
         start: Int = 1,
         display: Int = 30,
