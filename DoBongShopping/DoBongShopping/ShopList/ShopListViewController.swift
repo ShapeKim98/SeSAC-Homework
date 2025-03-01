@@ -48,13 +48,6 @@ final class ShopListViewController: UIViewController {
         
         bindAction()
     }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        
-        viewModel.send.accept(.safariViewControllerDidFinish)
-    }
-
 }
 
 // MARK: Configure Views
@@ -206,7 +199,7 @@ private extension ShopListViewController {
         
         bindQuery()
         
-        bindURL()
+        bindSelectedItem()
     }
     
     func bindShop() {
@@ -265,9 +258,9 @@ private extension ShopListViewController {
             .disposed(by: disposeBag)
     }
     
-    func bindURL() {
-        viewModel.$state
-            .compactMap(\.selectedItem)
+    func bindSelectedItem() {
+        viewModel.state.$selectedItem
+            .compactMap(\.self)
             .map { WebViewController(viewModel: WebViewModel(item: $0)) }
             .drive(rx.pushViewController(animated: true))
             .disposed(by: disposeBag)

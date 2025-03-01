@@ -23,7 +23,6 @@ final class ShopListViewModel: Composable {
         case bindErrorMessage(String)
         case collectionViewModelSelected(ShopResponse.Item)
         case errorAlertTapped
-        case safariViewControllerDidFinish
     }
     
     struct State {
@@ -31,6 +30,7 @@ final class ShopListViewModel: Composable {
         var selectedSort: Sort = .sim
         var isLoading: Bool = false
         var query: String
+        @ComposableState
         var selectedItem: ShopResponse.Item?
         var errorMessage: String?
     }
@@ -80,9 +80,6 @@ final class ShopListViewModel: Composable {
             return .none
         case .errorAlertTapped:
             state.errorMessage = nil
-            return .none
-        case .safariViewControllerDidFinish:
-            state.selectedItem = nil
             return .none
         }
     }
