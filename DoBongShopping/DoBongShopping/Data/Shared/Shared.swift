@@ -32,7 +32,7 @@ struct Shared<T> {
         }
         set {
             switch type {
-            case let .userDefaults(key, defaultValue):
+            case let .userDefaults(key, _):
                 if newValue == nil {
                     UserDefaults.standard.removeObject(forKey: key.rawValue)
                 } else {

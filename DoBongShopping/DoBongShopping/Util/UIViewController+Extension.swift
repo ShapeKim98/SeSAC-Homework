@@ -22,13 +22,6 @@ extension Reactive where Base: UIViewController {
         }
     }
     
-    func pushSFSafariViewController(animated: Bool) -> Binder<SFSafariViewController> {
-        Binder(base) { base, safariViewController in
-            base.navigationController?.present(safariViewController, animated: animated)
-            base.navigationController?.setNavigationBarHidden(true, animated: false)
-        }
-    }
-    
     func presentAlert(title: String?, actions: UIAlertAction...) -> Binder<String?> {
         Binder(base) { base, message in
             let alert = UIAlertController(

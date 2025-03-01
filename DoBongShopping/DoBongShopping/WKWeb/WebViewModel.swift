@@ -21,37 +21,22 @@ final class WebViewModel: Composable {
         var favoriteItems: [String: Bool]?
         let item: ShopResponse.Item
         var isFavorite: Bool {
-            print(favoriteItems)
-            return favoriteItems?[item.productId] ?? false
+            favoriteItems?[item.productId] ?? false
         }
     }
     
-    private let state: BehaviorRelay<State>
+    let state: BehaviorRelay<State>
     var observableState: Driver<State> { state.asDriver() }
     let send = PublishRelay<Action>()
-    private let disposeBag = DisposeBag()
+    let disposeBag = DisposeBag()
     
     init(item: ShopResponse.Item) {
         state = BehaviorRelay(value: State(item: item))
         
-        send
-            .observe(on: MainScheduler.asyncInstance)
-            .debug("\(Self.self): Received Action")
-            .withUnretained(self)
-            .compactMap { this, action in
-                var state = this.state.value
-                this.reducer(&state, action)
-                    .observe(on: MainScheduler.asyncInstance)
-                    .compactMap(\.action)
-                    .bind(to: this.send)
-                    .disposed(by: this.disposeBag)
-                return state
-            }
-            .bind(to: state)
-            .disposed(by: disposeBag)
+        bindSend()
     }
     
-    private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
+    func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
         case .favoriteButtonTapped:
             let productId = state.item.productId

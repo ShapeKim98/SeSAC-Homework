@@ -36,32 +36,18 @@ final class ShopListViewModel: Composable {
     private var isPaging = false
     private var errorMessage: String?
     
-    private let state: BehaviorRelay<State>
+    let state: BehaviorRelay<State>
     var observableState: Driver<State> { state.asDriver() }
     let send = PublishRelay<Action>()
-    private let disposeBag = DisposeBag()
+    let disposeBag = DisposeBag()
     
     init(query: String, shop: ShopResponse) {
         self.state = BehaviorRelay(value: State(shop: shop, query: query))
         
-        send
-            .observe(on: MainScheduler.asyncInstance)
-            .debug("\(Self.self): Received Action")
-            .withUnretained(self)
-            .compactMap { this, action in
-                var state = this.state.value
-                this.reducer(&state, action)
-                    .observe(on: MainScheduler.asyncInstance)
-                    .compactMap(\.action)
-                    .bind(to: this.send)
-                    .disposed(by: this.disposeBag)
-                return state
-            }
-            .bind(to: state)
-            .disposed(by: disposeBag)
+        bindSend()
     }
     
-    private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
+    func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
         case let .collectionViewPrefetchItemsAt(items):
             for item in items {

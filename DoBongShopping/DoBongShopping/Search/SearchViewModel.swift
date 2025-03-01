@@ -19,6 +19,7 @@ final class SearchViewModel: Composable {
         case bindErrorMessage(String)
         case errorAlertTapped
         case alertTapped
+        case navigationDidPop
     }
     
     struct State {
@@ -30,30 +31,14 @@ final class SearchViewModel: Composable {
     
     private var errorMessage: String?
     
-    private let state = BehaviorRelay(value: State())
+    let state = BehaviorRelay(value: State())
     var observableState: Driver<State> { state.asDriver() }
     let send = PublishRelay<Action>()
-    private let disposeBag = DisposeBag()
+    let disposeBag = DisposeBag()
     
-    init() {
-        send
-            .observe(on: MainScheduler.asyncInstance)
-            .debug("\(Self.self): Received Action")
-            .withUnretained(self)
-            .compactMap { this, action in
-                var state = this.state.value
-                this.reducer(&state, action)
-                    .observe(on: MainScheduler.asyncInstance)
-                    .compactMap(\.action)
-                    .bind(to: this.send)
-                    .disposed(by: this.disposeBag)
-                return state
-            }
-            .bind(to: state)
-            .disposed(by: disposeBag)
-    }
+    init() { bindSend() }
     
-    private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
+    func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
         case let .searchBarSearchButtonClicked(query):
             guard query.filter(\.isLetter).count >= 2 else {
@@ -94,6 +79,9 @@ final class SearchViewModel: Composable {
             return .none
         case .alertTapped:
             state.alertMessage = nil
+            return .none
+        case .navigationDidPop:
+            state.shop = nil
             return .none
         }
     }

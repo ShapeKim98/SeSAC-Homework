@@ -176,9 +176,8 @@ private extension ShopListViewController {
         }
         
         collectionView.rx.willDisplayCell
-            .map { cell, indexPath in
-                Action.collectionViewWillDisplay(item: indexPath.item)
-            }
+            .map(\.at.item)
+            .map { Action.collectionViewWillDisplay(item: $0) }
             .bind(to: viewModel.send)
             .disposed(by: disposeBag)
         
