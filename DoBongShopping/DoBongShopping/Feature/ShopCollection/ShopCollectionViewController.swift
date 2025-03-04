@@ -126,8 +126,9 @@ private extension ShopCollectionViewController {
             .drive(collectionView.rx.items(
                 cellIdentifier: .shopCollectionCell,
                 cellType: ShopCollectionViewCell.self
-            )) { indexPath, item, cell in
+            )) { [weak self] indexPath, item, cell in
                 cell.cellForItemAt(item)
+                cell.delegate = self
             }
             .disposed(by: disposeBag)
     }
@@ -138,5 +139,17 @@ private extension ShopCollectionViewController {
             .map { WebViewController(viewModel: WebViewModel(item: $0)) }
             .drive(rx.pushViewController(animated: true))
             .disposed(by: disposeBag)
+    }
+}
+
+extension ShopCollectionViewController: ShopCollectionViewCellDelegate {
+    func shopItemTableDelete(_ shopItem: ShopResponse.Item) {
+        let message = "\(shopItem.title.removeHTMLTags())울 좋아요 취소했어요"
+        view.makeToast(message, duration: 2.0, position: .top)
+    }
+    
+    func shopItemTableCreate(_ shopItem: ShopResponse.Item) {
+        let message = "\(shopItem.title.removeHTMLTags())울 좋아요 했어요"
+        view.makeToast(message, duration: 2.0, position: .top)
     }
 }

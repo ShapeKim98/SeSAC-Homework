@@ -24,6 +24,8 @@ final class WebViewModel: Composable {
         var isFavorite: Bool {
             $shopItemTable.findObject(item.productId) != nil
         }
+        @PresentState
+        var toastMessage: String?
     }
     
     @ComposableState var state: State
@@ -45,8 +47,10 @@ final class WebViewModel: Composable {
             do {
                 if let item {
                     try state.$shopItemTable.delete(item)
+                    state.toastMessage = "\(state.item.title.removeHTMLTags())울 좋아요 취소했어요"
                 } else {
                     try state.$shopItemTable.create(state.item.toObject())
+                    state.toastMessage = "\(state.item.title.removeHTMLTags())울 좋아요 했어요"
                 }
             } catch {
                 

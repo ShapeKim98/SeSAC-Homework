@@ -8,6 +8,7 @@
 import UIKit
 import WebKit
 
+import Toast
 import SnapKit
 import RxSwift
 import RxCocoa
@@ -79,6 +80,13 @@ private extension WebViewController {
             .map { $0.isFavorite ? "heart.fill" : "heart" }
             .map { UIImage(systemName: $0) }
             .drive(favoriteButton.rx.image)
+            .disposed(by: disposeBag)
+        
+        viewModel.$state.present(\.$toastMessage)
+            .compactMap(\.self)
+            .drive(with: self) { this, message in
+                this.view.makeToast(message, duration: 2.0, position: .top)
+            }
             .disposed(by: disposeBag)
     }
 }

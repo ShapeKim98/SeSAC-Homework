@@ -11,8 +11,13 @@ import Kingfisher
 import SnapKit
 import RxSwift
 import RxCocoa
-
 import RealmSwift
+
+@MainActor
+protocol ShopCollectionViewCellDelegate: AnyObject {
+    func shopItemTableDelete(_ shopItem: ShopResponse.Item)
+    func shopItemTableCreate(_ shopItem: ShopResponse.Item)
+}
 
 final class ShopCollectionViewCell: UICollectionViewCell {
     private let imageView = UIImageView()
@@ -25,6 +30,8 @@ final class ShopCollectionViewCell: UICollectionViewCell {
     var shopItemTable: Results<ShopItemTable>
     
     private var disposeBag = DisposeBag()
+    
+    weak var delegate: ShopCollectionViewCellDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -76,8 +83,10 @@ final class ShopCollectionViewCell: UICollectionViewCell {
                 do {
                     if let item {
                         try this.$shopItemTable.delete(item)
+                        this.delegate?.shopItemTableDelete(shopItem)
                     } else {
                         try this.$shopItemTable.create(shopItem.toObject())
+                        this.delegate?.shopItemTableCreate(shopItem)
                     }
                 } catch {
                     print(error)
