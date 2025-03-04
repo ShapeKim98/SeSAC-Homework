@@ -44,10 +44,6 @@ struct RealmTable<T: Object> {
         return object
     }
     
-    func observe(block: @escaping NotificationBlock) -> NotificationToken {
-        realm.observe(block)
-    }
-    
     var observable: Observable<Realm> {
         return BehaviorRelay<Realm>.create { observer in
             let token = realm.observe { notification, realm in

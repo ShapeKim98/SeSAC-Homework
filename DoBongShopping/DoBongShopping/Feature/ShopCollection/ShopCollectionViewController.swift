@@ -144,12 +144,12 @@ private extension ShopCollectionViewController {
 
 extension ShopCollectionViewController: ShopCollectionViewCellDelegate {
     func shopItemTableDelete(_ shopItem: ShopResponse.Item) {
-        let message = "\(shopItem.title.removeHTMLTags())울 좋아요 취소했어요"
+        let message = "\(shopItem.title.removeHTMLTags()) 좋아요 취소"
         view.makeToast(message, duration: 2.0, position: .top)
     }
     
     func shopItemTableCreate(_ shopItem: ShopResponse.Item) {
-        let message = "\(shopItem.title.removeHTMLTags())울 좋아요 했어요"
+        let message = "\(shopItem.title.removeHTMLTags()) 좋아요 추가"
         view.makeToast(message, duration: 2.0, position: .top)
     }
 }
