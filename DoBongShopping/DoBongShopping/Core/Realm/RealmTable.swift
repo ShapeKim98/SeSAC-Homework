@@ -7,15 +7,13 @@
 
 import Foundation
 
+import RxSwift
+import RxCocoa
 import RealmSwift
 
 @propertyWrapper
 struct RealmTable<T: Object> {
     private let realm = try! Realm()
-    
-    init() {
-        print(realm.configuration.fileURL)
-    }
     
     var wrappedValue: Results<T> {
         get { realm.objects(T.self) }
@@ -43,11 +41,24 @@ struct RealmTable<T: Object> {
     
     func findObject<K>(_ forPrimaryKey: K) -> T? {
         let object = realm.object(ofType: T.self, forPrimaryKey: forPrimaryKey)
-        print(object)
         return object
     }
     
     func observe(block: @escaping NotificationBlock) -> NotificationToken {
         realm.observe(block)
+    }
+    
+    var observable: Observable<Results<T>> {
+        return BehaviorRelay<Results<T>>.create { observer in
+            let token = realm.observe { notification, realm in
+                switch notification {
+                case .didChange:
+                    observer.onNext(realm.objects(T.self))
+                case .refreshRequired: break
+                }
+            }
+            return Disposables.create { token.invalidate() }
+        }
+        .debug()
     }
 }
