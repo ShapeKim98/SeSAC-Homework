@@ -20,7 +20,6 @@ final class ShopListViewModel: Composable {
         case bindShop(ShopResponse)
         case bindPaginationShop(ShopResponse)
         case bindErrorMessage(String)
-        case collectionViewModelSelected(ShopResponse.Item)
         case errorAlertTapped
         case shopCollectionViewModel(ShopCollectionViewModel.Action)
     }
@@ -30,8 +29,6 @@ final class ShopListViewModel: Composable {
         var selectedSort: Sort = .sim
         var isLoading: Bool = false
         var query: String
-        @PresentState
-        var selectedItem: ShopResponse.Item?
         var errorMessage: String?
     }
     private var isPaging = false
@@ -45,7 +42,7 @@ final class ShopListViewModel: Composable {
     
     init(query: String, shop: ShopResponse) {
         self.state = State(shop: shop, query: query)
-        self.shopCollectionViewModel = ShopCollectionViewModel(shop: shop)
+        self.shopCollectionViewModel = ShopCollectionViewModel(shopItems: shop.items)
         
         bindSend()
         
@@ -73,19 +70,16 @@ final class ShopListViewModel: Composable {
         case let .bindShop(shop):
             state.shop = shop
             state.isLoading = false
-            shopCollectionViewModel.send.accept(.bindShop(shop))
+            shopCollectionViewModel.send.accept(.bindShopItems(shop.items))
             return .none
         case let .bindPaginationShop(shop):
             state.shop.items += shop.items
             isPaging = false
-            shopCollectionViewModel.send.accept(.bindPaginationShop(shop))
+            shopCollectionViewModel.send.accept(.bindPaginationShopItems(shop.items))
             return .none
         case let .bindErrorMessage(message):
             state.errorMessage = message
             state.isLoading = false
-            return .none
-        case let .collectionViewModelSelected(item):
-            state.selectedItem = item
             return .none
         case .errorAlertTapped:
             state.errorMessage = nil

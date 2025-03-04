@@ -14,12 +14,16 @@ class ShopItemTable: Object {
     var productId: String
     @Persisted(indexed: true)
     var title: String
-    var image: String = ""
-    var lprice: String = ""
+    @Persisted
+    var image: String
+    @Persisted
+    var lprice: String
     @Persisted(indexed: true)
     var mallName: String
-    var link: String = ""
-    var addDate: Date = .now
+    @Persisted
+    var link: String
+    @Persisted
+    var addDate: Date
     
     convenience init(
         productId: String,
@@ -27,7 +31,8 @@ class ShopItemTable: Object {
         image: String,
         lprice: String,
         mallName: String,
-        link: String
+        link: String,
+        addDate: Date = .now
     ) {
         self.init()
         

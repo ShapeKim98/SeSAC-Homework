@@ -16,8 +16,8 @@ final class ShopCollectionViewModel: Composable {
         case collectionViewPrefetchItemsAt(items: [Int])
         case collectionViewWillDisplay(item: Int)
         case collectionViewModelSelected(ShopResponse.Item)
-        case bindShop(ShopResponse)
-        case bindPaginationShop(ShopResponse)
+        case bindShopItems([ShopResponse.Item])
+        case bindPaginationShopItems([ShopResponse.Item])
         case delegate(Delegate)
         
         enum Delegate {
@@ -27,7 +27,7 @@ final class ShopCollectionViewModel: Composable {
     }
     
     struct State {
-        var shop: ShopResponse
+        var shopItems: [ShopResponse.Item]
         @PresentState
         var selectedItem: ShopResponse.Item?
     }
@@ -37,8 +37,8 @@ final class ShopCollectionViewModel: Composable {
     let send = PublishRelay<Action>()
     let disposeBag = DisposeBag()
     
-    init(shop: ShopResponse) {
-        self.state = State(shop: shop)
+    init(shopItems: [ShopResponse.Item]) {
+        self.state = State(shopItems: shopItems)
         bindSend()
     }
     
@@ -48,11 +48,11 @@ final class ShopCollectionViewModel: Composable {
             return .send(.delegate(.collectionViewPrefetchItemsAt(items: items)))
         case .collectionViewWillDisplay(let item):
             return .send(.delegate(.collectionViewWillDisplay(item: item)))
-        case let .bindPaginationShop(shop):
-            state.shop.items += shop.items
+        case let .bindPaginationShopItems(shopItems):
+            state.shopItems += shopItems
             return .none
-        case let .bindShop(shop):
-            state.shop = shop
+        case let .bindShopItems(shopItems):
+            state.shopItems = shopItems
             return .none
         case let .collectionViewModelSelected(item):
             state.selectedItem = item

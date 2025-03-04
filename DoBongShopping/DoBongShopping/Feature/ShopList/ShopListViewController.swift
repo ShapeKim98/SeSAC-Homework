@@ -54,11 +54,9 @@ final class ShopListViewController: UIViewController {
     override func willMove(toParent parent: UIViewController?) {
         super.willMove(toParent: parent)
         
-        if parent == nil {
-            collectionViewController.willMove(toParent: nil)
-            collectionViewController.removeFromParent()
-            collectionViewController.view.removeFromSuperview()
-        }
+        collectionViewController.willMove(toParent: nil)
+        collectionViewController.view.removeFromSuperview()
+        collectionViewController.removeFromParent()
     }
 }
 
@@ -174,8 +172,6 @@ private extension ShopListViewController {
         bindIsLoading()
         
         bindQuery()
-        
-        bindSelectedItem()
     }
     
     func bindShop() {
@@ -216,14 +212,6 @@ private extension ShopListViewController {
             .map(\.query)
             .distinctUntilChanged()
             .drive(navigationItem.rx.title)
-            .disposed(by: disposeBag)
-    }
-    
-    func bindSelectedItem() {
-        viewModel.$state.present(\.$selectedItem)
-            .compactMap(\.self)
-            .map { WebViewController(viewModel: WebViewModel(item: $0)) }
-            .drive(rx.pushViewController(animated: true))
             .disposed(by: disposeBag)
     }
     

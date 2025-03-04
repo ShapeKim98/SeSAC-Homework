@@ -121,7 +121,7 @@ private extension ShopCollectionViewController {
     
     func bindShop() {
         viewModel.$state.driver
-            .map(\.shop.items)
+            .map(\.shopItems)
             .distinctUntilChanged()
             .drive(collectionView.rx.items(
                 cellIdentifier: .shopCollectionCell,
