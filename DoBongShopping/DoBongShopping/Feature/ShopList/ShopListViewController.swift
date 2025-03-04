@@ -51,12 +51,14 @@ final class ShopListViewController: UIViewController {
         bindAction()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
         
-        collectionViewController.willMove(toParent: nil)
-        collectionViewController.removeFromParent()
-        collectionViewController.view.removeFromSuperview()
+        if parent == nil {
+            collectionViewController.willMove(toParent: nil)
+            collectionViewController.removeFromParent()
+            collectionViewController.view.removeFromSuperview()
+        }
     }
 }
 

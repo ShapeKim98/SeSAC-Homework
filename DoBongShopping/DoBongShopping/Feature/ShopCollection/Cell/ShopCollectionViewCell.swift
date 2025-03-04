@@ -12,6 +12,8 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
+import RealmSwift
+
 final class ShopCollectionViewCell: UICollectionViewCell {
     private let imageView = UIImageView()
     private let mallNameLabel = UILabel()
@@ -19,8 +21,9 @@ final class ShopCollectionViewCell: UICollectionViewCell {
     private let lpriceLabel = UILabel()
     private let favoriteButton = UIButton()
     
-    @Shared(.userDefaults(.favoriteItems, defaultValue: [String: Bool]()))
-    private var favoriteItems: [String: Bool]?
+    @RealmTable
+    var shopItemTable: Results<ShopItemTable>
+    var token: NotificationToken?
     
     private var disposeBag = DisposeBag()
     
@@ -41,6 +44,8 @@ final class ShopCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         
         disposeBag = DisposeBag()
+        token?.invalidate()
+        token = nil
     }
     
     func cellForItemAt(_ shopItem: ShopResponse.Item) {
@@ -64,21 +69,35 @@ final class ShopCollectionViewCell: UICollectionViewCell {
         else { return }
         lpriceLabel.text = lprice
         
+        let isSelected = $shopItemTable.findObject(shopItem.productId) != nil
+        favoriteButton.isSelected = isSelected
+        
         favoriteButton.rx.tap
             .bind(with: self) { this, _ in
-                let productId = shopItem.productId
-                if this.favoriteItems?[productId] ?? false {
-                    this.favoriteItems?.removeValue(forKey: productId)
-                } else {
-                    this.favoriteItems?.updateValue(true, forKey: productId)
+                let item = this.$shopItemTable.findObject(shopItem.productId)
+                do {
+                    if let item {
+                        try this.$shopItemTable.delete(item)
+                        this.favoriteButton.isSelected = false
+                    } else {
+                        try this.$shopItemTable.create(shopItem.toObject())
+                        this.favoriteButton.isSelected = true
+                    }
+                } catch {
+                    print(error)
                 }
             }
             .disposed(by: disposeBag)
         
-        $favoriteItems
-            .map { $0?[shopItem.productId] ?? false }
-            .bind(to: favoriteButton.rx.isSelected)
-            .disposed(by: disposeBag)
+        token = $shopItemTable.observe { [weak self] notification, realm in
+            guard let `self` else { return }
+            switch notification {
+            case .didChange:
+                favoriteButton.isSelected = $shopItemTable.findObject(shopItem.productId) != nil
+            case .refreshRequired:
+                return
+            }
+        }
     }
     
     func cancelImageDownload() {

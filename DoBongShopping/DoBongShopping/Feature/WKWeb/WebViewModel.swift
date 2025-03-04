@@ -9,6 +9,7 @@ import Foundation
 
 import RxSwift
 import RxCocoa
+import RealmSwift
 
 @MainActor
 final class WebViewModel: Composable {
@@ -17,11 +18,11 @@ final class WebViewModel: Composable {
     }
     
     struct State {
-        @Shared(.userDefaults(.favoriteItems, defaultValue: [String: Bool]()))
-        var favoriteItems: [String: Bool]?
+        @RealmTable
+        var shopItemTable: Results<ShopItemTable>
         let item: ShopResponse.Item
         var isFavorite: Bool {
-            favoriteItems?[item.productId] ?? false
+            $shopItemTable.findObject(item.productId) != nil
         }
     }
     
@@ -39,10 +40,16 @@ final class WebViewModel: Composable {
         switch action {
         case .favoriteButtonTapped:
             let productId = state.item.productId
-            if state.favoriteItems?[productId] ?? false {
-                state.favoriteItems?.removeValue(forKey: productId)
-            } else {
-                state.favoriteItems?.updateValue(true, forKey: productId)
+            let item = state.$shopItemTable.findObject(productId)
+            
+            do {
+                if let item {
+                    try state.$shopItemTable.delete(item)
+                } else {
+                    try state.$shopItemTable.create(state.item.toObject())
+                }
+            } catch {
+                
             }
             return .none
         }
