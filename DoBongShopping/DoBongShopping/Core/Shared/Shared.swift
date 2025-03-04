@@ -18,33 +18,35 @@ struct Shared<T> {
         self.type = type
     }
     
+    init(wrappedValue: T, _ type: SharedType<T>) {
+        self.type = type
+        
+        switch type {
+        case .userDefaults(let key):
+            if UserDefaults.standard.object(forKey: key.rawValue) == nil {
+                UserDefaults.standard.set(wrappedValue, forKey: key.rawValue)
+            }
+        }
+    }
+    
     var wrappedValue: T? {
         get {
             switch type {
-            case let .userDefaults(key, defaultValue):
-                guard let value = (UserDefaults.standard.object(forKey: key.rawValue) as? T) else {
-                    UserDefaults.standard.set(defaultValue, forKey: key.rawValue)
-                    return defaultValue
-                }
-                
-                return value
+            case let .userDefaults(key):
+                UserDefaults.standard.object(forKey: key.rawValue) as? T
             }
         }
         set {
             switch type {
-            case let .userDefaults(key, _):
-                if newValue == nil {
-                    UserDefaults.standard.removeObject(forKey: key.rawValue)
-                } else {
-                    UserDefaults.standard.set(newValue, forKey: key.rawValue)
-                }
+            case let .userDefaults(key):
+                UserDefaults.standard.set(newValue, forKey: key.rawValue)
             }
         }
     }
     
     var projectedValue: Observable<T?> {
         switch type {
-        case let .userDefaults(key, _):
+        case .userDefaults(let key):
             UserDefaults.standard.rx
                 .observe(T.self, key.rawValue, options: [.initial, .new])
                 .share()
@@ -53,7 +55,7 @@ struct Shared<T> {
 }
 
 enum SharedType<T> {
-    case userDefaults(UserDefaultKey, defaultValue: T? = nil)
+    case userDefaults(UserDefaultKey)
 }
 
 enum UserDefaultKey: String {
