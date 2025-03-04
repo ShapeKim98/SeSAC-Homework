@@ -48,8 +48,9 @@ final class FavoriteListViewModel: Composable {
                 .send(.observeShopItemTable)
             )
         case .observeShopItemTable:
-            return .run($shopItemTable.observable.map { table in
-                Action.bindShopItems(table.map { $0.toData() })
+            return .run($shopItemTable.observable.map { realm in
+                let results = realm.objects(ShopItemTable.self).map { $0.toData() }
+                return Action.bindShopItems(Array(results))
             })
         case let .bindShopItems(shopItems):
             shopCollectionViewModel.send.accept(.bindShopItems(shopItems))

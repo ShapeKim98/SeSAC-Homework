@@ -23,7 +23,6 @@ final class ShopCollectionViewCell: UICollectionViewCell {
     
     @RealmTable
     var shopItemTable: Results<ShopItemTable>
-    var token: NotificationToken?
     
     private var disposeBag = DisposeBag()
     
@@ -40,14 +39,10 @@ final class ShopCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    deinit { token?.invalidate() }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         
         disposeBag = DisposeBag()
-        token?.invalidate()
-        token = nil
     }
     
     func cellForItemAt(_ shopItem: ShopResponse.Item) {
@@ -75,15 +70,14 @@ final class ShopCollectionViewCell: UICollectionViewCell {
         favoriteButton.isSelected = isSelected
         
         favoriteButton.rx.tap
-            .bind(with: self) { this, _ in
-                let item = this.$shopItemTable.findObject(shopItem.productId)
+            .withUnretained(self)
+            .map { this, _ in this.$shopItemTable.findObject(shopItem.productId) }
+            .bind(with: self) { this, item in
                 do {
                     if let item {
                         try this.$shopItemTable.delete(item)
-                        this.favoriteButton.isSelected = false
                     } else {
                         try this.$shopItemTable.create(shopItem.toObject())
-                        this.favoriteButton.isSelected = true
                     }
                 } catch {
                     print(error)
@@ -91,15 +85,15 @@ final class ShopCollectionViewCell: UICollectionViewCell {
             }
             .disposed(by: disposeBag)
         
-        token = $shopItemTable.observe { [weak self] notification, realm in
-            guard let `self` else { return }
-            switch notification {
-            case .didChange:
-                favoriteButton.isSelected = $shopItemTable.findObject(shopItem.productId) != nil
-            case .refreshRequired:
-                return
+        $shopItemTable.observable
+            .map { realm in
+                realm.object(
+                    ofType: ShopItemTable.self,
+                    forPrimaryKey: shopItem.productId
+                ) != nil
             }
-        }
+            .bind(to: favoriteButton.rx.isSelected)
+            .disposed(by: disposeBag)
     }
     
     func cancelImageDownload() {

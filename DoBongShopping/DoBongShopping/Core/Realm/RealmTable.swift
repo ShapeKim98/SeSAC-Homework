@@ -48,12 +48,12 @@ struct RealmTable<T: Object> {
         realm.observe(block)
     }
     
-    var observable: Observable<Results<T>> {
-        return BehaviorRelay<Results<T>>.create { observer in
+    var observable: Observable<Realm> {
+        return BehaviorRelay<Realm>.create { observer in
             let token = realm.observe { notification, realm in
                 switch notification {
                 case .didChange:
-                    observer.onNext(realm.objects(T.self))
+                    observer.onNext(realm)
                 case .refreshRequired: break
                 }
             }
