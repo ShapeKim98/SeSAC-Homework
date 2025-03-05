@@ -9,7 +9,7 @@ import Foundation
 
 import Alamofire
 
-struct NetworkManager<E: EndPoint>: Sendable {
+struct NetworkProvider<E: EndPoint>: Sendable {
     func request<T: Decodable & Sendable>(_ endPoint: E) async throws -> T {
         var urlComponent = URLComponents(string: "https://openapi.naver.com")
         urlComponent?.path = endPoint.path

@@ -12,7 +12,7 @@ import Alamofire
 actor ShopClient {
     static let shared = ShopClient()
     
-    private let manager = NetworkManager<ShopEndPoint>()
+    private let manager = NetworkProvider<ShopEndPoint>()
     
     private init() { }
     
