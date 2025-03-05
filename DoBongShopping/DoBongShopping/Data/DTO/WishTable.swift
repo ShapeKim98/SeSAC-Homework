@@ -41,11 +41,11 @@ extension WishTable {
 }
 
 extension Wish {
-    func toData() -> WishTable? {
-        let realm = try! Realm()
-        return realm.object(
-            ofType: WishTable.self,
-            forPrimaryKey: self.id
+    func toData() -> WishTable {
+        return WishTable(
+            id: self.id,
+            name: self.name,
+            date: self.date
         )
     }
 }

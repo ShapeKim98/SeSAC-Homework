@@ -12,26 +12,24 @@ import RxCocoa
 
 final class WishRepository: WishRepositoryProtocol {
     private let provider = RealmProvider<WishTable>()
-    private let folderProvider = RealmProvider<WishFolderTable>()
     
     func create(_ wish: Wish) throws {
-        guard let wishTable = wish.toData() else { return }
-        try provider.create(wishTable)
+        try provider.create(wish.toData())
     }
     
     func create(_ wish: Wish, from: WishFolder) throws {
-        guard
-            let folder = from.toData(),
-            let wishTable = wish.toData()
-        else { return }
+        let folderProvider = RealmProvider<WishFolderTable>()
+        guard let folderTable = folderProvider.read(from.id) else {
+            return
+        }
+        
         try provider.write {
-            folder.items.append(wishTable)
+            folderTable.items.append(wish.toData())
         }
     }
     
     func update(_ wish: Wish) throws {
-        guard let wishTable = wish.toData() else { return }
-        try provider.update(wishTable)
+        try provider.update(wish.id)
     }
     
     func readAll() -> [Wish] {
@@ -43,8 +41,7 @@ final class WishRepository: WishRepositoryProtocol {
     }
     
     func delete(_ wish: Wish) throws {
-        guard let wishTable = wish.toData() else { return }
-        try provider.delete(wishTable)
+        try provider.delete(wish.id)
     }
     
     func observable() -> RxSwift.Observable<CollectionChange<[Wish]>> {

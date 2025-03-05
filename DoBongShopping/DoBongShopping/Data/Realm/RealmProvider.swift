@@ -32,13 +32,15 @@ struct RealmProvider<T: Object> {
         realm.object(ofType: T.self, forPrimaryKey: forPrimaryKey)
     }
     
-    func delete(_ object: T) throws {
+    func delete<K>(_ forPrimaryKey: K) throws {
+        guard let object = read(forPrimaryKey) else { return }
         try realm.write {
             realm.delete(object)
         }
     }
     
-    func update(_ object: T) throws {
+    func update<K>(_ forPrimaryKey: K) throws {
+        guard let object = read(forPrimaryKey) else { return }
         try realm.write {
             realm.add(object, update: .modified)
         }
