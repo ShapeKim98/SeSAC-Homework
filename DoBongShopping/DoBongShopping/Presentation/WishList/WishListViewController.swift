@@ -20,8 +20,18 @@ final class WishListViewController: UIViewController {
     
     private lazy var dataSource = { configureDataSource() }()
     
-    private let viewModel = WishListViewModel()
+    private let viewModel: WishListViewModel
     private let disposeBag = DisposeBag()
+    
+    init(viewModel: WishListViewModel) {
+        self.viewModel = viewModel
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +43,8 @@ final class WishListViewController: UIViewController {
         bindState()
          
         bindAction()
+        
+        viewModel.send.accept(.viewDidLoad)
     }
 }
 
@@ -122,7 +134,7 @@ private extension WishListViewController {
     
     func bindWishList() {
         viewModel.$state.driver
-            .map(\.wishList)
+            .map(\.folder.items)
             .distinctUntilChanged()
             .drive(with: self) { this, wishList in
                 var snapshot = NSDiffableDataSourceSnapshot<String, Wish>()
@@ -138,6 +150,6 @@ fileprivate extension String {
     static let wishList = "WishList"
 }
 
-#Preview {
-    UINavigationController(rootViewController: WishListViewController())
-}
+//#Preview {
+//    UINavigationController(rootViewController: WishListViewController())
+//}

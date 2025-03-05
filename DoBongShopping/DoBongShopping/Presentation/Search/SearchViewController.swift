@@ -121,7 +121,7 @@ private extension SearchViewController {
             .disposed(by: disposeBag)
         
         wishListButton.rx.tap
-            .map { _ in WishListViewController() }
+            .map { _ in WishListFolderViewController() }
             .bind(to: rx.pushViewController(animated: true))
             .disposed(by: disposeBag)
         
