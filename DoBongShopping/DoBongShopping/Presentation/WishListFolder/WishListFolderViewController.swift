@@ -92,11 +92,18 @@ private extension WishListFolderViewController {
     }
     
     func configureSearchController() {
-        searchController.searchBar.placeholder = "관심 상품을 입력해주세요"
+        searchController.searchBar.placeholder = "생성할 폴더 이름을 입력해주세요."
         searchController.searchBar.overrideUserInterfaceStyle = .dark
         
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.searchController = searchController
+        
+        navigationItem.backBarButtonItem = UIBarButtonItem(
+            title: "",
+            style: .plain,
+            target: self,
+            action: nil
+        )
     }
 }
 
@@ -105,11 +112,18 @@ private extension WishListFolderViewController {
     typealias Action = WishListFolderViewModel.Action
     
     func bindAction() {
-        searchController.searchBar.rx.searchButtonClicked
+        let searchButtonClicked = searchController.searchBar.rx.searchButtonClicked.share()
+        
+        searchButtonClicked
             .withLatestFrom(searchController.searchBar.rx.text.orEmpty)
             .distinctUntilChanged()
             .map { Action.searchButtonClicked($0) }
             .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+        
+        searchButtonClicked
+            .map { "" }
+            .bind(to: searchController.searchBar.rx.text)
             .disposed(by: disposeBag)
         
         collectionView.rx.itemSelected

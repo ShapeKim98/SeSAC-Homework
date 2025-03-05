@@ -115,11 +115,18 @@ private extension WishListViewController {
     typealias Action = WishListViewModel.Action
     
     func bindAction() {
-        searchController.searchBar.rx.searchButtonClicked
+        let searchButtonClicked = searchController.searchBar.rx.searchButtonClicked.share()
+        
+        searchButtonClicked
             .withLatestFrom(searchController.searchBar.rx.text.orEmpty)
             .distinctUntilChanged()
             .map { Action.searchButtonClicked($0) }
             .bind(to: viewModel.send)
+            .disposed(by: disposeBag)
+        
+        searchButtonClicked
+            .map { "" }
+            .bind(to: searchController.searchBar.rx.text)
             .disposed(by: disposeBag)
         
         collectionView.rx.itemSelected
@@ -142,6 +149,12 @@ private extension WishListViewController {
                 snapshot.appendItems(wishList, toSection: .wishList)
                 this.dataSource.apply(snapshot)
             }
+            .disposed(by: disposeBag)
+        
+        viewModel.$state.driver
+            .map(\.folder.name)
+            .distinctUntilChanged()
+            .drive(navigationItem.rx.title)
             .disposed(by: disposeBag)
     }
 }
