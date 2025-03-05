@@ -129,6 +129,11 @@ private extension WishListViewController {
             .bind(to: searchController.searchBar.rx.text)
             .disposed(by: disposeBag)
         
+        searchButtonClicked
+            .map { false }
+            .bind(to: searchController.rx.isActive)
+            .disposed(by: disposeBag)
+        
         collectionView.rx.itemSelected
             .map { Action.collectionViewItemSelected($0.item) }
             .bind(to: viewModel.send)

@@ -29,11 +29,9 @@ final class WishListFolderViewModel: Composable {
     let send = PublishRelay<Action>()
     let disposeBag = DisposeBag()
     
-    let useCase = WishListFolderUseCase(wishFolderRepository: WishFolderRepository())
+    init() { bindSend() }
     
-    init() {
-        bindSend()
-    }
+    let useCase = WishListFolderUseCase(wishFolderRepository: WishFolderRepository())
     
     func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
