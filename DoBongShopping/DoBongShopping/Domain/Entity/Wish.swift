@@ -8,7 +8,7 @@
 import Foundation
 
 struct Wish: Hashable, Identifiable {
-    let id = UUID()
+    let id: UUID
     let name: String
-    let date: Date = .now
+    let date: Date
 }
