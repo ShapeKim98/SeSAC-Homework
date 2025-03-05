@@ -14,6 +14,7 @@
 		C929DC452D7718E800309A9D /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C929DC442D7718E800309A9D /* SnapKit */; };
 		C929DC482D77190C00309A9D /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C929DC472D77190C00309A9D /* RealmSwift */; };
 		C929DCFF2D77696800309A9D /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C929DCFE2D77696800309A9D /* Toast */; };
+		C95D10372D7833A40096064E /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C95D10362D7833A40096064E /* Dependencies */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 				C929DC482D77190C00309A9D /* RealmSwift in Frameworks */,
 				C929DC422D7718DB00309A9D /* Kingfisher in Frameworks */,
 				C929DC3F2D7718CB00309A9D /* RxSwift in Frameworks */,
+				C95D10372D7833A40096064E /* Dependencies in Frameworks */,
 				C929DC3D2D7718CB00309A9D /* RxCocoa in Frameworks */,
 				C929DC3A2D7718BF00309A9D /* Alamofire in Frameworks */,
 				C929DCFF2D77696800309A9D /* Toast in Frameworks */,
@@ -102,6 +104,7 @@
 				C929DC442D7718E800309A9D /* SnapKit */,
 				C929DC472D77190C00309A9D /* RealmSwift */,
 				C929DCFE2D77696800309A9D /* Toast */,
+				C95D10362D7833A40096064E /* Dependencies */,
 			);
 			productName = DoBongShopping;
 			productReference = C920796D2D3792A10016889E /* DoBongShopping.app */;
@@ -138,6 +141,7 @@
 				C929DC432D7718E800309A9D /* XCRemoteSwiftPackageReference "SnapKit" */,
 				C929DC462D77190C00309A9D /* XCRemoteSwiftPackageReference "realm-swift" */,
 				C929DCFD2D77696800309A9D /* XCRemoteSwiftPackageReference "Toast-Swift" */,
+				C95D10352D7833A40096064E /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C920796E2D3792A10016889E /* Products */;
@@ -423,6 +427,14 @@
 				minimumVersion = 5.1.1;
 			};
 		};
+		C95D10352D7833A40096064E /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -460,6 +472,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C929DCFD2D77696800309A9D /* XCRemoteSwiftPackageReference "Toast-Swift" */;
 			productName = Toast;
+		};
+		C95D10362D7833A40096064E /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C95D10352D7833A40096064E /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
