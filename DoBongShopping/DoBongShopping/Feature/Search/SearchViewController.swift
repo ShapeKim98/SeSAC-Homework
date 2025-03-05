@@ -16,6 +16,7 @@ final class SearchViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let indicatorView = UIActivityIndicatorView(style: .large)
     private let wishListButton = UIBarButtonItem()
+    private let favoritListButton = UIBarButtonItem()
     
     private let viewModel: SearchViewModel
     private let disposeBag = DisposeBag()
@@ -87,6 +88,9 @@ private extension SearchViewController {
         
         wishListButton.image = UIImage(systemName: "cart.fill")
         navigationItem.rightBarButtonItem = wishListButton
+        
+        favoritListButton.image = UIImage(systemName: "heart.fill")
+        navigationItem.leftBarButtonItem = favoritListButton
     }
     
     func configureSearchBar() {
@@ -118,6 +122,11 @@ private extension SearchViewController {
         
         wishListButton.rx.tap
             .map { _ in WishListViewController() }
+            .bind(to: rx.pushViewController(animated: true))
+            .disposed(by: disposeBag)
+        
+        favoritListButton.rx.tap
+            .map { _ in FavoriteListViewController() }
             .bind(to: rx.pushViewController(animated: true))
             .disposed(by: disposeBag)
     }

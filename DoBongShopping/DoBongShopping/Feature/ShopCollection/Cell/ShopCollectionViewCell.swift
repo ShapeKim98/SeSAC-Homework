@@ -11,6 +11,13 @@ import Kingfisher
 import SnapKit
 import RxSwift
 import RxCocoa
+import RealmSwift
+
+@MainActor
+protocol ShopCollectionViewCellDelegate: AnyObject {
+    func shopItemTableDelete(_ shopItem: ShopResponse.Item)
+    func shopItemTableCreate(_ shopItem: ShopResponse.Item)
+}
 
 final class ShopCollectionViewCell: UICollectionViewCell {
     private let imageView = UIImageView()
@@ -19,10 +26,12 @@ final class ShopCollectionViewCell: UICollectionViewCell {
     private let lpriceLabel = UILabel()
     private let favoriteButton = UIButton()
     
-    @Shared(.userDefaults(.favoriteItems, defaultValue: [String: Bool]()))
-    private var favoriteItems: [String: Bool]?
+    @RealmTable
+    var shopItemTable: Results<ShopItemTable>
     
     private var disposeBag = DisposeBag()
+    
+    weak var delegate: ShopCollectionViewCellDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -64,19 +73,34 @@ final class ShopCollectionViewCell: UICollectionViewCell {
         else { return }
         lpriceLabel.text = lprice
         
+        let isSelected = $shopItemTable.findObject(shopItem.productId) != nil
+        favoriteButton.isSelected = isSelected
+        
         favoriteButton.rx.tap
-            .bind(with: self) { this, _ in
-                let productId = shopItem.productId
-                if this.favoriteItems?[productId] ?? false {
-                    this.favoriteItems?.removeValue(forKey: productId)
-                } else {
-                    this.favoriteItems?.updateValue(true, forKey: productId)
+            .withUnretained(self)
+            .map { this, _ in this.$shopItemTable.findObject(shopItem.productId) }
+            .bind(with: self) { this, item in
+                do {
+                    if let item {
+                        try this.$shopItemTable.delete(item)
+                        this.delegate?.shopItemTableDelete(shopItem)
+                    } else {
+                        try this.$shopItemTable.create(shopItem.toObject())
+                        this.delegate?.shopItemTableCreate(shopItem)
+                    }
+                } catch {
+                    print(error)
                 }
             }
             .disposed(by: disposeBag)
         
-        $favoriteItems
-            .map { $0?[shopItem.productId] ?? false }
+        $shopItemTable.observable
+            .map { realm in
+                realm.object(
+                    ofType: ShopItemTable.self,
+                    forPrimaryKey: shopItem.productId
+                ) != nil
+            }
             .bind(to: favoriteButton.rx.isSelected)
             .disposed(by: disposeBag)
     }

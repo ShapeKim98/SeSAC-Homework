@@ -27,7 +27,7 @@ extension Composable {
     func bindSend() {
         send
             .observe(on: MainScheduler.asyncInstance)
-//            .debug("\(Self.self): Received Action")
+            .debug("\(Self.self): Received Action")
             .withUnretained(self)
             .compactMap { this, action in
                 var state = this.state

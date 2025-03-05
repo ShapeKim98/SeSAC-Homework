@@ -13,7 +13,6 @@ import Alamofire
 
 @MainActor
 final class ShopListViewModel: Composable {
-    
     enum Action {
         case collectionViewPrefetchItemsAt(items: [Int])
         case collectionViewWillDisplay(item: Int)
@@ -21,8 +20,8 @@ final class ShopListViewModel: Composable {
         case bindShop(ShopResponse)
         case bindPaginationShop(ShopResponse)
         case bindErrorMessage(String)
-        case collectionViewModelSelected(ShopResponse.Item)
         case errorAlertTapped
+        case shopCollectionViewModel(ShopCollectionViewModel.Action)
     }
     
     struct State {
@@ -30,12 +29,11 @@ final class ShopListViewModel: Composable {
         var selectedSort: Sort = .sim
         var isLoading: Bool = false
         var query: String
-        @PresentState
-        var selectedItem: ShopResponse.Item?
         var errorMessage: String?
     }
     private var isPaging = false
     private var errorMessage: String?
+    let shopCollectionViewModel: ShopCollectionViewModel
     
     @ComposableState var state: State
     
@@ -44,8 +42,14 @@ final class ShopListViewModel: Composable {
     
     init(query: String, shop: ShopResponse) {
         self.state = State(shop: shop, query: query)
+        self.shopCollectionViewModel = ShopCollectionViewModel(shopItems: shop.items)
         
         bindSend()
+        
+        shopCollectionViewModel.send
+            .map { Action.shopCollectionViewModel($0) }
+            .bind(to: send)
+            .disposed(by: disposeBag)
     }
     
     func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
@@ -66,20 +70,26 @@ final class ShopListViewModel: Composable {
         case let .bindShop(shop):
             state.shop = shop
             state.isLoading = false
+            shopCollectionViewModel.send.accept(.bindShopItems(shop.items))
             return .none
         case let .bindPaginationShop(shop):
             state.shop.items += shop.items
             isPaging = false
+            shopCollectionViewModel.send.accept(.bindPaginationShopItems(shop.items))
             return .none
         case let .bindErrorMessage(message):
             state.errorMessage = message
             state.isLoading = false
             return .none
-        case let .collectionViewModelSelected(item):
-            state.selectedItem = item
-            return .none
         case .errorAlertTapped:
             state.errorMessage = nil
+            return .none
+            
+        case let .shopCollectionViewModel(.delegate(.collectionViewPrefetchItemsAt(items: items))):
+            return .send(.collectionViewPrefetchItemsAt(items: items))
+        case let .shopCollectionViewModel(.delegate(.collectionViewWillDisplay(item: item))):
+            return .send(.collectionViewWillDisplay(item: item))
+        case .shopCollectionViewModel:
             return .none
         }
     }

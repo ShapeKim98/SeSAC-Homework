@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SafariServices
 
 import SnapKit
 import Alamofire
@@ -19,9 +18,7 @@ final class ShopListViewController: UIViewController {
     private var sortButtons = [SortButton]()
     private let indicatorView = UIActivityIndicatorView(style: .large)
     
-    private lazy var collectionView: UICollectionView = {
-        configureCollectionView()
-    }()
+    private let collectionViewController: ShopCollectionViewController
     
     private let viewModel: ShopListViewModel
     
@@ -29,6 +26,9 @@ final class ShopListViewController: UIViewController {
     
     init(viewModel: ShopListViewModel) {
         self.viewModel = viewModel
+        self.collectionViewController = ShopCollectionViewController(
+            viewModel: viewModel.shopCollectionViewModel
+        )
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -42,11 +42,21 @@ final class ShopListViewController: UIViewController {
         
         configureUI()
         
+        configureCollectionViewController()
+        
         configureLayout()
         
         bindState()
         
         bindAction()
+    }
+    
+    override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        
+        collectionViewController.willMove(toParent: nil)
+        collectionViewController.view.removeFromSuperview()
+        collectionViewController.removeFromParent()
     }
 }
 
@@ -77,15 +87,23 @@ private extension ShopListViewController {
             make.leading.equalToSuperview().inset(12)
         }
         
-        collectionView.snp.makeConstraints { make in
+        collectionViewController.view.snp.makeConstraints { make in
             make.top.equalTo(sortButtonHStack.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
         indicatorView.snp.makeConstraints { make in
-            make.center.equalTo(collectionView)
+            make.center.equalTo(collectionViewController.view)
         }
+    }
+    
+    func configureCollectionViewController() {
+        view.addSubview(collectionViewController.view)
+        
+        addChild(collectionViewController)
+        
+        collectionViewController.didMove(toParent: self)
     }
     
     func configureNavigation() {
@@ -124,29 +142,6 @@ private extension ShopListViewController {
         }
     }
     
-    func configureCollectionView() -> UICollectionView {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.sectionInset = UIEdgeInsets(top: 8, left: 12, bottom: 12, right: 12)
-        layout.minimumLineSpacing = 16
-        layout.minimumInteritemSpacing = 12
-        let width = (view.frame.width - (2 + 1) * 12) / 2
-        layout.itemSize = CGSize(width: width, height: 300)
-        
-        let collectionView = UICollectionView(
-            frame: .zero,
-            collectionViewLayout: layout
-        )
-        collectionView.register(
-            ShopCollectionViewCell.self,
-            forCellWithReuseIdentifier: .shopCollectionCell
-        )
-        collectionView.backgroundColor = .clear
-        view.addSubview(collectionView)
-        
-        return collectionView
-    }
-    
     func configureIndicatorView() {
         indicatorView.hidesWhenStopped = true
         indicatorView.stopAnimating()
@@ -167,27 +162,6 @@ private extension ShopListViewController {
                 .bind(to: viewModel.send)
                 .disposed(by: disposeBag)
         }
-        
-        collectionView.rx.willDisplayCell
-            .map(\.at.item)
-            .map { Action.collectionViewWillDisplay(item: $0) }
-            .bind(to: viewModel.send)
-            .disposed(by: disposeBag)
-        
-        collectionView.rx.prefetchItems
-            .map { Action.collectionViewPrefetchItemsAt(items: $0.map(\.item)) }
-            .bind(to: viewModel.send)
-            .disposed(by: disposeBag)
-        
-        collectionView.rx.didEndDisplayingCell
-            .compactMap { cell, _ in cell as? ShopCollectionViewCell }
-            .bind { $0.cancelImageDownload() }
-            .disposed(by: disposeBag)
-        
-        collectionView.rx.modelSelected(ShopResponse.Item.self)
-            .map { Action.collectionViewModelSelected($0) }
-            .bind(to: viewModel.send)
-            .disposed(by: disposeBag)
     }
     
     func bindState() {
@@ -198,22 +172,9 @@ private extension ShopListViewController {
         bindIsLoading()
         
         bindQuery()
-        
-        bindSelectedItem()
     }
     
     func bindShop() {
-        viewModel.$state.driver
-            .map(\.shop.items)
-            .distinctUntilChanged()
-            .drive(collectionView.rx.items(
-                cellIdentifier: .shopCollectionCell,
-                cellType: ShopCollectionViewCell.self
-            )) { indexPath, item, cell in
-                cell.cellForItemAt(item)
-            }
-            .disposed(by: disposeBag)
-        
         viewModel.$state.driver
             .map(\.shop.total)
             .distinctUntilChanged()
@@ -227,11 +188,7 @@ private extension ShopListViewController {
             .map(\.selectedSort)
             .distinctUntilChanged()
             .drive(with: self) { this, selectedSort in
-                this.collectionView.scrollToItem(
-                    at: IndexPath(item: 0, section: 0),
-                    at: .top,
-                    animated: true
-                )
+                this.collectionViewController.scrollToTop()
                 UIView.animate(withDuration: 0.3) {
                     for (index, sort) in Sort.allCases.enumerated() {
                         let isSelected = sort == selectedSort
@@ -255,14 +212,6 @@ private extension ShopListViewController {
             .map(\.query)
             .distinctUntilChanged()
             .drive(navigationItem.rx.title)
-            .disposed(by: disposeBag)
-    }
-    
-    func bindSelectedItem() {
-        viewModel.$state.present(\.$selectedItem)
-            .compactMap(\.self)
-            .map { WebViewController(viewModel: WebViewModel(item: $0)) }
-            .drive(rx.pushViewController(animated: true))
             .disposed(by: disposeBag)
     }
     
@@ -328,5 +277,9 @@ enum Sort: String, CaseIterable {
 }
 
 #Preview {
-    UINavigationController(rootViewController: ShopListViewController(viewModel: ShopListViewModel(query: "캠핑카", shop: .mock)))
+    UINavigationController(
+        rootViewController: ShopListViewController(
+            viewModel: ShopListViewModel(query: "캠핑카", shop: .mock)
+        )
+    )
 }

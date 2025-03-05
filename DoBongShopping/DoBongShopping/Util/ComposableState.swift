@@ -23,9 +23,7 @@ struct ComposableState<State> {
         set { relay.accept(newValue) }
     }
     
-    var projectedValue: ComposableState<State> {
-        self
-    }
+    var projectedValue: ComposableState<State> { self }
     
     var driver: Driver<State> { relay.asDriver() }
     
