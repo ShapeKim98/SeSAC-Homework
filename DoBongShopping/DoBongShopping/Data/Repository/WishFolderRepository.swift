@@ -14,11 +14,17 @@ final class WishFolderRepository: WishFolderRepositoryProtocol {
     private let provider = RealmProvider<WishFolderTable>()
     
     func create(_ wishFolder: WishFolder) throws {
-        try provider.create(wishFolder.toData())
+        guard let wishFolderTable = wishFolder.toData() else {
+            return
+        }
+        try provider.create(wishFolderTable)
     }
     
     func update(_ wishFolder: WishFolder) throws {
-        try provider.update(wishFolder.toData())
+        guard let wishFolderTable = wishFolder.toData() else {
+            return
+        }
+        try provider.update(wishFolderTable)
     }
     
     func readAll() -> [WishFolder] {
@@ -30,7 +36,10 @@ final class WishFolderRepository: WishFolderRepositoryProtocol {
     }
     
     func delete(_ wishFolder: WishFolder) throws {
-        try provider.delete(wishFolder.toData())
+        guard let wishFolderTable = wishFolder.toData() else {
+            return
+        }
+        try provider.delete(wishFolderTable)
     }
     
     func observable() -> Observable<CollectionChange<[WishFolder]>> {

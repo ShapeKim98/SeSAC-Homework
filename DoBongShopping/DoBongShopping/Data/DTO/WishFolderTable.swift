@@ -44,11 +44,11 @@ extension WishFolderTable {
 }
 
 extension WishFolder {
-    func toData() -> WishFolderTable {
-        return WishFolderTable(
-            id: self.id,
-            name: self.name,
-            date: self.date
+    func toData() -> WishFolderTable? {
+        let realm = try! Realm()
+        return realm.object(
+            ofType: WishFolderTable.self,
+            forPrimaryKey: self.id
         )
     }
 }
