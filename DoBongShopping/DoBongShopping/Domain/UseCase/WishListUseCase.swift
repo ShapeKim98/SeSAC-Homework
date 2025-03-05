@@ -12,9 +12,14 @@ import RxCocoa
 
 final class WishListUseCase {
     private let wishRepository: WishRepositoryProtocol
+    private let wishFolderRepository: WishFolderRepositoryProtocol
     
-    init(wishRepository: WishRepositoryProtocol) {
+    init(
+        wishRepository: WishRepositoryProtocol,
+        wishFolderRepository: WishFolderRepositoryProtocol
+    ) {
         self.wishRepository = wishRepository
+        self.wishFolderRepository = wishFolderRepository
     }
     
     func create(_ wish: Wish, from: WishFolder) throws {
@@ -23,6 +28,10 @@ final class WishListUseCase {
     
     func delete(_ wish: Wish) throws {
         try wishRepository.delete(wish)
+    }
+    
+    func readFolder(_ primaryKey: UUID) -> WishFolder? {
+        wishFolderRepository.read(primaryKey)
     }
     
     func readAll() -> [Wish] {

@@ -27,7 +27,10 @@ final class WishListViewModel: Composable {
     let send = PublishRelay<Action>()
     let disposeBag = DisposeBag()
     
-    private let useCase = WishListUseCase(wishRepository: WishRepository())
+    private let useCase = WishListUseCase(
+        wishRepository: WishRepository(),
+        wishFolderRepository: WishFolderRepository()
+    )
     
     init(wishFolder: WishFolder) {
         self.state = State(folder: wishFolder)
@@ -45,7 +48,10 @@ final class WishListViewModel: Composable {
             } catch { print(error) }
             return .none
         case .bindCollection:
-            state.folder.items = useCase.readAll()
+            guard let items = useCase.readFolder(state.folder.id)?.items else {
+                return .none
+            }
+            state.folder.items = items
             return .none
         case let .collectionViewItemSelected(index):
             do {
