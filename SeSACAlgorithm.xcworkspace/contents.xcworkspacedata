@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:homework61/homework61.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:baekjoon2493/baekjoon2493.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:LinkedListQueue/LinkedListQueue.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:baekjoon2309/baekjoon2309.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:baekjoon10804/baekjoon10804.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:baekjoon1919/baekjoon1919.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:baekjoon2164/baekjoon2164.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:baekjoon2480/baekjoon2480.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:baekjoon9012/baekjoon9012.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:baekjoon1267/baekjoon1267.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:baekjoon1406/baekjoon1406.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:baekjoon1158/baekjoon1158.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:baekjoon10807/baekjoon10807.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:backjoon10808/baekjoon10808.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:backjoon3273/baekjoon3273.xcodeproj">
+   </FileRef>
+</Workspace>

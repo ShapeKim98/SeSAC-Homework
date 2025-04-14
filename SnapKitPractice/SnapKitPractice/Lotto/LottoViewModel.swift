@@ -9,8 +9,9 @@ import Foundation
 
 import RxSwift
 import RxCocoa
+import RxCompose
 
-final class LottoViewModel: Composable {
+final class LottoViewModel: Composer {
     enum Action {
         case viewDidLoad
         case bindLotto(Lotto)
@@ -30,31 +31,14 @@ final class LottoViewModel: Composable {
         var errorMessage: String?
     }
     
-    private let state = BehaviorRelay(value: State())
-    var observableState: Driver<State> { state.asDriver() }
-    let send = PublishRelay<Action>()
-    private let disposeBag = DisposeBag()
+    @ComposableState
+    var state = State()
+    var action: PublishRelay<Action> = .init()
+    var disposeBag: DisposeBag = DisposeBag()
     
     private let lottoClient = LottoClient.shared
     
-    init() {
-        send
-            .observe(on: MainScheduler.asyncInstance)
-            .debug("\(Self.self): Received Action")
-            .withUnretained(self)
-            .map { this, action in
-                var state = this.state.value
-                this.reducer(&state, action)
-                    .compactMap(\.action)
-                    .bind(to: this.send)
-                    .disposed(by: this.disposeBag)
-                return state
-            }
-            .bind(to: state)
-            .disposed(by: disposeBag)
-    }
-    
-    private func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
+    func reducer(_ state: inout State, _ action: Action) -> Observable<Effect<Action>> {
         switch action {
         case .viewDidLoad:
             let firstLottery = "2002-12-07"
