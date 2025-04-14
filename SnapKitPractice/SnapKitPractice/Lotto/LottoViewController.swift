@@ -11,8 +11,9 @@ import SnapKit
 import Alamofire
 import RxSwift
 import RxCocoa
+import RxCompose
 
-class LottoViewController: UIViewController {
+class LottoViewController: UIViewController, Composable {
     private let drwNoTextField = UITextField()
     private let drwNoTextFieldContainer = UIView()
     private let drwNoPicker = UIPickerView()
@@ -26,9 +27,10 @@ class LottoViewController: UIViewController {
     private let observableButton = UIButton()
     private let singleButton = UIButton()
     
-    private let viewModel = LottoViewModel()
+    @Compose
+    var composer = LottoViewModel()
     
-    private let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,7 +43,7 @@ class LottoViewController: UIViewController {
         
         bindAction()
          
-        viewModel.send.accept(.viewDidLoad)
+        $composer.send(.viewDidLoad)
     }
 }
 
@@ -146,22 +148,20 @@ private extension LottoViewController {
 
 // MARK: Data Bindings
 private extension LottoViewController {
-    typealias Action = LottoViewModel.Action
-    
     func bindAction() {
         drwNoPicker.rx.itemSelected
             .map { Action.drwNoPickImteSelected($0.row) }
-            .bind(to: viewModel.send)
+            .bind(to: composer.action)
             .disposed(by: disposeBag)
         
         observableButton.rx.tap
             .map { Action.observableButtonTapped }
-            .bind(to: viewModel.send)
+            .bind(to: composer.action)
             .disposed(by: disposeBag)
         
         singleButton.rx.tap
             .map { Action.singleButtonTapped }
-            .bind(to: viewModel.send)
+            .bind(to: composer.action)
             .disposed(by: disposeBag)
     }
     
@@ -180,7 +180,7 @@ private extension LottoViewController {
     }
     
     func bindLotto() {
-        let lotto = viewModel.observableState
+        let lotto = composer.$state.observable
             .compactMap(\.lotto)
         
         lotto.map(\.drwNoDate)
@@ -202,7 +202,7 @@ private extension LottoViewController {
     }
     
     func bindLotteryDay() {
-        viewModel.observableState
+        composer.$state.observable
             .compactMap(\.lotteryDay)
             .map { String($0) }
             .drive(drwNoTextField.rx.text)
@@ -210,7 +210,7 @@ private extension LottoViewController {
     }
     
     func bindDrwNos() {
-        viewModel.observableState
+        composer.$state.observable
             .map(\.drwNos)
             .drive(with: self) { this, drwNos in
                 for cell in this.drwNoList {
@@ -240,21 +240,21 @@ private extension LottoViewController {
     }
     
     func bindLotteryRange() {
-        viewModel.observableState
+        composer.$state.observable
             .map(\.lotteryRange)
             .drive(drwNoPicker.rx.itemTitles) { _, item in item }
             .disposed(by: disposeBag)
     }
     
     func bindSelectedDate() {
-        viewModel.observableState
+        composer.$state.observable
             .map(\.currentDrwNo)
             .drive(drwNoTextField.rx.text)
             .disposed(by: disposeBag)
     }
     
     func bindErrorMessage() {
-        viewModel.observableState
+        composer.$state.observable
             .compactMap(\.errorMessage)
             .drive(with: self) { this, message in
                 let alert = UIAlertController(
@@ -266,7 +266,7 @@ private extension LottoViewController {
                     title: "확인",
                     style: .default,
                     handler: { _ in
-                        this.viewModel.send.accept(.alertConfirmTapped)
+                        this.$composer.send(.alertConfirmTapped)
                     }
                 ))
                 this.present(alert, animated: true)

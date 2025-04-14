@@ -119,7 +119,6 @@ private extension WishListViewController {
         
         searchButtonClicked
             .withLatestFrom(searchController.searchBar.rx.text.orEmpty)
-            .distinctUntilChanged()
             .map { Action.searchButtonClicked($0) }
             .bind(to: viewModel.send)
             .disposed(by: disposeBag)

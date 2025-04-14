@@ -9,7 +9,10 @@
 /* Begin PBXBuildFile section */
 		C96392B12D6C524A00F62B47 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = C96392B02D6C524A00F62B47 /* RxCocoa */; };
 		C96392B32D6C524A00F62B47 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C96392B22D6C524A00F62B47 /* RxSwift */; };
+		C96BE9842D9682060077EC7D /* RxCompose in Frameworks */ = {isa = PBXBuildFile; productRef = C96BE9832D9682060077EC7D /* RxCompose */; };
 		C97610CB2D36ADED004939C8 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C97610CA2D36ADED004939C8 /* Alamofire */; };
+		C9A198682D964AF3008EDDD8 /* RxCompose in Frameworks */ = {isa = PBXBuildFile; productRef = C9A198672D964AF3008EDDD8 /* RxCompose */; };
+		C9A1986B2D964B19008EDDD8 /* RxCompose in Frameworks */ = {isa = PBXBuildFile; productRef = C9A1986A2D964B19008EDDD8 /* RxCompose */; };
 		C9A4D8192D34F92200966911 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C9A4D8182D34F92200966911 /* SnapKit */; };
 /* End PBXBuildFile section */
 
@@ -44,8 +47,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				C96392B12D6C524A00F62B47 /* RxCocoa in Frameworks */,
+				C9A1986B2D964B19008EDDD8 /* RxCompose in Frameworks */,
 				C9A4D8192D34F92200966911 /* SnapKit in Frameworks */,
+				C9A198682D964AF3008EDDD8 /* RxCompose in Frameworks */,
 				C96392B32D6C524A00F62B47 /* RxSwift in Frameworks */,
+				C96BE9842D9682060077EC7D /* RxCompose in Frameworks */,
 				C97610CB2D36ADED004939C8 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -93,6 +99,9 @@
 				C97610CA2D36ADED004939C8 /* Alamofire */,
 				C96392B02D6C524A00F62B47 /* RxCocoa */,
 				C96392B22D6C524A00F62B47 /* RxSwift */,
+				C9A198672D964AF3008EDDD8 /* RxCompose */,
+				C9A1986A2D964B19008EDDD8 /* RxCompose */,
+				C96BE9832D9682060077EC7D /* RxCompose */,
 			);
 			productName = SnapKitPractice;
 			productReference = C9A4D7EF2D34F88F00966911 /* SnapKitPractice.app */;
@@ -126,6 +135,7 @@
 				C9A4D8172D34F92200966911 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				C97610C92D36ADED004939C8 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				C96392AF2D6C524A00F62B47 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				C96BE9822D9682060077EC7D /* XCRemoteSwiftPackageReference "RxCompose" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C9A4D7F02D34F88F00966911 /* Products */;
@@ -371,6 +381,14 @@
 				minimumVersion = 6.9.0;
 			};
 		};
+		C96BE9822D9682060077EC7D /* XCRemoteSwiftPackageReference "RxCompose" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ShapeKim98/RxCompose.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
 		C97610C92D36ADED004939C8 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire";
@@ -400,10 +418,23 @@
 			package = C96392AF2D6C524A00F62B47 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxSwift;
 		};
+		C96BE9832D9682060077EC7D /* RxCompose */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C96BE9822D9682060077EC7D /* XCRemoteSwiftPackageReference "RxCompose" */;
+			productName = RxCompose;
+		};
 		C97610CA2D36ADED004939C8 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C97610C92D36ADED004939C8 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		C9A198672D964AF3008EDDD8 /* RxCompose */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RxCompose;
+		};
+		C9A1986A2D964B19008EDDD8 /* RxCompose */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RxCompose;
 		};
 		C9A4D8182D34F92200966911 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
