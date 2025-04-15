@@ -9,9 +9,11 @@ import SwiftUI
 
 struct MyRandomImageView: View {
     var body: some View {
-        ScrollView(content: content)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle("My Random Image")
+        NavigationStack {
+            ScrollView(content: content)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .navigationTitle("My Random Image")
+        }
     }
 }
 
@@ -75,7 +77,5 @@ private extension MyRandomImageView {
 }
 
 #Preview {
-    NavigationStack {
-        MyRandomImageView()
-    }
+    MyRandomImageView()
 }
