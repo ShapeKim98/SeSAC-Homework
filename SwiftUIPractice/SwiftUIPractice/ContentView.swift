@@ -26,6 +26,9 @@ struct ContentView: View {
             case .jackWallet:
                 JackWalletView()
                     .toolbarBackground(.hidden, for: .tabBar)
+            case .shopping:
+                SearchView()
+                    .toolbarBackground(.hidden, for: .tabBar)
             }
         }
         .overlay(alignment: .bottom) {
@@ -40,13 +43,15 @@ struct ContentView: View {
         case mission
         case randomImage
         case jackWallet
+        case shopping
         
         var title: String {
             switch self {
             case .home: return "홈"
             case .mission: return "혜택"
-            case .randomImage: return "랜덤 이미지"
+            case .randomImage: return "랜덤"
             case .jackWallet: return "지갑"
+            case .shopping: return "쇼핑"
             }
         }
         
@@ -56,6 +61,7 @@ struct ContentView: View {
             case .mission: return "diamond.fill"
             case .randomImage: return "photo.fill"
             case .jackWallet: return "wallet.pass.fill"
+            case .shopping: return "basket.fill"
             }
         }
     }
