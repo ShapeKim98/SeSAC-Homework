@@ -15,7 +15,6 @@ struct JackWalletView: View {
     
     var body: some View {
         NavigationStack(path: $path, root: root)
-            
     }
 }
 
