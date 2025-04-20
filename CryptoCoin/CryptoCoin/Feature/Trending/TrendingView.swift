@@ -234,12 +234,12 @@ private extension TrendingView {
         
         private let id: String
         
+        @State
+        private var coin: CoinDetail?
+        
         init(id: String) {
             self.id = id
         }
-        
-        @State
-        private var coin: CoinDetail?
         
         var body: some View {
             VStack(alignment: .leading, spacing: 40) {
