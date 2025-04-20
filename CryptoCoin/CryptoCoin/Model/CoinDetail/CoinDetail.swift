@@ -8,7 +8,7 @@
 import Foundation
 
 /// #4. 코인상세 화면
-struct CoinDetail: Decodable, Equatable {
+struct CoinDetail: Decodable, Hashable, Identifiable {
     let id: String
     let symbol: String
     let name: String
@@ -44,7 +44,7 @@ struct CoinDetail: Decodable, Equatable {
 }
 
 // MARK: - 스파크라인 차트 데이터
-struct SparklineData: Decodable, Equatable {
+struct SparklineData: Decodable, Hashable {
     let price: [Double]
 }
 
