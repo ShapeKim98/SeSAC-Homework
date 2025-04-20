@@ -33,6 +33,9 @@ struct TrendingView: View {
         NavigationStack(path: $path) {
             ScrollView(content: content)
                 .navigationTitle("Cryto Coin")
+                .navigationDestination(for: String.self) { id in
+                    CoinDetailView(id: id)
+                }
                 .task(bodyTask)
         }
     }
@@ -318,9 +321,6 @@ private extension TrendingView {
         @Sendable
         private func bodyTask() async {
             do {
-                /// 임시
-                try? await Task.sleep(for: .seconds(1))
-                
                 let request = CoinDetailRequest(ids: id)
                 let response = try await client.fetchCoinDetail(request).first
                 guard let response else { return }
@@ -337,9 +337,6 @@ private extension TrendingView {
     @Sendable
     func bodyTask() async {
         do {
-            /// 임시
-            try? await Task.sleep(for: .seconds(1))
-            
             let response = try await client.fetchTrending()
             coins = response.coins
             nfts = response.nfts

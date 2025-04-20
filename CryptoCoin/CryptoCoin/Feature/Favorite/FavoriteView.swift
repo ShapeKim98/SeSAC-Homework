@@ -139,9 +139,6 @@ private extension FavoriteView {
     @Sendable
     func bodyTask() async {
         do {
-            /// 임시
-            try? await Task.sleep(for: .seconds(1))
-            
             let request = CoinDetailRequest(ids: favoriteIds.joined(separator: ","))
             let response = try await client.fetchCoinDetail(request)
             favoriteCoins = response

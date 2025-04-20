@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C9B311912DB4A52900276718 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C9B311902DB4A52900276718 /* Alamofire */; };
-		C9B313432DB4B11A00276718 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C9B313422DB4B11A00276718 /* Dependencies */; };
-		C9B313452DB4B11A00276718 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = C9B313442DB4B11A00276718 /* DependenciesMacros */; };
+		C96A4E812DB5024300C11E4D /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = C96A4E802DB5024300C11E4D /* DGCharts */; };
+		C96A4E842DB5025400C11E4D /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C96A4E832DB5025400C11E4D /* Alamofire */; };
+		C96A4E872DB5026200C11E4D /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C96A4E862DB5026200C11E4D /* Dependencies */; };
+		C96A4E892DB5026200C11E4D /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = C96A4E882DB5026200C11E4D /* DependenciesMacros */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,9 +43,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9B311912DB4A52900276718 /* Alamofire in Frameworks */,
-				C9B313432DB4B11A00276718 /* Dependencies in Frameworks */,
-				C9B313452DB4B11A00276718 /* DependenciesMacros in Frameworks */,
+				C96A4E872DB5026200C11E4D /* Dependencies in Frameworks */,
+				C96A4E812DB5024300C11E4D /* DGCharts in Frameworks */,
+				C96A4E892DB5026200C11E4D /* DependenciesMacros in Frameworks */,
+				C96A4E842DB5025400C11E4D /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,9 +89,10 @@
 			);
 			name = CryptoCoin;
 			packageProductDependencies = (
-				C9B311902DB4A52900276718 /* Alamofire */,
-				C9B313422DB4B11A00276718 /* Dependencies */,
-				C9B313442DB4B11A00276718 /* DependenciesMacros */,
+				C96A4E802DB5024300C11E4D /* DGCharts */,
+				C96A4E832DB5025400C11E4D /* Alamofire */,
+				C96A4E862DB5026200C11E4D /* Dependencies */,
+				C96A4E882DB5026200C11E4D /* DependenciesMacros */,
 			);
 			productName = CryptoCoin;
 			productReference = C9B310B42DB4A45F00276718 /* CryptoCoin.app */;
@@ -120,8 +123,9 @@
 			mainGroup = C9B310AB2DB4A45F00276718;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				C9B3118F2DB4A52900276718 /* XCRemoteSwiftPackageReference "Alamofire" */,
-				C9B313412DB4B11A00276718 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				C96A4E7F2DB5024300C11E4D /* XCRemoteSwiftPackageReference "Charts" */,
+				C96A4E822DB5025400C11E4D /* XCRemoteSwiftPackageReference "Alamofire" */,
+				C96A4E852DB5026200C11E4D /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C9B310B52DB4A45F00276718 /* Products */;
@@ -156,6 +160,8 @@
 /* Begin XCBuildConfiguration section */
 		C9B310C02DB4A46000276718 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C9B310B62DB4A45F00276718 /* CryptoCoin */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -219,6 +225,8 @@
 		};
 		C9B310C12DB4A46000276718 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C9B310B62DB4A45F00276718 /* CryptoCoin */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -275,6 +283,8 @@
 		};
 		C9B310C32DB4A46000276718 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C9B310B62DB4A45F00276718 /* CryptoCoin */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -306,6 +316,8 @@
 		};
 		C9B310C42DB4A46000276718 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C9B310B62DB4A45F00276718 /* CryptoCoin */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -359,7 +371,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C9B3118F2DB4A52900276718 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		C96A4E7F2DB5024300C11E4D /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ChartsOrg/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+		C96A4E822DB5025400C11E4D /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire";
 			requirement = {
@@ -367,7 +387,7 @@
 				minimumVersion = 5.10.2;
 			};
 		};
-		C9B313412DB4B11A00276718 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+		C96A4E852DB5026200C11E4D /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
 			requirement = {
@@ -378,19 +398,24 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C9B311902DB4A52900276718 /* Alamofire */ = {
+		C96A4E802DB5024300C11E4D /* DGCharts */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C9B3118F2DB4A52900276718 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = C96A4E7F2DB5024300C11E4D /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+		C96A4E832DB5025400C11E4D /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C96A4E822DB5025400C11E4D /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
-		C9B313422DB4B11A00276718 /* Dependencies */ = {
+		C96A4E862DB5026200C11E4D /* Dependencies */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C9B313412DB4B11A00276718 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			package = C96A4E852DB5026200C11E4D /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = Dependencies;
 		};
-		C9B313442DB4B11A00276718 /* DependenciesMacros */ = {
+		C96A4E882DB5026200C11E4D /* DependenciesMacros */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C9B313412DB4B11A00276718 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			package = C96A4E852DB5026200C11E4D /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = DependenciesMacros;
 		};
 /* End XCSwiftPackageProductDependency section */

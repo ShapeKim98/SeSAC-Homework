@@ -129,8 +129,6 @@ private extension SearchView {
         searchOnSubmitTask = Task {
             isLoading = true
             defer { isLoading = false }
-            /// 임시
-            try? await Task.sleep(for: .seconds(1))
             do {
                 let request = SearchRequest(query: query)
                 let response = try await client.fetchSearch(request)

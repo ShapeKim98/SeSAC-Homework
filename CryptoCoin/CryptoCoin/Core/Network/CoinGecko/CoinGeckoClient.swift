@@ -40,9 +40,18 @@ extension CoinGeckoClient: DependencyKey {
 
 extension CoinGeckoClient: TestDependencyKey {
     static let testValue: CoinGeckoClient = CoinGeckoClient(
-        fetchTrending: { .mock },
-        fetchSearch: { _ in .mock },
-        fetchCoinDetail: { _ in [CoinDetail.mock] }
+        fetchTrending: {
+            try? await Task.sleep(for: .seconds(1))
+            return .mock
+        },
+        fetchSearch: { _ in
+            try? await Task.sleep(for: .seconds(1))
+            return .mock
+        },
+        fetchCoinDetail: { _ in
+            try? await Task.sleep(for: .seconds(1))
+            return [CoinDetail.mock]
+        }
     )
     
     static let previewValue: CoinGeckoClient = testValue
