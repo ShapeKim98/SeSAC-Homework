@@ -28,6 +28,9 @@ struct SearchView: View {
         NavigationStack(path: $path) {
             ScrollView(content: content)
                 .navigationTitle("Search")
+                .navigationDestination(for: String.self) { id in
+                    CoinDetailView(id: id)
+                }
                 .searchable(text: $query)
                 .onSubmit(of: .search, searchOnSubmit)
         }

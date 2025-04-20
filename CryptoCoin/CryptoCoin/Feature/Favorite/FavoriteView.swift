@@ -35,12 +35,18 @@ private extension FavoriteView {
             Spacer()
         }
         .navigationTitle("Favorite")
+        .navigationDestination(for: String.self) { id in
+            CoinDetailView(id: id)
+        }
     }
     
     func content() -> some View {
         LazyHStack {
             ForEach(favoriteCoins) { coin in
-                FavoriteCell(coin: coin)
+                NavigationLink(value: coin.id) {
+                    FavoriteCell(coin: coin)
+                }
+                .buttonStyle(.plain)
             }
         }
         .fixedSize()

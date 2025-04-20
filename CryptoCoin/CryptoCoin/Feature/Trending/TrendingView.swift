@@ -131,7 +131,10 @@ private extension TrendingView {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
                     ForEach(favoriteIds, id: \.hashValue) { id in
-                        FavoriteCell(id: id)
+                        NavigationLink(value: id) {
+                            FavoriteCell(id: id)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal, 16)
