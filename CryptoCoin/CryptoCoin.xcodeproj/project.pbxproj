@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		C9B311912DB4A52900276718 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C9B311902DB4A52900276718 /* Alamofire */; };
+		C9B313432DB4B11A00276718 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C9B313422DB4B11A00276718 /* Dependencies */; };
+		C9B313452DB4B11A00276718 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = C9B313442DB4B11A00276718 /* DependenciesMacros */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +43,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9B311912DB4A52900276718 /* Alamofire in Frameworks */,
+				C9B313432DB4B11A00276718 /* Dependencies in Frameworks */,
+				C9B313452DB4B11A00276718 /* DependenciesMacros in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +88,8 @@
 			name = CryptoCoin;
 			packageProductDependencies = (
 				C9B311902DB4A52900276718 /* Alamofire */,
+				C9B313422DB4B11A00276718 /* Dependencies */,
+				C9B313442DB4B11A00276718 /* DependenciesMacros */,
 			);
 			productName = CryptoCoin;
 			productReference = C9B310B42DB4A45F00276718 /* CryptoCoin.app */;
@@ -115,6 +121,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C9B3118F2DB4A52900276718 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				C9B313412DB4B11A00276718 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C9B310B52DB4A45F00276718 /* Products */;
@@ -283,6 +290,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -313,6 +321,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -358,6 +367,14 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		C9B313412DB4B11A00276718 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.9.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -365,6 +382,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C9B3118F2DB4A52900276718 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		C9B313422DB4B11A00276718 /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C9B313412DB4B11A00276718 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
+		};
+		C9B313442DB4B11A00276718 /* DependenciesMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C9B313412DB4B11A00276718 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesMacros;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -49,8 +49,8 @@ struct SparklineData: Decodable, Equatable {
 }
 
 extension CoinDetail {
-    static var mock: CoinDetail {
-        CoinDetail(
+    static var mock: [CoinDetail] {
+        [CoinDetail(
             id: "bitcoin",
             symbol: "btc",
             name: "Bitcoin",
@@ -239,6 +239,6 @@ extension CoinDetail {
                     85246.71284128349
                 ]
             )
-        )
+        )]
     }
 }

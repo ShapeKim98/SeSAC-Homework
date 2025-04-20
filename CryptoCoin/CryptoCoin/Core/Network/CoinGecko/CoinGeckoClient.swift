@@ -5,24 +5,45 @@
 //  Created by 김도형 on 3/9/25.
 //
 
-import Foundation
+import SwiftUI
 
-final class CoinGeckoClient {
-    static let shared = CoinGeckoClient()
+import Dependencies
+import DependenciesMacros
+
+@DependencyClient
+struct CoinGeckoClient {
+    var fetchTrending: () async throws -> Trending
+    var fetchSearch: (
+        _ model: SearchRequest
+    ) async throws -> Search
+    var fetchCoinDetail: (
+        _ model: CoinDetailRequest
+    ) async throws -> [CoinDetail]
+}
+
+extension CoinGeckoClient: DependencyKey {
+    static let liveValue: CoinGeckoClient = {
+        let provider = NetworkProvider<CoinGeckoEndPoint>()
+        return CoinGeckoClient(
+            fetchTrending: {
+                try await provider.request(.trending)
+            },
+            fetchSearch: { model in
+                try await provider.request(.search(model))
+            },
+            fetchCoinDetail: { model in
+                try await provider.request(.markets(model))
+            }
+        )
+    }()
+}
+
+extension CoinGeckoClient: TestDependencyKey {
+    static let testValue: CoinGeckoClient = CoinGeckoClient(
+        fetchTrending: { .mock },
+        fetchSearch: { _ in .mock },
+        fetchCoinDetail: { _ in CoinDetail.mock }
+    )
     
-    private let provider = NetworkProvider<CoinGeckoEndPoint>()
-    
-    private init() {}
-    
-    func fetchTrending() async throws -> Trending {
-        try await provider.request(.trending)
-    }
-    
-    func fetchSearch(_ model: SearchRequest) async throws -> Search {
-        try await provider.request(.search(model))
-    }
-    
-    func fetchCoinDetail(_ model: CoinDetailRequest) async throws -> [CoinDetail] {
-        try await provider.request(.markets(model))
-    }
+    static let previewValue: CoinGeckoClient = testValue
 }
