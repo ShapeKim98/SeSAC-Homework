@@ -35,7 +35,7 @@ extension Trending {
 }
 
 extension Trending.TrendingCoinItem {
-    struct TrendingCoinDetails: Decodable, Hashable {
+    struct TrendingCoinDetails: Decodable, Hashable, Identifiable {
         let id: String
         let coinId: Int
         let name: String
@@ -55,9 +55,11 @@ extension Trending.TrendingCoinItem {
 
 extension Trending.TrendingCoinItem.TrendingCoinDetails {
     struct TrendingCoinData: Decodable, Hashable {
+        let price: Double
         let priceChangePercentage24h: Percentage
         
         enum CodingKeys: String, CodingKey {
+            case price
             case priceChangePercentage24h = "price_change_percentage_24h"
         }
     }
@@ -65,7 +67,7 @@ extension Trending.TrendingCoinItem.TrendingCoinDetails {
 
 extension Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData {
     struct Percentage: Decodable, Hashable {
-        let krw: Double
+        let usd: Double
     }
 }
 
@@ -96,293 +98,306 @@ extension Trending.TrendingNFTItem {
 }
 
 extension Trending {
-    static var mock: Trending {
-        Trending(
-            coins: [
-                TrendingCoinItem(
+    static let mock: Trending = Trending(
+        coins: [
+            TrendingCoinItem(
+                id: "voxies",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
                     id: "voxies",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "voxies",
-                        coinId: 21260,
-                        name: "Voxies",
-                        symbol: "VOXEL",
-                        marketCapRank: 880,
-                        small: "https://coin-images.coingecko.com/coins/images/21260/small/Voxies_color_icon.png?1715217306",
-                        score: 0,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 234.05494536660308)
-                        )
+                    coinId: 21260,
+                    name: "Voxies",
+                    symbol: "VOXEL",
+                    marketCapRank: 879,
+                    small: "https://coin-images.coingecko.com/coins/images/21260/small/Voxies_color_icon.png?1715217306",
+                    score: 0,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 0.12233242670219126,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 210.94753469680262)
                     )
-                ),
-                TrendingCoinItem(
+                )
+            ),
+            TrendingCoinItem(
+                id: "connect-token-wct",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
                     id: "connect-token-wct",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "connect-token-wCt",
-                        coinId: 50390,
-                        name: "WalletConnect Token",
-                        symbol: "WCT",
-                        marketCapRank: 445,
-                        small: "https://coin-images.coingecko.com/coins/images/50390/small/wc-token1.png?1727569464",
-                        score: 1,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 44.48621400255899)
-                        )
+                    coinId: 50390,
+                    name: "WalletConnect Token",
+                    symbol: "WCT",
+                    marketCapRank: 429,
+                    small: "https://coin-images.coingecko.com/coins/images/50390/small/wc-token1.png?1727569464",
+                    score: 1,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 0.5351293229934171,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 55.272930781300076)
                     )
-                ),
-                TrendingCoinItem(
-                    id: "hyperliquid",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "hyperliquid",
-                        coinId: 50882,
-                        name: "Hyperliquid",
-                        symbol: "HYPE",
-                        marketCapRank: 24,
-                        small: "https://coin-images.coingecko.com/coins/images/50882/small/hyperliquid.jpg?1729431300",
-                        score: 2,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 5.799751153202096)
-                        )
-                    )
-                ),
-                TrendingCoinItem(
-                    id: "pi-network",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "pi-network",
-                        coinId: 54342,
-                        name: "Pi Network",
-                        symbol: "PI",
-                        marketCapRank: 30,
-                        small: "https://coin-images.coingecko.com/coins/images/54342/small/pi_network.jpg?1739347576",
-                        score: 3,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: -1.2376026847710875)
-                        )
-                    )
-                ),
-                TrendingCoinItem(
+                )
+            ),
+            TrendingCoinItem(
+                id: "mantra-dao",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
                     id: "mantra-dao",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "mantra-dao",
-                        coinId: 12151,
-                        name: "MANTRA",
-                        symbol: "OM",
-                        marketCapRank: 124,
-                        small: "https://coin-images.coingecko.com/coins/images/12151/small/OM_Token.png?1696511991",
-                        score: 4,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: -6.211929714490936)
-                        )
+                    coinId: 12151,
+                    name: "MANTRA",
+                    symbol: "OM",
+                    marketCapRank: 124,
+                    small: "https://coin-images.coingecko.com/coins/images/12151/small/OM_Token.png?1696511991",
+                    score: 2,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 0.6043280984595609,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: -6.276534326550057)
                     )
-                ),
-                TrendingCoinItem(
-                    id: "bittensor",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "bittensor",
-                        coinId: 28452,
-                        name: "Bittensor",
-                        symbol: "TAO",
-                        marketCapRank: 45,
-                        small: "https://coin-images.coingecko.com/coins/images/28452/small/ARUsPeNQ_400x400.jpeg?1696527447",
-                        score: 5,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 8.565372208727972)
-                        )
+                )
+            ),
+            TrendingCoinItem(
+                id: "nkn",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
+                    id: "nkn",
+                    coinId: 3375,
+                    name: "NKN",
+                    symbol: "NKN",
+                    marketCapRank: 753,
+                    small: "https://coin-images.coingecko.com/coins/images/3375/small/nkn.png?1696504074",
+                    score: 3,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 0.04799110191485709,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 123.31775790330973)
                     )
-                ),
-                TrendingCoinItem(
+                )
+            ),
+            TrendingCoinItem(
+                id: "solana",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
                     id: "solana",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "solana",
-                        coinId: 4128,
-                        name: "Solana",
-                        symbol: "SOL",
-                        marketCapRank: 6,
-                        small: "https://coin-images.coingecko.com/coins/images/4128/small/solana.png?1718769756",
-                        score: 6,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 1.5596412691512764)
-                        )
+                    coinId: 4128,
+                    name: "Solana",
+                    symbol: "SOL",
+                    marketCapRank: 6,
+                    small: "https://coin-images.coingecko.com/coins/images/4128/small/solana.png?1718769756",
+                    score: 4,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 141.300899579125,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 2.005562613407555)
                     )
-                ),
-                TrendingCoinItem(
+                )
+            ),
+            TrendingCoinItem(
+                id: "hyperliquid",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
+                    id: "hyperliquid",
+                    coinId: 50882,
+                    name: "Hyperliquid",
+                    symbol: "HYPE",
+                    marketCapRank: 24,
+                    small: "https://coin-images.coingecko.com/coins/images/50882/small/hyperliquid.jpg?1729431300",
+                    score: 5,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 18.388523322751112,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 4.648785292875282)
+                    )
+                )
+            ),
+            TrendingCoinItem(
+                id: "bittensor",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
+                    id: "bittensor",
+                    coinId: 28452,
+                    name: "Bittensor",
+                    symbol: "TAO",
+                    marketCapRank: 45,
+                    small: "https://coin-images.coingecko.com/coins/images/28452/small/ARUsPeNQ_400x400.jpeg?1696527447",
+                    score: 6,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 299.12281910185965,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 8.424186156824213)
+                    )
+                )
+            ),
+            TrendingCoinItem(
+                id: "pi-network",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
+                    id: "pi-network",
+                    coinId: 54342,
+                    name: "Pi Network",
+                    symbol: "PI",
+                    marketCapRank: 30,
+                    small: "https://coin-images.coingecko.com/coins/images/54342/small/pi_network.jpg?1739347576",
+                    score: 7,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 0.6510938381227491,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 0.14435414703995836)
+                    )
+                )
+            ),
+            TrendingCoinItem(
+                id: "fartcoin",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
                     id: "fartcoin",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "fartcoin",
-                        coinId: 50891,
-                        name: "Fartcoin",
-                        symbol: "FARTCOIN",
-                        marketCapRank: 94,
-                        small: "https://coin-images.coingecko.com/coins/images/50891/small/fart.jpg?1729503972",
-                        score: 7,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 6.338665944656493)
-                        )
+                    coinId: 50891,
+                    name: "Fartcoin",
+                    symbol: "FARTCOIN",
+                    marketCapRank: 90,
+                    small: "https://coin-images.coingecko.com/coins/images/50891/small/fart.jpg?1729503972",
+                    score: 8,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 0.869785888405358,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 10.712376220720815)
                     )
-                ),
-                TrendingCoinItem(
+                )
+            ),
+            TrendingCoinItem(
+                id: "ondo-finance",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
+                    id: "ondo-finance",
+                    coinId: 26580,
+                    name: "Ondo",
+                    symbol: "ONDO",
+                    marketCapRank: 42,
+                    small: "https://coin-images.coingecko.com/coins/images/26580/small/ONDO.png?1696525656",
+                    score: 9,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 0.855796732816021,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 1.3320226338453656)
+                    )
+                )
+            ),
+            TrendingCoinItem(
+                id: "sui",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
+                    id: "sui",
+                    coinId: 26375,
+                    name: "Sui",
+                    symbol: "SUI",
+                    marketCapRank: 20,
+                    small: "https://coin-images.coingecko.com/coins/images/26375/small/sui-ocean-square.png?1727791290",
+                    score: 10,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 2.1646565148870347,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 0.8360855939596146)
+                    )
+                )
+            ),
+            TrendingCoinItem(
+                id: "magic",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
+                    id: "magic",
+                    coinId: 18623,
+                    name: "Treasure",
+                    symbol: "MAGIC",
+                    marketCapRank: 701,
+                    small: "https://coin-images.coingecko.com/coins/images/18623/small/magic.png?1696518095",
+                    score: 11,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 0.1361537785648643,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 72.79609793944464)
+                    )
+                )
+            ),
+            TrendingCoinItem(
+                id: "bitcoin",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
                     id: "bitcoin",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "bitcoin",
-                        coinId: 1,
-                        name: "Bitcoin",
-                        symbol: "BTC",
-                        marketCapRank: 1,
-                        small: "https://coin-images.coingecko.com/coins/images/1/small/bitcoin.png?1696501400",
-                        score: 8,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 0.337913138329549)
-                        )
-                    )
-                ),
-                TrendingCoinItem(
-                    id: "ronin",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "ronin",
-                        coinId: 20009,
-                        name: "Ronin",
-                        symbol: "RON",
-                        marketCapRank: 197,
-                        small: "https://coin-images.coingecko.com/coins/images/20009/small/photo_2024-04-06_22-52-24.jpg?1712415367",
-                        score: 9,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 1.705610934999803)
-                        )
-                    )
-                ),
-                TrendingCoinItem(
-                    id: "berachain-bera",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "berachain-bera",
-                        coinId: 25235,
-                        name: "Berachain",
-                        symbol: "BERA",
-                        marketCapRank: 169,
-                        small: "https://coin-images.coingecko.com/coins/images/25235/small/BERA.png?1738822008",
-                        score: 10,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 2.473538925101969)
-                        )
-                    )
-                ),
-                TrendingCoinItem(
-                    id: "polkadot",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "polkadot",
-                        coinId: 12171,
-                        name: "Polkadot",
-                        symbol: "DOT",
-                        marketCapRank: 25,
-                        small: "https://coin-images.coingecko.com/coins/images/12171/small/polkadot.png?1696512008",
-                        score: 11,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 4.331528075468077)
-                        )
-                    )
-                ),
-                TrendingCoinItem(
-                    id: "grass",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "grass",
-                        coinId: 40094,
-                        name: "Grass",
-                        symbol: "GRASS",
-                        marketCapRank: 141,
-                        small: "https://coin-images.coingecko.com/coins/images/40094/small/Grass.jpg?1725697048",
-                        score: 12,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 1.683950626366066)
-                        )
-                    )
-                ),
-                TrendingCoinItem(
-                    id: "aleo",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "aleo",
-                        coinId: 27916,
-                        name: "ALEO",
-                        symbol: "ALEO",
-                        marketCapRank: 395,
-                        small: "https://coin-images.coingecko.com/coins/images/27916/small/secondary-icon-dark.png?1726770428",
-                        score: 13,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 40.65682165146396)
-                        )
-                    )
-                ),
-                TrendingCoinItem(
-                    id: "based-brett",
-                    item: TrendingCoinItem.TrendingCoinDetails(
-                        id: "based-brett",
-                        coinId: 35529,
-                        name: "Brett",
-                        symbol: "BRETT",
-                        marketCapRank: 173,
-                        small: "https://coin-images.coingecko.com/coins/images/35529/small/1000050750.png?1709031995",
-                        score: 14,
-                        data: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
-                            priceChangePercentage24h: TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(krw: 5.340584553284178)
-                        )
+                    coinId: 1,
+                    name: "Bitcoin",
+                    symbol: "BTC",
+                    marketCapRank: 1,
+                    small: "https://coin-images.coingecko.com/coins/images/1/small/bitcoin.png?1696501400",
+                    score: 12,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 85200.21976367784,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 0.15640170979841742)
                     )
                 )
-            ],
-            nfts: [
-                TrendingNFTItem(
-                    id: "murakami-flowers-official",
-                    name: "Murakami.Flowers Official",
-                    symbol: "M.F",
-                    thumb: "https://coin-images.coingecko.com/nft_contracts/images/913/standard/murakami-flowers-official.png?1707287562",
-                    floorPrice24hPercentageChange: 43.86462372277597,
-                    data: TrendingNFTItem.TrendingNFTData(floorPrice: "0.40 ETH")
-                ),
-                TrendingNFTItem(
-                    id: "cryptodickbutts",
-                    name: "CryptoDickbutts",
-                    symbol: "CDB",
-                    thumb: "https://coin-images.coingecko.com/nft_contracts/images/1265/standard/cryptodickbutts.gif?1707287730",
-                    floorPrice24hPercentageChange: 35.13492745482199,
-                    data: TrendingNFTItem.TrendingNFTData(floorPrice: "0.78 ETH")
-                ),
-                TrendingNFTItem(
-                    id: "opepen-edition",
-                    name: "Opepen Edition",
-                    symbol: "OPEPEN",
-                    thumb: "https://coin-images.coingecko.com/nft_contracts/images/2540/standard/opepen.jpeg?1707288408",
-                    floorPrice24hPercentageChange: 22.1746707203369,
-                    data: TrendingNFTItem.TrendingNFTData(floorPrice: "0.29 ETH")
-                ),
-                TrendingNFTItem(
-                    id: "cryptopunks-v1-wrapped",
-                    name: "CryptoPunks V1 (wrapped)",
-                    symbol: "WPV1",
-                    thumb: "https://coin-images.coingecko.com/nft_contracts/images/479/standard/cryptopunks-v1-wrapped.png?1707287336",
-                    floorPrice24hPercentageChange: 19.74557329279665,
-                    data: TrendingNFTItem.TrendingNFTData(floorPrice: "2.49 ETH")
-                ),
-                TrendingNFTItem(
-                    id: "bored-ape-kennel-club",
-                    name: "Bored Ape Kennel Club",
-                    symbol: "BAKC",
-                    thumb: "https://coin-images.coingecko.com/nft_contracts/images/233/standard/bored-ape-kennel-club.png?1707287231",
-                    floorPrice24hPercentageChange: 12.35523447073876,
-                    data: TrendingNFTItem.TrendingNFTData(floorPrice: "0.65 ETH")
-                ),
-                TrendingNFTItem(
-                    id: "wealthy-hypio-babies",
-                    name: "Wealthy Hypio Babies",
-                    symbol: "HYPIO",
-                    thumb: "https://coin-images.coingecko.com/nft_contracts/images/15671/standard/wealthy-hypio-babies.png?1741099389",
-                    floorPrice24hPercentageChange: 10.07014013216132,
-                    data: TrendingNFTItem.TrendingNFTData(floorPrice: "1.80 ETH")
-                ),
-                TrendingNFTItem(
-                    id: "redacted-remilio-babies",
-                    name: "Redacted Remilio Babies",
-                    symbol: "TEST",
-                    thumb: "https://coin-images.coingecko.com/nft_contracts/images/2736/standard/redacted-remilio-babies.?1707289665",
-                    floorPrice24hPercentageChange: 9.724167962018093,
-                    data: TrendingNFTItem.TrendingNFTData(floorPrice: "0.53 ETH")
+            ),
+            TrendingCoinItem(
+                id: "aerodrome-finance",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
+                    id: "aerodrome-finance",
+                    coinId: 31745,
+                    name: "Aerodrome Finance",
+                    symbol: "AERO",
+                    marketCapRank: 188,
+                    small: "https://coin-images.coingecko.com/coins/images/31745/small/token.png?1696530564",
+                    score: 13,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 0.4085395571516313,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 4.181348796789184)
+                    )
                 )
-            ]
-        )
-    }
+            ),
+            TrendingCoinItem(
+                id: "dogwifcoin",
+                item: Trending.TrendingCoinItem.TrendingCoinDetails(
+                    id: "dogwifcoin",
+                    coinId: 33566,
+                    name: "dogwifhat",
+                    symbol: "WIF",
+                    marketCapRank: 148,
+                    small: "https://coin-images.coingecko.com/coins/images/33566/small/dogwifhat.jpg?1702499428",
+                    score: 14,
+                    data: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData(
+                        price: 0.43541615332531963,
+                        priceChangePercentage24h: Trending.TrendingCoinItem.TrendingCoinDetails.TrendingCoinData.Percentage(usd: 7.089150734125139)
+                    )
+                )
+            )
+        ],
+        nfts: [
+            TrendingNFTItem(
+                id: "murakami-flowers-official",
+                name: "Murakami.Flowers Official",
+                symbol: "M.F",
+                thumb: "https://coin-images.coingecko.com/nft_contracts/images/913/standard/murakami-flowers-official.png?1707287562",
+                floorPrice24hPercentageChange: 43.40048103638284,
+                data: Trending.TrendingNFTItem.TrendingNFTData(floorPrice: "0.40 ETH")
+            ),
+            TrendingNFTItem(
+                id: "cryptodickbutts",
+                name: "CryptoDickbutts",
+                symbol: "CDB",
+                thumb: "https://coin-images.coingecko.com/nft_contracts/images/1265/standard/cryptodickbutts.gif?1707287730",
+                floorPrice24hPercentageChange: 34.41340146244138,
+                data: Trending.TrendingNFTItem.TrendingNFTData(floorPrice: "0.78 ETH")
+            ),
+            TrendingNFTItem(
+                id: "opepen-edition",
+                name: "Opepen Edition",
+                symbol: "OPEPEN",
+                thumb: "https://coin-images.coingecko.com/nft_contracts/images/2540/standard/opepen.jpeg?1707288408",
+                floorPrice24hPercentageChange: 21.83147839304141,
+                data: Trending.TrendingNFTItem.TrendingNFTData(floorPrice: "0.29 ETH")
+            ),
+            TrendingNFTItem(
+                id: "cryptopunks-v1-wrapped",
+                name: "CryptoPunks V1 (wrapped)",
+                symbol: "WPV1",
+                thumb: "https://coin-images.coingecko.com/nft_contracts/images/479/standard/cryptopunks-v1-wrapped.png?1707287336",
+                floorPrice24hPercentageChange: 19.37131425180619,
+                data: Trending.TrendingNFTItem.TrendingNFTData(floorPrice: "2.49 ETH")
+            ),
+            TrendingNFTItem(
+                id: "bored-ape-kennel-club",
+                name: "Bored Ape Kennel Club",
+                symbol: "bakc",
+                thumb: "https://coin-images.coingecko.com/nft_contracts/images/233/standard/bored-ape-kennel-club.png?1707287231",
+                floorPrice24hPercentageChange: 11.21229795899199,
+                data: Trending.TrendingNFTItem.TrendingNFTData(floorPrice: "0.65 ETH")
+            ),
+            TrendingNFTItem(
+                id: "wealthy-hypio-babies",
+                name: "Wealthy Hypio Babies",
+                symbol: "hypio",
+                thumb: "https://coin-images.coingecko.com/nft_contracts/images/15671/standard/wealthy-hypio-babies.png?1741099389",
+                floorPrice24hPercentageChange: 9.86999323987863,
+                data: Trending.TrendingNFTItem.TrendingNFTData(floorPrice: "1.80 ETH")
+            ),
+            TrendingNFTItem(
+                id: "redacted-remilio-babies",
+                name: "Redacted Remilio Babies",
+                symbol: "TEST",
+                thumb: "https://coin-images.coingecko.com/nft_contracts/images/2736/standard/redacted-remilio-babies.?1707289665",
+                floorPrice24hPercentageChange: 7.488478262947211,
+                data: Trending.TrendingNFTItem.TrendingNFTData(floorPrice: "0.53 ETH")
+            )
+        ]
+    )
 }

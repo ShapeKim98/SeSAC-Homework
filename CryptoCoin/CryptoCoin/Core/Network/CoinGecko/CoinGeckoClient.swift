@@ -42,7 +42,7 @@ extension CoinGeckoClient: TestDependencyKey {
     static let testValue: CoinGeckoClient = CoinGeckoClient(
         fetchTrending: { .mock },
         fetchSearch: { _ in .mock },
-        fetchCoinDetail: { _ in CoinDetail.mock }
+        fetchCoinDetail: { _ in [CoinDetail.mock] }
     )
     
     static let previewValue: CoinGeckoClient = testValue
