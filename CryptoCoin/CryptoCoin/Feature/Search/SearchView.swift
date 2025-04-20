@@ -44,6 +44,7 @@ private extension SearchView {
                 NavigationLink(value: item.id) {
                     SearchCell(item: item)
                 }
+                .buttonStyle(.plain)
             }
         }
         .redacted(reason: isLoading ? [.placeholder] : [])
@@ -94,7 +95,8 @@ private extension SearchView {
         private var nameInfo: some View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.name)
-                    .font(.headline)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
                     .lineLimit(1)
                 
                 Text(item.symbol)
