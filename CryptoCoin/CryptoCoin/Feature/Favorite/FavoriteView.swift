@@ -103,7 +103,6 @@ private extension FavoriteView {
             .animation(.smooth, value: coin)
         }
         
-        @ViewBuilder
         private var thumbnail: some View {
             AsyncImage(url: URL(string: coin.image)) { phase in
                 switch phase {

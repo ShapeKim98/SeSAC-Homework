@@ -43,7 +43,6 @@ struct SearchView: View {
 
 // MARK: - Configure Views
 private extension SearchView {
-    @ViewBuilder
     func content() -> some View {
         LazyVStack(spacing: 20) {
             let items = isLoading ? Search.mock.coins : searchItems
