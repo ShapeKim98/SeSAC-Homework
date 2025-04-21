@@ -46,7 +46,7 @@ struct Shared<T> {
     
     var projectedValue: AnyPublisher<T, Never> {
         switch type {
-        case .userDefaults(let key):
+        case .userDefaults:
             subject.compactMap(\.self)
                 .eraseToAnyPublisher()
         }

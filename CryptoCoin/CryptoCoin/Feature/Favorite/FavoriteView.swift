@@ -12,20 +12,36 @@ import Dependencies
 struct FavoriteView: View {
     @Dependency(CoinGeckoClient.self)
     private var client
+    
     @State
     @Shared(.userDefaults(.favoriteIds))
     private var sharedFavoriteIds = [String]()
-    
     @State
     private var path: [String] = []
     @State
     private var favoriteIds = [String]()
     @State
     private var favoriteCoins: [CoinDetail] = []
+    @State
+    private var timerTask: Task<Void, Never>?
+    @State
+    private var onDisappeared: Bool = false
+    
+    private let timer = Timer.publish(
+        every: 10,
+        on: .main,
+        in: .common
+    ).autoconnect()
     
     var body: some View {
         NavigationStack(path: $path, root: root)
             .task(bodyTask)
+            .onReceive(timer) { _ in
+                timerOnReceive()
+            }
+            .onDisappear {
+                onDisappeared = true
+            }
     }
 }
 
@@ -120,6 +136,8 @@ private extension FavoriteView {
                 Text("₩" + Int(coin.currentPrice).formatted())
                     .font(.subheadline)
                     .fontWeight(.semibold)
+                    .contentTransition(.numericText())
+                    .animation(.default, value: coin.currentPrice)
                 
                 let percentage = coin.priceChangePercentage24h ?? 0
                 let color: Color = percentage > 0
@@ -131,6 +149,8 @@ private extension FavoriteView {
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundStyle(color)
+                    .contentTransition(.numericText())
+                    .animation(.default, value: percentage)
                     .padding(.vertical, 4)
                     .padding(.horizontal, 8)
                     .background(color.opacity(0.2), in: RoundedRectangle(
@@ -147,6 +167,7 @@ private extension FavoriteView {
 private extension FavoriteView {
     @Sendable
     func bodyTask() async {
+        onDisappeared = false
         favoriteIds = sharedFavoriteIds ?? []
         
         do {
@@ -155,6 +176,21 @@ private extension FavoriteView {
             favoriteCoins = response
         } catch {
             print(error)
+        }
+    }
+    
+    func timerOnReceive() {
+        timerTask?.cancel()
+        guard !onDisappeared else { return }
+        
+        timerTask = Task {
+            do {
+                let request = CoinDetailRequest(ids: favoriteIds.joined(separator: ","))
+                let response = try await client.fetchCoinDetail(request)
+                favoriteCoins = response
+            } catch {
+                print(error)
+            }
         }
     }
 }

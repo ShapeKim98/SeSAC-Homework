@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import Combine
 
 import Dependencies
 import DGCharts
@@ -24,8 +25,15 @@ struct CoinDetailView: View {
     private var isLoading = true
     @State
     private var isFavorite = false
+    @State
+    private var timerTask: Task<Void, Never>?
     
     private let id: String
+    private let timer = Timer.publish(
+        every: 10,
+        on: .main,
+        in: .common
+    ).autoconnect()
     
     init(id: String) {
         self.id = id
@@ -40,6 +48,9 @@ struct CoinDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     favoriteButton
                 }
+            }
+            .onReceive(timer) { _ in
+                timerOnReceive()
             }
     }
 }
@@ -94,6 +105,8 @@ private extension CoinDetailView {
             Text("₩\(coin.currentPrice.formatted())")
                 .font(.largeTitle)
                 .fontWeight(.bold)
+                .contentTransition(.numericText())
+                .animation(.default, value: coin.currentPrice)
             
             HStack(spacing: 8) {
                 let percentage = coin.priceChangePercentage24h ?? 0
@@ -105,6 +118,8 @@ private extension CoinDetailView {
                 Text("\(String(format: format, percentage))%")
                     .font(.footnote)
                     .foregroundStyle(color)
+                    .contentTransition(.numericText())
+                    .animation(.default, value: percentage)
                 
                 Text("Today")
                     .font(.footnote)
@@ -271,6 +286,21 @@ private extension CoinDetailView {
         }
         guard let sharedFavoriteIds else { return }
         isFavorite = sharedFavoriteIds.contains(id)
+    }
+    
+    func timerOnReceive() {
+        timerTask?.cancel()
+        
+        timerTask = Task {
+            do {
+                let request = CoinDetailRequest(ids: id)
+                let response = try await client.fetchCoinDetail(request).first
+                guard let response else { return }
+                coin = response
+            } catch {
+                print(error)
+            }
+        }
     }
 }
 
