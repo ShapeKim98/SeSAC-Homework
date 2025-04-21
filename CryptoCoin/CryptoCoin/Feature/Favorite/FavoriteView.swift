@@ -12,11 +12,14 @@ import Dependencies
 struct FavoriteView: View {
     @Dependency(CoinGeckoClient.self)
     private var client
+    @State
+    @Shared(.userDefaults(.favoriteIds))
+    private var sharedFavoriteIds = [String]()
     
     @State
     private var path: [String] = []
     @State
-    private var favoriteIds: [String] = ["bitCoin"]
+    private var favoriteIds = [String]()
     @State
     private var favoriteCoins: [CoinDetail] = []
     
@@ -144,6 +147,8 @@ private extension FavoriteView {
 private extension FavoriteView {
     @Sendable
     func bodyTask() async {
+        favoriteIds = sharedFavoriteIds ?? []
+        
         do {
             let request = CoinDetailRequest(ids: favoriteIds.joined(separator: ","))
             let response = try await client.fetchCoinDetail(request)

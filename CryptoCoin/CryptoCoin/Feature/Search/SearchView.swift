@@ -31,7 +31,11 @@ struct SearchView: View {
                 .navigationDestination(for: String.self) { id in
                     CoinDetailView(id: id)
                 }
-                .searchable(text: $query)
+                .searchable(
+                    text: $query,
+                    placement: .navigationBarDrawer(displayMode: .always),
+                    prompt: Text("검색어를 입력해주세요.")
+                )
                 .onSubmit(of: .search, searchOnSubmit)
         }
     }
@@ -56,6 +60,12 @@ private extension SearchView {
     }
     
     struct SearchCell: View {
+        @State
+        @Shared(.userDefaults(.favoriteIds))
+        private var sharedFavoriteIds = [String]()
+        @State
+        private var isFavorite = false
+        
         private let item: Search.SearchItem
         
         init(item: Search.SearchItem) {
@@ -74,6 +84,7 @@ private extension SearchView {
                     favoriteButton
                 }
             }
+            .onAppear(perform: bodyOnAppear)
         }
         
         private var thumbnail: some View {
@@ -109,13 +120,25 @@ private extension SearchView {
         
         private var favoriteButton: some View {
             Button(action: favoriteButtonAction) {
-                Image(systemName: "star")
+                Image(systemName: isFavorite ? "star.fill" : "star")
                     .foregroundColor(.purple)
+                    .animation(.smooth, value: isFavorite)
             }
         }
         
         private func favoriteButtonAction() {
-            
+            if isFavorite {
+                sharedFavoriteIds?.removeAll(where: { $0 == item.id })
+            } else {
+                sharedFavoriteIds?.insert(item.id, at: 0)
+            }
+            guard let sharedFavoriteIds else { return }
+            isFavorite = sharedFavoriteIds.contains(item.id)
+        }
+        
+        private func bodyOnAppear() {
+            guard let sharedFavoriteIds else { return }
+            isFavorite = sharedFavoriteIds.contains(item.id)
         }
     }
 }

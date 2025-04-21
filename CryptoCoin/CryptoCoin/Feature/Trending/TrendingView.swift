@@ -12,16 +12,20 @@ import Dependencies
 struct TrendingView: View {
     @Dependency(CoinGeckoClient.self)
     private var client
+    @State
+    @Shared(.userDefaults(.favoriteIds))
+    private var sharedFavoriteIds = [String]()
     
     @State
     private var coins: [Trending.TrendingCoinItem]?
     @State
     private var nfts: [Trending.TrendingNFTItem]?
     @State
-    private var favoriteIds: [String] = ["bitCoin"]
-    
-    @State
     private var path: [String] = []
+    @State
+    private var favoriteIds = [String]()
+    @State
+    private var favoriteCoins: [CoinDetail] = []
     
     private let trendingListRows = [
         GridItem(.flexible(), spacing: 16),
@@ -65,7 +69,6 @@ private extension TrendingView {
                         price: String(format: "$%.4f", coin.item.data.price),
                         percentage: coin.item.data.priceChangePercentage24h.usd
                     )
-                    .animation(.smooth, value: self.coins)
                     .redacted(reason: self.coins == nil ? [.placeholder] : [])
                 }
                 .buttonStyle(.plain)
@@ -87,7 +90,6 @@ private extension TrendingView {
                     price: nft.data.floorPrice,
                     percentage: nft.floorPrice24hPercentageChange
                 )
-                .animation(.smooth, value: self.nfts)
                 .redacted(reason: self.nfts == nil ? [.placeholder] : [])
             }
         }
@@ -130,9 +132,9 @@ private extension TrendingView {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
-                    ForEach(favoriteIds, id: \.hashValue) { id in
-                        NavigationLink(value: id) {
-                            FavoriteCell(id: id)
+                    ForEach(favoriteCoins) { coin in
+                        NavigationLink(value: coin.id) {
+                            FavoriteCell(coin: coin)
                         }
                         .buttonStyle(.plain)
                     }
@@ -235,16 +237,10 @@ private extension TrendingView {
     }
     
     struct FavoriteCell: View {
-        @Dependency(CoinGeckoClient.self)
-        var client
+        private let coin: CoinDetail
         
-        private let id: String
-        
-        @State
-        private var coin: CoinDetail?
-        
-        init(id: String) {
-            self.id = id
+        init(coin: CoinDetail) {
+            self.coin = coin
         }
         
         var body: some View {
@@ -263,40 +259,33 @@ private extension TrendingView {
                 cornerRadius: 12,
                 style: .continuous
             ))
-            .redacted(reason: coin == nil ? [.placeholder] : [])
-            .animation(.smooth, value: coin)
-            .task(bodyTask)
         }
         
-        @ViewBuilder
         private var thumbnail: some View {
-            if let image = coin?.image {
-                AsyncImage(url: URL(string: image)) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    case .failure:
-                        Color.secondary
-                    @unknown default:
-                        Color.secondary
-                    }
+            AsyncImage(url: URL(string: coin.image)) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                case .failure:
+                    Color.secondary
+                @unknown default:
+                    Color.secondary
                 }
-                .frame(width: 32, height: 32)
-                .clipped()
             }
+            .frame(width: 32, height: 32)
+            .clipped()
         }
         
         private var nameInfo: some View {
             VStack(alignment: .leading, spacing: 4) {
-                Text(coin?.name ?? CoinDetail.mock.name)
+                Text(coin.name)
                     .font(.headline)
                 
-                let symbol = coin?.symbol ?? CoinDetail.mock.symbol
-                Text(symbol.uppercased())
+                Text(coin.symbol.uppercased())
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -304,12 +293,11 @@ private extension TrendingView {
         
         private var priceInfo: some View {
             VStack(alignment: .leading, spacing: 4) {
-                let price = coin?.currentPrice ?? CoinDetail.mock.currentPrice
-                Text("₩" + Int(price).formatted())
+                Text("₩" + Int(coin.currentPrice).formatted())
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 
-                let percentage = coin?.priceChangePercentage24h ?? 0
+                let percentage = coin.priceChangePercentage24h ?? 0
                 let color: Color = percentage > 0
                 ? .red : percentage < 0
                 ? .blue : .primary
@@ -320,18 +308,6 @@ private extension TrendingView {
                     .foregroundStyle(color)
             }
         }
-        
-        @Sendable
-        private func bodyTask() async {
-            do {
-                let request = CoinDetailRequest(ids: id)
-                let response = try await client.fetchCoinDetail(request).first
-                guard let response else { return }
-                coin = response
-            } catch {
-                print(error)
-            }
-        }
     }
 }
 
@@ -339,10 +315,15 @@ private extension TrendingView {
 private extension TrendingView {
     @Sendable
     func bodyTask() async {
+        favoriteIds = sharedFavoriteIds ?? []
+        
         do {
-            let response = try await client.fetchTrending()
-            coins = response.coins
-            nfts = response.nfts
+            let request = CoinDetailRequest(ids: favoriteIds.joined(separator: ","))
+            async let trendingResponse = client.fetchTrending()
+            async let coinDetailResponse = client.fetchCoinDetail(request)
+            favoriteCoins = try await coinDetailResponse
+            coins = try await trendingResponse.coins
+            nfts = try await trendingResponse.nfts
         } catch {
             print(error)
         }

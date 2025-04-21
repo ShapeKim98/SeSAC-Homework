@@ -16,9 +16,14 @@ struct CoinDetailView: View {
     private var client
     
     @State
+    @Shared(.userDefaults(.favoriteIds))
+    private var sharedFavoriteIds = [String]()
+    @State
     private var coin: CoinDetail = .mock
     @State
     private var isLoading = true
+    @State
+    private var isFavorite = false
     
     private let id: String
     
@@ -31,6 +36,11 @@ struct CoinDetailView: View {
             .task(bodyTask)
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    favoriteButton
+                }
+            }
     }
 }
 
@@ -50,7 +60,6 @@ private extension CoinDetailView {
                 .frame(height: 400)
         }
         .redacted(reason: isLoading ? [.placeholder] : [])
-        .animation(.smooth, value: isLoading)
         .padding(.horizontal, 16)
     }
     
@@ -133,6 +142,14 @@ private extension CoinDetailView {
                     isHigh: false
                 )
             }
+        }
+    }
+    
+    var favoriteButton: some View {
+        Button(action: favoriteButtonAction) {
+            Image(systemName: isFavorite ? "star.fill" : "star")
+                .foregroundColor(.purple)
+                .animation(.smooth, value: isFavorite)
         }
     }
     
@@ -231,6 +248,10 @@ private extension CoinDetailView {
 private extension CoinDetailView {
     @Sendable
     func bodyTask() async {
+        if let sharedFavoriteIds {
+            isFavorite = sharedFavoriteIds.contains(id)
+        }
+        
         do {
             let request = CoinDetailRequest(ids: id)
             let response = try await client.fetchCoinDetail(request).first
@@ -240,6 +261,16 @@ private extension CoinDetailView {
         } catch {
             print(error)
         }
+    }
+    
+    func favoriteButtonAction() {
+        if isFavorite {
+            sharedFavoriteIds?.removeAll(where: { $0 == id })
+        } else {
+            sharedFavoriteIds?.insert(id, at: 0)
+        }
+        guard let sharedFavoriteIds else { return }
+        isFavorite = sharedFavoriteIds.contains(id)
     }
 }
 
