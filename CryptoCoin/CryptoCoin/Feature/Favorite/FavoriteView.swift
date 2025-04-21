@@ -48,11 +48,14 @@ struct FavoriteView: View {
 // MARK: - Configure View
 private extension FavoriteView {
     func root() -> some View {
-        VStack {
-            ScrollView(.horizontal, content: content)
-            
-            Spacer()
+        ScrollView {
+            VStack {
+                ScrollView(.horizontal, content: content)
+                
+                Spacer()
+            }
         }
+        .refreshable(action: refreshable)
         .navigationTitle("Favorite")
         .navigationDestination(for: String.self) { id in
             CoinDetailView(id: id)
@@ -191,6 +194,17 @@ private extension FavoriteView {
             } catch {
                 print(error)
             }
+        }
+    }
+    
+    @Sendable
+    func refreshable() async {
+        do {
+            let request = CoinDetailRequest(ids: favoriteIds.joined(separator: ","))
+            let response = try await client.fetchCoinDetail(request)
+            favoriteCoins = response
+        } catch {
+            print(error)
         }
     }
 }
